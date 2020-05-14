@@ -71,7 +71,8 @@ void Misc::slowwalk(UserCmd* cmd) noexcept
 void Misc::inverseRagdollGravity() noexcept
 {
     static auto ragdollGravity = interfaces->cvar->findVar("cl_ragdoll_gravity");
-    ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? -600 : 600);
+    //ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? -600 : 600);
+    ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? config->visuals.inverseRagdollGravityValue : 600);
 }
 
 void Misc::updateClanTag(bool tagChanged) noexcept
