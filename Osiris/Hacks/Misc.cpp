@@ -411,15 +411,26 @@ bool Misc::changeName(bool reconnect, const char* newName, float delay) noexcept
 
 void Misc::bunnyHop(UserCmd* cmd) noexcept
 {
-    if (!localPlayer)
+    static int hopsHit = 0;
+
+    if (!config->misc.bunnyHop || !localPlayer)
         return;
 
-    static auto wasLastTimeOnGround{ localPlayer->flags() & 1 };
+    //if (config->misc.bunnyHop && !(localPlayer->flags() & 1) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
+        //cmd->buttons &= ~UserCmd::IN_JUMP;
 
-    if (config->misc.bunnyHop && !(localPlayer->flags() & 1) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
-        cmd->buttons &= ~UserCmd::IN_JUMP;
-
-    wasLastTimeOnGround = localPlayer->flags() & 1;
+    if (localPlayer->moveType() != MoveType::LADDER) {
+        if (cmd->buttons & UserCmd::IN_JUMP && !(localPlayer->flags() & 1)) {
+            cmd->buttons &= ~UserCmd::IN_JUMP;
+        }
+        else if ((hopsHit >= config->misc.bhopMinHits && rand() % 100 + 1 > config->misc.bhopHitchance) || hopsHit >= config->misc.bhopMaxHits) {
+            cmd->buttons &= ~UserCmd::IN_JUMP;
+            hopsHit = 0;
+        }
+        else {
+            hopsHit++;
+        }
+    }
 }
 
 void Misc::fakeBan(bool set) noexcept
@@ -769,6 +780,21 @@ void Misc::fakeDuck(UserCmd* cmd, bool& sendPacket) noexcept
         {
             config->misc.fakeDuckShotState = 0;
         }
+    }
+}
+
+void Misc::drawAimbotFov() noexcept {
+    if (config->misc.drawAimbotFov && interfaces->engine->isInGame()) {
+        if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon()) return;
+        int weaponId = getWeaponIndex(localPlayer->getActiveWeapon()->itemDefinitionIndex2());
+        if (!config->aimbot[weaponId].enabled) weaponId = 0;
+        if (!config->aimbot[weaponId].enabled) return;
+        auto [width, heigth] = interfaces->surface->getScreenSize();
+        if (config->aimbot[weaponId].silent)
+            interfaces->surface->setDrawColor(255, 10, 10, 255);
+        else interfaces->surface->setDrawColor(10, 255, 10, 255);
+        float radius = std::tan(degreesToRadians(config->aimbot[weaponId].fov / 2.f)) / std::tan(degreesToRadians(config->misc.actualFov / 2.f)) * width;
+        interfaces->surface->drawOutlinedCircle(width / 2, heigth / 2, radius, 100);
     }
 }
 

@@ -42,5 +42,6 @@ namespace Misc
     float RandomFloat(float min, float max) noexcept;
     void chokePackets(bool& sendPacket, UserCmd* cmd) noexcept;
     void killSound(GameEvent& event) noexcept;
+    void drawAimbotFov() noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
 }

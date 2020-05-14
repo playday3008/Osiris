@@ -68,6 +68,8 @@ void Config::load(size_t id) noexcept
         if (triggerbotJson.isMember("Min damage")) triggerbotConfig.minDamage = triggerbotJson["Min damage"].asInt();
         if (triggerbotJson.isMember("Killshot")) triggerbotConfig.killshot = triggerbotJson["Killshot"].asBool();
         if (triggerbotJson.isMember("Burst Time")) triggerbotConfig.burstTime = triggerbotJson["Burst Time"].asFloat();
+        if (triggerbotJson.isMember("Max aim inaccuracy")) triggerbotConfig.maxAimInaccuracy = triggerbotJson["Max aim inaccuracy"].asFloat();
+        if (triggerbotJson.isMember("Max shot inaccuracy")) triggerbotConfig.maxShotInaccuracy = triggerbotJson["Max shot inaccuracy"].asFloat();
     }
 
     {
@@ -823,6 +825,9 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Anti AFK kick")) misc.antiAfkKick = miscJson["Anti AFK kick"].asBool();
         if (miscJson.isMember("Auto strafe")) misc.autoStrafe = miscJson["Auto strafe"].asBool();
         if (miscJson.isMember("Bunny hop")) misc.bunnyHop = miscJson["Bunny hop"].asBool();
+        if (miscJson.isMember("Bhop hitchance")) misc.bhopHitchance = miscJson["Bhop hitchance"].asInt();
+        if (miscJson.isMember("Min hits")) misc.bhopMinHits = miscJson["Min hits"].asInt();
+        if (miscJson.isMember("Max hits")) misc.bhopMaxHits = miscJson["Max hits"].asInt();
         if (miscJson.isMember("Custom clan tag")) misc.customClanTag = miscJson["Custom clan tag"].asBool();
         if (miscJson.isMember("Clock tag")) misc.clocktag = miscJson["Clock tag"].asBool();
         if (miscJson.isMember("Clan tag")) misc.clanTag = miscJson["Clan tag"].asString();
@@ -920,6 +925,7 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Fix tablet signal")) misc.fixTabletSignal = miscJson["Fix tablet signal"].asBool();
         if (miscJson.isMember("Max angle delta")) misc.maxAngleDelta = miscJson["Max angle delta"].asFloat();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
+        if (miscJson.isMember("Draw aimbot FOV")) misc.drawAimbotFov = miscJson["Draw aimbot FOV"].asBool();
         if (miscJson.isMember("Autozeus")) misc.autoZeus = miscJson["Autozeus"].asBool();
         if (miscJson.isMember("Custom Hit Sound")) misc.customHitSound = miscJson["Custom Hit Sound"].asString();
         if (miscJson.isMember("Kill sound")) misc.killSound = miscJson["Kill sound"].asInt();
@@ -1003,6 +1009,8 @@ void Config::save(size_t id) const noexcept
         triggerbotJson["Min damage"] = triggerbotConfig.minDamage;
         triggerbotJson["Killshot"] = triggerbotConfig.killshot;
         triggerbotJson["Burst Time"] = triggerbotConfig.burstTime;
+        triggerbotJson["Max aim inaccuracy"] = triggerbotConfig.maxAimInaccuracy;
+        triggerbotJson["Max shot inaccuracy"] = triggerbotConfig.maxShotInaccuracy;
     }
 
     {
@@ -1627,6 +1635,9 @@ void Config::save(size_t id) const noexcept
         miscJson["Anti AFK kick"] = misc.antiAfkKick;
         miscJson["Auto strafe"] = misc.autoStrafe;
         miscJson["Bunny hop"] = misc.bunnyHop;
+        miscJson["Bhop hitchance"] = misc.bhopHitchance;
+        miscJson["Max hits"] = misc.bhopMaxHits;
+        miscJson["Min hits"] = misc.bhopMinHits;
         miscJson["Custom clan tag"] = misc.customClanTag;
         miscJson["Clock tag"] = misc.clocktag;
         miscJson["Clan tag"] = misc.clanTag;
@@ -1706,6 +1717,8 @@ void Config::save(size_t id) const noexcept
         miscJson["Fix tablet signal"] = misc.fixTabletSignal;
         miscJson["Max angle delta"] = misc.maxAngleDelta;
         miscJson["Fake prime"] = misc.fakePrime;
+        miscJson["Draw aimbot FOV"] = misc.drawAimbotFov;
+        miscJson["Draw aimbot Actual FOV"] = misc.actualFov;
         miscJson["Autozeus"] = misc.autoZeus;
         miscJson["Custom Hit Sound"] = misc.customHitSound;
         miscJson["Kill sound"] = misc.killSound;
