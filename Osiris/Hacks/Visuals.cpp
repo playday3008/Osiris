@@ -537,7 +537,7 @@ void Visuals::hitMarkerDamageIndicator(GameEvent* event) noexcept
         const auto font_id = 17;
         interfaces->surface->setTextFont(font_id);
         interfaces->surface->setTextPosition(width / 2 + 6 + ratio * dist / 2, height / 2 + 6 + ratio * dist);
-        interfaces->surface->setTextColor(255, 255, 255, alpha);
+        interfaces->surface->setTextColor(255, 255, 255, (int)alpha);
         interfaces->surface->printText(std::to_wstring(hitMarkerInfo.at(i).hitMarkerDmg));
     }
 }
