@@ -27,4 +27,10 @@ namespace Visuals
     bool removeWeapons(const char* modelName) noexcept;
     void skybox() noexcept;
     void indicators() noexcept;
+    void hitMarkerDamageIndicator(GameEvent* = nullptr) noexcept;
+
+    struct HitMarkerInfo {
+        float hitMarkerExpTime;
+        int hitMarkerDmg;
+    };
 }

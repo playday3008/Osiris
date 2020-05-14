@@ -261,6 +261,7 @@ static void __stdcall paintTraverse(unsigned int panel, bool forceRepaint, bool 
         Misc::watermark();        
         Visuals::hitMarker();
         Misc::drawAimbotFov();
+        Visuals::hitMarkerDamageIndicator();
         Visuals::indicators();
     }
     hooks->panel.callOriginal<void, 41>(panel, forceRepaint, allowForce);
@@ -379,6 +380,7 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
             Misc::playHitSound(*event);
             Visuals::hitEffect(event);                
             Visuals::hitMarker(event);
+            Visuals::hitMarkerDamageIndicator(event);
             break;
         case fnv::hash("round_announce_match_start"):
             Misc::teamKills = 0;
