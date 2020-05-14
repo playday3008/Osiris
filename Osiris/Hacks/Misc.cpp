@@ -559,10 +559,56 @@ void Misc::autoPistol(UserCmd* cmd) noexcept
     }
 }
 
-void Misc::chokePackets(bool& sendPacket) noexcept
+float Misc::RandomFloat(float min, float max) noexcept
 {
-    if (!config->misc.chokedPacketsKey || GetAsyncKeyState(config->misc.chokedPacketsKey))
-        sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= config->misc.chokedPackets;
+    return (min + 1) + (((float)rand()) / (float)RAND_MAX) * (max - (min + 1));
+}
+
+void Misc::chokePackets(bool& sendPacket, UserCmd * cmd) noexcept
+{
+    bool doFakeLag{ false };
+    auto position = localPlayer->getAbsOrigin();
+    auto velocity = localPlayer->velocity();
+    auto extrapolatedVelocity = sqrt(sqrt(velocity.x * velocity.y * velocity.z));
+    auto& records = config->globals.serverPos;
+    float distanceDifToServerSide = sqrt(sqrt(records.origin.x * records.origin.y * records.origin.z));
+
+    if (config->misc.fakeLagMode != 0)
+    {
+        if ((config->misc.fakeLagSelectedFlags[0] && cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))
+            || (config->misc.fakeLagSelectedFlags[1] && !(cmd->buttons & (UserCmd::IN_FORWARD | UserCmd::IN_BACK | UserCmd::IN_MOVELEFT | UserCmd::IN_MOVERIGHT)))
+            || (config->misc.fakeLagSelectedFlags[2] && cmd->buttons & (UserCmd::IN_FORWARD | UserCmd::IN_BACK | UserCmd::IN_MOVELEFT | UserCmd::IN_MOVERIGHT))
+            || (config->misc.fakeLagSelectedFlags[3] && !(localPlayer->flags() & 1)))
+            doFakeLag = true;
+        else
+            doFakeLag = false;
+    }
+
+    if (doFakeLag)
+    {
+        if (config->misc.fakeLagMode == 1)
+            sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= config->misc.fakeLagTicks;
+        if (config->misc.fakeLagMode == 2)
+        {
+            auto requiredPacketsToBreakLagComp = 65 / extrapolatedVelocity;
+            if (!(requiredPacketsToBreakLagComp > config->misc.fakeLagTicks) && requiredPacketsToBreakLagComp <= 16)
+                sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= requiredPacketsToBreakLagComp;
+            else
+                sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= 16;
+        }
+        if (config->misc.fakeLagMode == 3)
+        {
+            float lagTicks = RandomFloat(config->misc.fakeLagTicks, 16);
+            sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= lagTicks;
+        }
+        if (config->misc.fakeLagMode == 4)
+        {
+            if (distanceDifToServerSide < 64.f && interfaces->engine->getNetworkChannel()->chokedPackets < 16)
+                sendPacket = false;
+            else
+                sendPacket = true;
+        }
+    }
 }
 
 void Misc::autoReload(UserCmd* cmd) noexcept
@@ -651,6 +697,79 @@ void Misc::killSound(GameEvent& event) noexcept
         interfaces->engine->clientCmdUnrestricted(killSounds[config->misc.killSound - 1]);
     else if (config->misc.killSound == 5)
         interfaces->engine->clientCmdUnrestricted(("play " + config->misc.customKillSound).c_str());
+}
+
+void Misc::fakeDuck(UserCmd* cmd, bool& sendPacket) noexcept
+{
+    auto state = localPlayer->getAnimstate();
+
+    if (config->misc.fakeDuck)
+    {
+        if (config->misc.fakeDuckKey != 0) {
+            if (!GetAsyncKeyState(config->misc.fakeDuckKey))
+            {
+                config->misc.fakeDucking = false;
+                return;
+            }
+            else
+                config->misc.fakeDucking = true;
+        }
+
+        if (config->misc.fakeDucking)
+        {
+            if (cmd->buttons & UserCmd::IN_ATTACK || config->misc.fakeDuckShotState != 0)
+            {
+                if (localPlayer->getAnimstate()->duckAmount > 0.2 && config->misc.fakeDuckShotState == 0)
+                {
+                    sendPacket = true; // clear up sendPacket for fakeduck going up to choke
+                    cmd->buttons |= UserCmd::IN_BULLRUSH;
+                    cmd->buttons |= UserCmd::IN_DUCK;
+                    cmd->buttons &= ~UserCmd::IN_ATTACK;
+                    config->misc.fakeDuckShotState = 1;
+                }
+                else if (localPlayer->getAnimstate()->duckAmount > 0.2 && config->misc.fakeDuckShotState == 1)
+                {
+                    sendPacket = false;
+                    cmd->buttons |= UserCmd::IN_BULLRUSH;
+                    cmd->buttons &= ~UserCmd::IN_DUCK;
+                    cmd->buttons &= ~UserCmd::IN_ATTACK;
+                    config->misc.fakeDuckShotState = 1;
+                }
+                else if (localPlayer->getAnimstate()->duckAmount <= 0.2 && config->misc.fakeDuckShotState == 1)
+                {
+                    sendPacket = false;
+                    cmd->buttons |= UserCmd::IN_BULLRUSH;
+                    cmd->buttons &= ~UserCmd::IN_DUCK;
+                    cmd->buttons |= UserCmd::IN_ATTACK;
+                    config->misc.fakeDuckShotState = 2;
+                }
+                else if (config->misc.fakeDuckShotState == 2)
+                {
+                    sendPacket = false;
+                    cmd->buttons |= UserCmd::IN_BULLRUSH;
+                    cmd->buttons |= UserCmd::IN_DUCK;
+                    config->misc.fakeDuckShotState = 3;
+                }
+                else if (config->misc.fakeDuckShotState == 3)
+                {
+                    sendPacket = true;
+                    cmd->buttons |= UserCmd::IN_BULLRUSH;
+                    cmd->buttons |= UserCmd::IN_DUCK;
+                    config->misc.fakeDuckShotState = 0;
+                }
+            }
+            else
+            {
+                cmd->buttons |= UserCmd::IN_BULLRUSH;
+                cmd->buttons |= UserCmd::IN_DUCK;
+                config->misc.fakeDuckShotState = 0;
+            }
+        }
+        else
+        {
+            config->misc.fakeDuckShotState = 0;
+        }
+    }
 }
 
 void Misc::purchaseList(GameEvent* event) noexcept

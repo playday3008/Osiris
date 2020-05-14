@@ -8,6 +8,7 @@
 #include "imgui/imgui.h"
 #include "nSkinz/config_.hpp"
 #include "ConfigStructs.h"
+#include "SDK/Vector.h"
 
 class Config {
 public:
@@ -19,6 +20,11 @@ public:
     void rename(size_t, const char*) noexcept;
     void reset() noexcept;
     void listConfigs() noexcept;
+    struct Record {
+        Vector origin;
+        float simulationTime;
+        matrix3x4 matrix[128];
+    };
 
     constexpr auto& getConfigs() noexcept
     {
@@ -85,9 +91,21 @@ public:
 
     struct {
         bool enabled{ false };
+        int thirdpersonMode{ 0 };
         bool pitch{ false };
         bool yaw{ false };
         float pitchAngle{ 0.0f };
+        float yawAngle{ 0.0f };
+        int yawInverseAngleKey{ 0 };
+        int yawInverseKeyMode{ 0 };
+        bool yawInversed{ false };
+        bool yawReal{ false };
+        float bodyLean{ 0.0f };
+        int mode{ 0 };
+        float jitterMax{ 0.0f };
+        float jitterMin{ 0.0f };
+        bool LBYBreaker{ false };
+        float LBYAngle{ 0.0f };
     } antiAim;
 
     struct Glow {
@@ -113,7 +131,7 @@ public:
         std::array<Material, 2> materials;
     };
 
-    std::array<Chams, 18> chams;
+    std::array<Chams, 20> chams;
 
     struct Esp {
         struct Shared {
@@ -202,6 +220,20 @@ public:
             float green = 0.0f;
             float yellow = 0.0f;
         } colorCorrection;
+
+        bool indicatorsEnabled{ false };
+        const char* indicators[4] = {
+            "Desync",
+            "LBY",
+            "Fakelag",
+            "Fakeduck"
+        };
+        bool selectedIndicators[4] = {
+            false,
+            false,
+            false,
+            false
+        };
     } visuals;
 
     std::array<item_setting, 36> skinChanger;
@@ -234,7 +266,7 @@ public:
         std::string clanTag;
         bool animatedClanTag{ false };
         bool fastDuck{ false };
-        bool moonwalk{ false };
+        bool moonwalk{ 0 };
         bool edgejump{ false };
         int edgejumpkey{ 0 };
         bool slowwalk{ false };
@@ -267,13 +299,31 @@ public:
         bool prepareRevolver{ false };
         int prepareRevolverKey{ 0 };
         int hitSound{ 0 };
-        int chokedPackets{ 0 };
-        int chokedPacketsKey{ 0 };
+        int fakeLagMode{ 0 };
+        int fakeLagTicks{ 0 };
+        int fakeLagKey{ 0 };
+        const char* fakeLagFlags[4] = {
+            "While Shooting",
+            "While Standing",
+            "While Moving",
+            "In Air"
+        };
+        bool fakeLagSelectedFlags[4] = {
+            false,
+            false,
+            false,
+            false
+        };
         int quickHealthshotKey{ 0 };
         bool nadePredict{ false };
         bool fixTabletSignal{ false };
         float maxAngleDelta{ 255.0f };
         bool fakePrime{ false };
+        bool autoZeus{ false };
+        bool fakeDuck{ false };
+        int fakeDuckKey{ 0 };
+        bool fakeDucking{ false };
+        int fakeDuckShotState{ 0 };
         int killSound{ 0 };
         std::string customKillSound;
         std::string customHitSound;
@@ -291,6 +341,19 @@ public:
         int delay{ 1 };
         int rounds{ 1 };
     } reportbot;
+
+    struct {
+        bool thirdPersonAnglesSet{ false };
+        Vector fakeAngle;
+        Vector realAngle;
+        Vector cmdAngle;
+        Record serverPos;
+        float serverTime{ 0.f };
+        int tickRate{ 0 };
+        float nextLBY{ 0.f };
+        float lastLBY{ 0.f };
+        int chokedPackets{ 0 };
+    } globals;
 private:
     std::filesystem::path path;
     std::vector<std::string> configs;

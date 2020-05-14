@@ -264,10 +264,55 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
         ImGui::Begin("Anti aim", &window.antiAim, windowFlags);
     }
     ImGui::Checkbox("Enabled", &config->antiAim.enabled);
-    ImGui::Checkbox("##pitch", &config->antiAim.pitch);
-    ImGui::SameLine();
-    ImGui::SliderFloat("Pitch", &config->antiAim.pitchAngle, -89.0f, 89.0f, "%.2f");
-    ImGui::Checkbox("Yaw", &config->antiAim.yaw);
+    if (config->antiAim.enabled)
+    {
+        ImGui::Checkbox("Pitch", &config->antiAim.pitch);
+        if (config->antiAim.pitch) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(240.0f);
+            ImGui::SliderFloat("Pitch Angle", &config->antiAim.pitchAngle, -89.0f, 89.0f, "%.2f", 1);
+        }
+        ImGui::Checkbox("Yaw", &config->antiAim.yaw);
+        if (config->antiAim.yaw) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(240.0f);
+            ImGui::SliderFloat("Yaw Angle", &config->antiAim.yawAngle, -179.0f, 179.0f, "%.2f", 1);
+            ImGui::Text("Invert Key");
+            ImGui::SameLine();
+            hotkey(config->antiAim.yawInverseAngleKey);
+            ImGui::SameLine();
+            ImGui::PushID(1);
+            ImGui::SetNextItemWidth(75.0f);
+            ImGui::Combo("", &config->antiAim.yawInverseKeyMode, "Hold\0Toggle\0");
+            ImGui::PopID();
+        }
+        else
+        {
+            ImGui::Text("Invert Key");
+            ImGui::SameLine();
+            hotkey(config->antiAim.yawInverseAngleKey);
+        }
+        ImGui::Checkbox("Yaw Desync", &config->antiAim.yawReal);
+        if (config->antiAim.yawReal == true)
+        {
+            ImGui::SetNextItemWidth(240.0f);
+            ImGui::SliderFloat("Body Lean", &config->antiAim.bodyLean, 0.0f, 100.0f, "%.2f", 1);
+            ImGui::Checkbox("LBY Breaker", &config->antiAim.LBYBreaker);
+            if (config->antiAim.LBYBreaker)
+            {
+                ImGui::SliderFloat("LBY Angle", &config->antiAim.LBYAngle, 0.0f, 180.0f, "%.2f", 1);
+            }
+        }
+        ImGui::SetNextItemWidth(85.0f);
+        ImGui::Combo("Anti-Aim Mode", &config->antiAim.mode, "Static\0Custom\0");
+        if (config->antiAim.mode == 1)
+        {
+            ImGui::SetNextItemWidth(240.0f);
+            ImGui::SliderFloat("Jitter Max", &config->antiAim.jitterMax, -179.0f, 179.0f, "%.2f", 1);
+            ImGui::SetNextItemWidth(240.0f);
+            ImGui::SliderFloat("Jitter Min", &config->antiAim.jitterMin, -179.0f, 179.0f, "%.2f", 1);
+        }
+    }
     if (!contentOnly)
         ImGui::End();
 }
@@ -468,7 +513,7 @@ void GUI::renderChamsWindow(bool contentOnly) noexcept
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
     ImGui::PushID(0);
-    ImGui::Combo("", &currentCategory, "Allies\0Enemies\0Planting\0Defusing\0Local player\0Weapons\0Hands\0Backtrack\0Sleeves\0");
+    ImGui::Combo("", &currentCategory, "Allies\0Enemies\0Planting\0Defusing\0Local player\0Weapons\0Hands\0Backtrack\0Sleeves\0"); //Server Position\0Real Angles\0");
     ImGui::PopID();
     static int currentItem{ 0 };
 
@@ -766,6 +811,8 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Thirdperson", &config->visuals.thirdperson);
     ImGui::SameLine();
     hotkey(config->visuals.thirdpersonKey);
+    ImGui::SetNextItemWidth(140.0f);
+    ImGui::Combo("Thirdperson Angles", &config->antiAim.thirdpersonMode, "Fake\0Real\0Current Tick\0");
     ImGui::PushItemWidth(290.0f);
     ImGui::PushID(0);
     ImGui::SliderInt("", &config->visuals.thirdpersonDistance, 0, 1000, "Thirdperson distance: %d");
@@ -795,6 +842,12 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderFloat("Hit effect time", &config->visuals.hitEffectTime, 0.1f, 1.5f, "%.2fs");
     ImGui::Combo("Hit marker", &config->visuals.hitMarker, "None\0Default (Cross)\0");
     ImGui::SliderFloat("Hit marker time", &config->visuals.hitMarkerTime, 0.1f, 1.5f, "%.2fs");
+    ImGui::Checkbox("Indicators", &config->visuals.indicatorsEnabled);
+    ImGui::SameLine();
+    ImGui::PushID(6);
+    ImGuiCustom::MultiCombo("", config->visuals.indicators, config->visuals.selectedIndicators, 4);
+    ImGui::PopID();
+
     ImGui::Checkbox("Color correction", &config->visuals.colorCorrection.enabled);
     ImGui::SameLine();
     bool ccPopup = ImGui::Button("Edit");
@@ -1073,11 +1126,25 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
             ImGui::SetTooltip("audio file must be put in csgo/sound/ directory");
     }
     ImGui::PopID();
-    ImGui::SetNextItemWidth(90.0f);
-    ImGui::InputInt("Choked packets", &config->misc.chokedPackets, 1, 5);
-    config->misc.chokedPackets = std::clamp(config->misc.chokedPackets, 0, 64);
+    ImGui::Combo("Fake Lag", &config->misc.fakeLagMode, "Off\0Normal\0Adaptive\0Random\0Switch");
     ImGui::SameLine();
-    hotkey(config->misc.chokedPacketsKey);
+    hotkey(config->misc.fakeLagKey);
+    if (!(config->misc.fakeLagMode == 0))
+    {
+        ImGuiCustom::MultiCombo("Flags", config->misc.fakeLagFlags, config->misc.fakeLagSelectedFlags, 4);
+        if (config->misc.fakeLagMode == 3)
+        {
+            ImGui::SetNextItemWidth(120.0f);
+            ImGui::SliderInt("Min Fakelag Amount", &config->misc.fakeLagTicks, 1, 16);
+            config->misc.fakeLagTicks = std::clamp(config->misc.fakeLagTicks, 1, 64);
+        }
+        else if (!(config->misc.fakeLagMode == 4))
+        {
+            ImGui::SetNextItemWidth(120.0f);
+            ImGui::SliderInt("Fakelag Amount", &config->misc.fakeLagTicks, 1, 16);
+            config->misc.fakeLagTicks = std::clamp(config->misc.fakeLagTicks, 1, 64);
+        }
+    }
     ImGui::Text("Quick healthshot");
     ImGui::SameLine();
     hotkey(config->misc.quickHealthshotKey);
@@ -1086,6 +1153,10 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::SetNextItemWidth(120.0f);
     ImGui::SliderFloat("Max angle delta", &config->misc.maxAngleDelta, 0.0f, 255.0f, "%.2f");
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
+    ImGui::Checkbox("Zeusbot", &config->misc.autoZeus);
+    ImGui::Checkbox("Fakeduck", &config->misc.fakeDuck);
+    ImGui::SameLine();
+    hotkey(config->misc.fakeDuckKey);
     ImGui::Checkbox("Purchase List", &config->misc.purchaseList.enabled);
     ImGui::SameLine();
 

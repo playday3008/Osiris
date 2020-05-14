@@ -84,6 +84,16 @@ void Config::load(size_t id) noexcept
         if (antiAimJson.isMember("Pitch")) antiAim.pitch = antiAimJson["Pitch"].asBool();
         if (antiAimJson.isMember("Pitch angle")) antiAim.pitchAngle = antiAimJson["Pitch angle"].asFloat();
         if (antiAimJson.isMember("Yaw")) antiAim.yaw = antiAimJson["Yaw"].asBool();
+        if (antiAimJson.isMember("Yaw angle")) antiAim.yawAngle = antiAimJson["Yaw angle"].asFloat();
+        if (antiAimJson.isMember("Inverse Yaw Key")) antiAim.yawInverseAngleKey = antiAimJson["Inverse Yaw Key"].asInt();
+        if (antiAimJson.isMember("Inverse Yaw Key Mode")) antiAim.yawInverseKeyMode = antiAimJson["Inverse Yaw Key Mode"].asInt();
+        if (antiAimJson.isMember("Yaw Real")) antiAim.yawReal = antiAimJson["Yaw Real"].asBool();
+        if (antiAimJson.isMember("Body Lean")) antiAim.bodyLean = antiAimJson["Body Lean"].asFloat();
+        if (antiAimJson.isMember("AntiAim Mode")) antiAim.mode = antiAimJson["AntiAim Mode"].asInt();
+        if (antiAimJson.isMember("Jitter Max")) antiAim.jitterMax = antiAimJson["Jitter Max"].asFloat();
+        if (antiAimJson.isMember("Jitter Min")) antiAim.jitterMin = antiAimJson["Jitter Min"].asFloat();
+        if (antiAimJson.isMember("LBY Breaker")) antiAim.LBYBreaker = antiAimJson["LBY Breaker"].asBool();
+        if (antiAimJson.isMember("LBY Angle")) antiAim.LBYAngle = antiAimJson["LBY Angle"].asFloat();
     }
 
     for (size_t i = 0; i < glow.size(); i++) {
@@ -677,6 +687,12 @@ void Config::load(size_t id) noexcept
         if (visualsJson.isMember("flashReduction")) visuals.flashReduction = visualsJson["flashReduction"].asInt();
         if (visualsJson.isMember("brightness")) visuals.brightness = visualsJson["brightness"].asFloat();
         if (visualsJson.isMember("skybox")) visuals.skybox = visualsJson["skybox"].asInt();
+        if (visualsJson.isMember("Thirdperson Mode")) antiAim.thirdpersonMode = visualsJson["Thirdperson Mode"].asInt();
+        if (visualsJson.isMember("Indicators Enabled")) visuals.indicatorsEnabled = visualsJson["Indicators Enabled"].asBool();
+        if (visualsJson.isMember("Desync Indicator")) visuals.selectedIndicators[0] = visualsJson["Desync Indicator"].asBool();
+        if (visualsJson.isMember("LBY Indicator")) visuals.selectedIndicators[1] = visualsJson["LBY Indicator"].asBool();
+        if (visualsJson.isMember("Fakelag Indicator")) visuals.selectedIndicators[2] = visualsJson["Fakelag Indicator"].asBool();
+        if (visualsJson.isMember("Fakeduck Indicator")) visuals.selectedIndicators[3] = visualsJson["Fakeduck Indicator"].asBool();
         if (visualsJson.isMember("World")) {
             const auto& worldJson = visualsJson["World"];
 
@@ -892,16 +908,24 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Prepare revolver")) misc.prepareRevolver = miscJson["Prepare revolver"].asBool();
         if (miscJson.isMember("Prepare revolver key")) misc.prepareRevolverKey = miscJson["Prepare revolver key"].asInt();
         if (miscJson.isMember("Hit sound")) misc.hitSound = miscJson["Hit sound"].asInt();
-        if (miscJson.isMember("Choked packets")) misc.chokedPackets = miscJson["Choked packets"].asInt();
-        if (miscJson.isMember("Choked packets key")) misc.chokedPacketsKey = miscJson["Choked packets key"].asInt();
+        if (miscJson.isMember("Fakelag Ticks")) misc.fakeLagTicks = miscJson["Fakelag Ticks"].asInt();
+        if (miscJson.isMember("Fakelag Mode")) misc.fakeLagMode = miscJson["Fakelag Mode"].asInt();
+        if (miscJson.isMember("Fakelag While Shooting")) misc.fakeLagSelectedFlags[0] = miscJson["Fakelag While Shooting"].asBool();
+        if (miscJson.isMember("Fakelag While Standing")) misc.fakeLagSelectedFlags[1] = miscJson["Fakelag While Standing"].asBool();
+        if (miscJson.isMember("Fakelag While Moving")) misc.fakeLagSelectedFlags[2] = miscJson["Fakelag While Moving"].asBool();
+        if (miscJson.isMember("Fakelag In Air")) misc.fakeLagSelectedFlags[3] = miscJson["Fakelag In Air"].asBool();
+        if (miscJson.isMember("Fakelag key")) misc.fakeLagKey = miscJson["Fakelag key"].asInt();
         if (miscJson.isMember("Quick healthshot key")) misc.quickHealthshotKey = miscJson["Quick healthshot key"].asInt();
         if (miscJson.isMember("Grenade predict")) misc.nadePredict = miscJson["Grenade predict"].asBool();
         if (miscJson.isMember("Fix tablet signal")) misc.fixTabletSignal = miscJson["Fix tablet signal"].asBool();
         if (miscJson.isMember("Max angle delta")) misc.maxAngleDelta = miscJson["Max angle delta"].asFloat();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
+        if (miscJson.isMember("Autozeus")) misc.autoZeus = miscJson["Autozeus"].asBool();
         if (miscJson.isMember("Custom Hit Sound")) misc.customHitSound = miscJson["Custom Hit Sound"].asString();
         if (miscJson.isMember("Kill sound")) misc.killSound = miscJson["Kill sound"].asInt();
         if (miscJson.isMember("Custom Kill Sound")) misc.customKillSound = miscJson["Custom Kill Sound"].asString();
+        if (miscJson.isMember("Fake Duck")) misc.fakeDuck = miscJson["Fake Duck"].asBool();
+        if (miscJson.isMember("Fake Duck Key")) misc.fakeDuckKey = miscJson["Fake Duck Key"].asInt();
 
         if (const auto& purchaseList = miscJson["Purchase List"]; purchaseList.isObject()) {
             if (const auto& enabled{ purchaseList["Enabled"] }; enabled.isBool())
@@ -995,6 +1019,16 @@ void Config::save(size_t id) const noexcept
         antiAimJson["Pitch"] = antiAim.pitch;
         antiAimJson["Pitch angle"] = antiAim.pitchAngle;
         antiAimJson["Yaw"] = antiAim.yaw;
+        antiAimJson["Yaw angle"] = antiAim.yawAngle;
+        antiAimJson["Inverse Yaw Key"] = antiAim.yawInverseAngleKey;
+        antiAimJson["Inverse Yaw Key Mode"] = antiAim.yawInverseKeyMode;
+        antiAimJson["Yaw Real"] = antiAim.yawReal;
+        antiAimJson["Body Lean"] = antiAim.bodyLean;
+        antiAimJson["AntiAim Mode"] = antiAim.mode;
+        antiAimJson["Jitter Max"] = antiAim.jitterMax;
+        antiAimJson["Jitter Min"] = antiAim.jitterMin;
+        antiAimJson["LBY Breaker"] = antiAim.LBYBreaker;
+        antiAimJson["LBY Angle"] = antiAim.LBYAngle;
     }
 
     for (size_t i = 0; i < glow.size(); i++) {
@@ -1472,6 +1506,12 @@ void Config::save(size_t id) const noexcept
         visualsJson["flashReduction"] = visuals.flashReduction;
         visualsJson["brightness"] = visuals.brightness;
         visualsJson["skybox"] = visuals.skybox;
+        visualsJson["Thirdperson Mode"] = config->antiAim.thirdpersonMode;
+        visualsJson["Indicators Enabled"] = visuals.indicatorsEnabled;
+        visualsJson["Desync Indicator"] = visuals.selectedIndicators[0];
+        visualsJson["LBY Indicator"] = visuals.selectedIndicators[1];
+        visualsJson["Fakelag Indicator"] = visuals.selectedIndicators[2];
+        visualsJson["Fakeduck Indicator"] = visuals.selectedIndicators[3];
 
         {
             auto& worldJson = visualsJson["World"];
@@ -1654,16 +1694,24 @@ void Config::save(size_t id) const noexcept
         miscJson["Prepare revolver"] = misc.prepareRevolver;
         miscJson["Prepare revolver key"] = misc.prepareRevolverKey;
         miscJson["Hit sound"] = misc.hitSound;
-        miscJson["Choked packets"] = misc.chokedPackets;
-        miscJson["Choked packets key"] = misc.chokedPacketsKey;
+        miscJson["Fakelag Ticks"] = misc.fakeLagTicks;
+        miscJson["Fakelag Mode"] = misc.fakeLagMode;
+        miscJson["Fakelag While Shooting"] = misc.fakeLagSelectedFlags[0];
+        miscJson["Fakelag While Standing"] = misc.fakeLagSelectedFlags[1];
+        miscJson["Fakelag While Moving"] = misc.fakeLagSelectedFlags[2];
+        miscJson["Fakelag In Air"] = misc.fakeLagSelectedFlags[3];
+        miscJson["Fakelag key"] = misc.fakeLagKey;
         miscJson["Quick healthshot key"] = misc.quickHealthshotKey;
         miscJson["Grenade predict"] = misc.nadePredict;
         miscJson["Fix tablet signal"] = misc.fixTabletSignal;
         miscJson["Max angle delta"] = misc.maxAngleDelta;
         miscJson["Fake prime"] = misc.fakePrime;
+        miscJson["Autozeus"] = misc.autoZeus;
         miscJson["Custom Hit Sound"] = misc.customHitSound;
         miscJson["Kill sound"] = misc.killSound;
         miscJson["Custom Kill Sound"] = misc.customKillSound;
+        miscJson["Fake Duck"] = misc.fakeDuck;
+        miscJson["Fake Duck Key"] = misc.fakeDuckKey;
 
         {
             auto& purchaseListJson = miscJson["Purchase List"];

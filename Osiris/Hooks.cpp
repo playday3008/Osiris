@@ -105,6 +105,8 @@ static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* 
 static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
 {
     auto result = hooks->clientMode.callOriginal<bool, 24>(inputSampleTime, cmd);
+    //const auto activeWeapon = localPlayer->getActiveWeapon();
+    //auto weaponClass = getWeaponClass(activeWeapon->itemDefinitionIndex2());
 
     if (!cmd->commandNumber)
         return result;
@@ -148,10 +150,18 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Misc::edgejump(cmd);
     Misc::moonwalk(cmd);
 
-    if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))) {
-        Misc::chokePackets(sendPacket);
+    config->globals.serverTime = memory->globalVars->serverTime();
+    config->globals.chokedPackets = interfaces->engine->getNetworkChannel()->chokedPackets;
+    config->globals.tickRate = memory->globalVars->intervalPerTick;
+
+    if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2)) || config->misc.fakeLagSelectedFlags[0])
+        if (config->misc.fakeLagKey == 0 || GetAsyncKeyState(config->misc.fakeLagKey))
+            Misc::chokePackets(sendPacket, cmd);
+
+    Misc::fakeDuck(cmd, sendPacket);
+
+    if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2 | UserCmd::IN_USE)))
         AntiAim::run(cmd, previousViewAngles, currentViewAngles, sendPacket);
-    }
 
     auto viewAnglesDelta{ cmd->viewangles - previousViewAngles };
     viewAnglesDelta.normalize();
@@ -171,6 +181,25 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
 
     previousViewAngles = cmd->viewangles;
 
+    if (sendPacket)
+    {
+        config->globals.fakeAngle = cmd->viewangles;
+        config->globals.cmdAngle = cmd->viewangles;
+        config->globals.thirdPersonAnglesSet = true;
+        /*
+        Config::Record record{ };
+        record.origin = localPlayer->getAbsOrigin();
+        record.simulationTime = localPlayer->simulationTime();
+        localPlayer->setupBones(record.matrix, 128, 0x7FF00, memory->globalVars->currenttime);
+        config->globals.serverPos = record;*/
+    }
+    else
+    {
+        config->globals.realAngle = cmd->viewangles;
+        config->globals.cmdAngle = cmd->viewangles;
+        config->globals.thirdPersonAnglesSet = true;
+    }
+
     return false;
 }
 
@@ -178,7 +207,6 @@ static int __stdcall doPostScreenEffects(int param) noexcept
 {
     if (interfaces->engine->isInGame()) {
         Visuals::modifySmoke();
-        Visuals::thirdperson();
         Misc::inverseRagdollGravity();
         Visuals::disablePostProcessing();
         Visuals::reduceFlashEffect();
@@ -232,6 +260,7 @@ static void __stdcall paintTraverse(unsigned int panel, bool forceRepaint, bool 
         Misc::spectatorList();
         Misc::watermark();        
         Visuals::hitMarker();
+        Visuals::indicators();
     }
     hooks->panel.callOriginal<void, 41>(panel, forceRepaint, allowForce);
 }
@@ -242,6 +271,16 @@ static void __stdcall frameStageNotify(FrameStage stage) noexcept
 
     if (interfaces->engine->isConnected() && !interfaces->engine->isInGame())
         Misc::changeName(true, nullptr, 0.0f);
+
+    if (interfaces->engine->isConnected() && interfaces->engine->isInGame())
+    {
+        if (config->antiAim.thirdpersonMode == 0)
+            Visuals::thirdperson(stage, config->globals.fakeAngle);
+        if (config->antiAim.thirdpersonMode == 1)
+            Visuals::thirdperson(stage, config->globals.realAngle);
+        if (config->antiAim.thirdpersonMode == 2)
+            Visuals::thirdperson(stage, config->globals.cmdAngle);
+    }
 
     if (stage == FrameStage::RENDER_START) {
         Misc::disablePanoramablur();
@@ -344,10 +383,39 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
 }
 
 struct ViewSetup {
-    std::byte pad[176];
+    /*std::byte pad[176];
     float fov;
     std::byte pad1[32];
+    float farZ;*/
+    char _0x0000[16];
+    __int32 x;
+    __int32 x_old;
+    __int32 y;
+    __int32 y_old;
+    __int32 width;
+    __int32    width_old;
+    __int32 height;
+    __int32    height_old;
+    char _0x0030[128];
+    float fov;
+    float fovViewmodel;
+    Vector origin;
+    Vector angles;
+    float zNear;
     float farZ;
+    float zNearViewmodel;
+    float zFarViewmodel;
+    float m_flAspectRatio;
+    float m_flNearBlurDepth;
+    float m_flNearFocusDepth;
+    float m_flFarFocusDepth;
+    float m_flFarBlurDepth;
+    float m_flNearBlurRadius;
+    float m_flFarBlurRadius;
+    float m_nDoFQuality;
+    __int32 m_nMotionBlurMode;
+    char _0x0104[68];
+    __int32 m_EdgeBlur;
 };
 
 static void __stdcall overrideView(ViewSetup* setup) noexcept
@@ -355,6 +423,8 @@ static void __stdcall overrideView(ViewSetup* setup) noexcept
     if (localPlayer && !localPlayer->isScoped())
         setup->fov += config->visuals.fov;
     setup->farZ += config->visuals.farZ * 10;
+    if (config->misc.fakeDucking)
+        setup->origin.z = localPlayer->getAbsOrigin().z + 64.f;
     hooks->clientMode.callOriginal<void, 18>(setup);
 }
 
