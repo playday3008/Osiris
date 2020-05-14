@@ -67,6 +67,7 @@ void GUI::render() noexcept
         renderMiscWindow();
         renderReportbotWindow();
         renderConfigWindow();
+        renderBETAWindow();
     } else {
         renderGuiStyle2();
     }
@@ -116,6 +117,7 @@ void GUI::renderMenuBar() noexcept
         ImGui::MenuItem("Misc", nullptr, &window.misc);
         ImGui::MenuItem("Reportbot", nullptr, &window.reportbot);
         ImGui::MenuItem("Config", nullptr, &window.config);
+        ImGui::MenuItem("OsirisBETA ", nullptr, &window.BETA);
         ImGui::EndMainMenuBar();
     }
 }
@@ -126,7 +128,7 @@ void GUI::renderAimbotWindow(bool contentOnly) noexcept
         if (!window.aimbot)
             return;
         ImGui::SetNextWindowSize({ 600.0f, 0.0f });
-        ImGui::Begin("Aimbot", &window.aimbot, windowFlags);
+        ImGui::Begin("Aimbot (OsirisBETA by PlayDay)", &window.aimbot, windowFlags);
     }
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
@@ -261,7 +263,7 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
         if (!window.antiAim)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Anti aim", &window.antiAim, windowFlags);
+        ImGui::Begin("Anti aim (OsirisBETA by PlayDay)", &window.antiAim, windowFlags);
     }
     ImGui::Checkbox("Enabled", &config->antiAim.enabled);
     if (config->antiAim.enabled)
@@ -323,7 +325,7 @@ void GUI::renderTriggerbotWindow(bool contentOnly) noexcept
         if (!window.triggerbot)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Triggerbot", &window.triggerbot, windowFlags);
+        ImGui::Begin("Triggerbot (OsirisBETA by PlayDay)", &window.triggerbot, windowFlags);
     }
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
@@ -448,7 +450,7 @@ void GUI::renderBacktrackWindow(bool contentOnly) noexcept
         if (!window.backtrack)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Backtrack", &window.backtrack, windowFlags);
+        ImGui::Begin("Backtrack (OsirisBETA by PlayDay)", &window.backtrack, windowFlags);
     }
     ImGui::Checkbox("Enabled", &config->backtrack.enabled);
     ImGui::Checkbox("Ignore smoke", &config->backtrack.ignoreSmoke);
@@ -466,7 +468,7 @@ void GUI::renderGlowWindow(bool contentOnly) noexcept
         if (!window.glow)
             return;
         ImGui::SetNextWindowSize({ 450.0f, 0.0f });
-        ImGui::Begin("Glow", &window.glow, windowFlags);
+        ImGui::Begin("Glow (OsirisBETA by PlayDay)", &window.glow, windowFlags);
     }
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
@@ -510,7 +512,7 @@ void GUI::renderChamsWindow(bool contentOnly) noexcept
         if (!window.chams)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Chams", &window.chams, windowFlags);
+        ImGui::Begin("Chams (OsirisBETA by PlayDay)", &window.chams, windowFlags);
     }
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
@@ -565,7 +567,7 @@ void GUI::renderEspWindow(bool contentOnly) noexcept
         if (!window.esp)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Esp", &window.esp, windowFlags);
+        ImGui::Begin("Esp (OsirisBETA by PlayDay)", &window.esp, windowFlags);
     }
 
     static int currentCategory = 0;
@@ -785,7 +787,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
         if (!window.visuals)
             return;
         ImGui::SetNextWindowSize({ 680.0f, 0.0f });
-        ImGui::Begin("Visuals", &window.visuals, windowFlags);
+        ImGui::Begin("Visuals (OsirisBETA by PlayDay)", &window.visuals, windowFlags);
     }
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 280.0f);
@@ -879,7 +881,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         if (!window.skinChanger)
             return;
         ImGui::SetNextWindowSize({ 700.0f, 0.0f });
-        ImGui::Begin("nSkinz", &window.skinChanger, windowFlags);
+        ImGui::Begin("nSkinz (OsirisBETA by PlayDay)", &window.skinChanger, windowFlags);
     }
 
     static auto itemIndex = 0;
@@ -992,7 +994,7 @@ void GUI::renderSoundWindow(bool contentOnly) noexcept
         if (!window.sound)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Sound", &window.sound, windowFlags);
+        ImGui::Begin("Sound (OsirisBETA by PlayDay)", &window.sound, windowFlags);
     }
     ImGui::SliderInt("Chicken volume", &config->sound.chickenVolume, 0, 200, "%d%%");
 
@@ -1015,7 +1017,7 @@ void GUI::renderStyleWindow(bool contentOnly) noexcept
         if (!window.style)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Style", &window.style, windowFlags);
+        ImGui::Begin("Style (OsirisBETA by PlayDay)", &window.style, windowFlags);
     }
 
     ImGui::PushItemWidth(150.0f);
@@ -1044,7 +1046,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
         if (!window.misc)
             return;
         ImGui::SetNextWindowSize({ 580.0f, 0.0f });
-        ImGui::Begin("Misc", &window.misc, windowFlags);
+        ImGui::Begin("Misc (OsirisBETA by PlayDay)", &window.misc, windowFlags);
     }
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 230.0f);
@@ -1200,7 +1202,7 @@ void GUI::renderReportbotWindow(bool contentOnly) noexcept
         if (!window.reportbot)
             return;
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Reportbot", &window.reportbot, windowFlags);
+        ImGui::Begin("Reportbot (OsirisBETA by PlayDay)", &window.reportbot, windowFlags);
     }
     ImGui::Checkbox("Enabled", &config->reportbot.enabled);
     ImGui::SameLine(0.0f, 50.0f);
@@ -1230,7 +1232,7 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
         if (!window.config)
             return;
         ImGui::SetNextWindowSize({ 290.0f, 200.0f });
-        ImGui::Begin("Config", &window.config, windowFlags);
+        ImGui::Begin("Config (OsirisBETA by PlayDay)", &window.config, windowFlags);
     }
 
     ImGui::Columns(2, nullptr, false);
@@ -1344,10 +1346,52 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
             ImGui::End();
 }
 
+void GUI::renderBETAWindow(bool contentOnly) noexcept
+{
+    if (!contentOnly) {
+        if (!window.BETA)
+            return;
+        ImGui::SetNextWindowSize({ 0.0f, 0.0f });
+        ImGui::Begin("Info (OsirisBETA by PlayDay)", &window.BETA, windowFlags);
+    }
+    ImGui::Text("Osiris by danielkrupinski;");
+    ImGui::Text("OsirisBETA by PlayDay (playday3008(GitHub)), (FlutterShy);");
+    ImGui::Text("Discord by w1ldac3 (https://discord.gg/cKtFcfu);");
+    ImGui::Text(" ");
+    ImGui::Text("Functions by:");
+    /*ImGui::Text("Aimbot and Triggerbot activated by 2 selectable keys by ThAsviix24;");
+    ImGui::Text("Max shot and aim inaccuracy to triggerbot by Vonr;");
+    ImGui::Text("Legit AA by notgoodusename;");
+    ImGui::Text("Save/Load/Delete Config Confirmation by ZerGo0;");
+    ImGui::Text("Human BHOP by jimbob88;");
+    ImGui::Text("Friendly fire/team damage counter by xAkiraMiura;");
+    ImGui::Text("Triggerbot hitchance by pubsense;");
+    ImGui::Text("Draw aimbot FOV by NexSqaud;");
+    ImGui::Text("Player Blocker by NekoRem;");
+    ImGui::Text("Dead thirdperson by JDeu;");
+    ImGui::Text("Bomb Damage Indicator by ZerGo0;");
+    ImGui::Text("Provide hotkey for Auto Strafe by simonsmh;");
+    ImGui::Text("mat_fullbright setting in visuals window by RyDeem;");
+    ImGui::Text("Changable gravity to invert gravity function by RyDeem;");
+    ImGui::Text("No zoom on scope by MinecraftGoodGame;");
+    ImGui::Text("Hitmarker Damage Indicator by ZerGo0;");
+    ImGui::Text("Draw all backtrack Chams by JDeu;");
+    ImGui::Text("Optionally show SniperCrosshair in Scope/Zoom by 0xE232FE;");
+    ImGui::Text("Custom View model Offset by effex1337;");
+    ImGui::Text("Standalone RCS by tirziz;");
+    ImGui::Text("AntiDetection by 0xE232FE;");*/
+    ImGui::Text(" ");
+    ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
+    if (ImGui::Button("MLP"))
+        Misc::MLP();
+    if (!contentOnly)
+        ImGui::End();
+}
+
 void GUI::renderGuiStyle2() noexcept
 {
     ImGui::SetNextWindowSize({ 600.0f, 0.0f });
-    ImGui::Begin("Osiris", nullptr, windowFlags | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Begin("Osiris by danielkrupinski, Beta by PlayDay", nullptr);
 
     if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
         if (ImGui::BeginTabItem("Aimbot")) {
@@ -1404,6 +1448,10 @@ void GUI::renderGuiStyle2() noexcept
         }
         if (ImGui::BeginTabItem("Config")) {
             renderConfigWindow(true);
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Info")) {
+            renderBETAWindow(true);
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();

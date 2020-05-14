@@ -48,4 +48,5 @@ namespace Misc
     void drawAimbotFov() noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void teamDamageCounter(GameEvent* event) noexcept;
+    void MLP() noexcept;
 }
