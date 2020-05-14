@@ -149,6 +149,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Backtrack::run(cmd);
     Misc::edgejump(cmd);
     Misc::moonwalk(cmd);
+    Visuals::fullBright();
 
     config->globals.serverTime = memory->globalVars->serverTime();
     config->globals.chokedPackets = interfaces->engine->getNetworkChannel()->chokedPackets;

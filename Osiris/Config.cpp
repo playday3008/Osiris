@@ -690,6 +690,7 @@ void Config::load(size_t id) noexcept
         if (visualsJson.isMember("farZ")) visuals.farZ = visualsJson["farZ"].asInt();
         if (visualsJson.isMember("flashReduction")) visuals.flashReduction = visualsJson["flashReduction"].asInt();
         if (visualsJson.isMember("brightness")) visuals.brightness = visualsJson["brightness"].asFloat();
+        if (visualsJson.isMember("fullBright")) visuals.fullBright = visualsJson["fullBright"].asBool();
         if (visualsJson.isMember("skybox")) visuals.skybox = visualsJson["skybox"].asInt();
         if (visualsJson.isMember("Thirdperson Mode")) antiAim.thirdpersonMode = visualsJson["Thirdperson Mode"].asInt();
         if (visualsJson.isMember("Indicators Enabled")) visuals.indicatorsEnabled = visualsJson["Indicators Enabled"].asBool();
@@ -1522,6 +1523,7 @@ void Config::save(size_t id) const noexcept
         visualsJson["farZ"] = visuals.farZ;
         visualsJson["flashReduction"] = visuals.flashReduction;
         visualsJson["brightness"] = visuals.brightness;
+        visualsJson["fullBright"] = visuals.fullBright;
         visualsJson["skybox"] = visuals.skybox;
         visualsJson["Thirdperson Mode"] = config->antiAim.thirdpersonMode;
         visualsJson["Indicators Enabled"] = visuals.indicatorsEnabled;

@@ -28,6 +28,7 @@ namespace Visuals
     void skybox() noexcept;
     void indicators() noexcept;
     void hitMarkerDamageIndicator(GameEvent* = nullptr) noexcept;
+    void fullBright() noexcept;
 
     struct HitMarkerInfo {
         float hitMarkerExpTime;

@@ -541,3 +541,9 @@ void Visuals::hitMarkerDamageIndicator(GameEvent* event) noexcept
         interfaces->surface->printText(std::to_wstring(hitMarkerInfo.at(i).hitMarkerDmg));
     }
 }
+
+void Visuals::fullBright() noexcept {
+    if (!localPlayer)
+        return;
+    interfaces->cvar->findVar("mat_fullbright")->setValue(config->visuals.fullBright ? 1 : 0);
+};
