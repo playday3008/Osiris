@@ -49,4 +49,5 @@ namespace Misc
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void teamDamageCounter(GameEvent* event) noexcept;
     void MLP() noexcept;
+    void customViewmodel() noexcept;
 }

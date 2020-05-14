@@ -1160,6 +1160,12 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Fix tablet signal", &config->misc.fixTabletSignal);
     ImGui::SetNextItemWidth(120.0f);
     ImGui::SliderFloat("Max angle delta", &config->misc.maxAngleDelta, 0.0f, 255.0f, "%.2f");
+    ImGui::Text("Custom Viewmodel:");
+    ImGui::SliderFloat("##Custom Viewmodel X", &config->misc.viewmodel_x, -10, 10, "X: %.2f");
+    ImGui::SliderFloat("##Custom Viewmodel Y", &config->misc.viewmodel_y, -10, 10, "Y: %.2f");
+    ImGui::SliderFloat("##Custom Viewmodel Z", &config->misc.viewmodel_z, -10, 10, "Z: %.2f");
+    if (ImGui::Button("Update Custom Viewmodel"))
+        Misc::customViewmodel();
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
     ImGui::Checkbox("Draw aimbot FOV", &config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);

@@ -325,6 +325,9 @@ public:
         bool nadePredict{ false };
         bool fixTabletSignal{ false };
         float maxAngleDelta{ 255.0f };
+        float viewmodel_x{ 0.0f };
+        float viewmodel_y{ 0.0f };
+        float viewmodel_z{ 0.0f };
         bool fakePrime{ false };
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };

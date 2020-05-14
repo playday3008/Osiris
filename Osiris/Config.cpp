@@ -926,6 +926,9 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Grenade predict")) misc.nadePredict = miscJson["Grenade predict"].asBool();
         if (miscJson.isMember("Fix tablet signal")) misc.fixTabletSignal = miscJson["Fix tablet signal"].asBool();
         if (miscJson.isMember("Max angle delta")) misc.maxAngleDelta = miscJson["Max angle delta"].asFloat();
+        if (miscJson.isMember("Custom Viewmodel X")) misc.viewmodel_x = miscJson["Custom Viewmodel X"].asFloat();
+        if (miscJson.isMember("Custom Viewmodel Y")) misc.viewmodel_y = miscJson["Custom Viewmodel Y"].asFloat();
+        if (miscJson.isMember("Custom Viewmodel Z")) misc.viewmodel_z = miscJson["Custom Viewmodel Z"].asFloat();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
         if (miscJson.isMember("Draw aimbot FOV")) misc.drawAimbotFov = miscJson["Draw aimbot FOV"].asBool();
         if (miscJson.isMember("Autozeus")) misc.autoZeus = miscJson["Autozeus"].asBool();
@@ -1720,6 +1723,9 @@ void Config::save(size_t id) const noexcept
         miscJson["Grenade predict"] = misc.nadePredict;
         miscJson["Fix tablet signal"] = misc.fixTabletSignal;
         miscJson["Max angle delta"] = misc.maxAngleDelta;
+        miscJson["Custom Viewmodel X"] = misc.viewmodel_x;
+        miscJson["Custom Viewmodel Y"] = misc.viewmodel_y;
+        miscJson["Custom Viewmodel Z"] = misc.viewmodel_z;
         miscJson["Fake prime"] = misc.fakePrime;
         miscJson["Draw aimbot FOV"] = misc.drawAimbotFov;
         miscJson["Draw aimbot Actual FOV"] = misc.actualFov;

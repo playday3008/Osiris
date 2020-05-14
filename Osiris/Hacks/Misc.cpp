@@ -929,3 +929,17 @@ void Misc::MLP() noexcept
     std::string cmd = "showconsole";
     interfaces->engine->clientCmdUnrestricted(cmd.c_str());
 }
+
+void Misc::customViewmodel() noexcept {
+    static ConVar* view_x = interfaces->cvar->findVar("viewmodel_offset_x");
+    static ConVar* view_y = interfaces->cvar->findVar("viewmodel_offset_y");
+    static ConVar* view_z = interfaces->cvar->findVar("viewmodel_offset_z");
+    static ConVar* sv_minspec = interfaces->cvar->findVar("sv_competitive_minspec");
+
+    *(int*)((DWORD)&sv_minspec->onChangeCallbacks + 0xC) = 0;
+
+    sv_minspec->setValue(0);
+    view_x->setValue(config->misc.viewmodel_x);
+    view_y->setValue(config->misc.viewmodel_y);
+    view_z->setValue(config->misc.viewmodel_z);
+}
