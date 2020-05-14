@@ -1,4 +1,4 @@
-name: Osiris
+name: OsirisBETA
 
 on: [pull_request, push]
 
@@ -11,22 +11,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
-    - name: MSBuild SSE2
+    - name: MSBuild SSE2 (Beta)
       working-directory: Osiris
       run: msbuild Osiris.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\SSE2\"
     - name: Rename SSE2
       working-directory: Osiris/Release/SSE2
-      run: ren Osiris.dll Osiris_SSE2.dll
+      run: ren Osiris.dll Osiris_BETA_SSE2.dll
       shell: cmd
     - name: Move to one folder SSE2
       working-directory: Osiris
       run: |
             mkdir D:\a\Osiris\Osiris\Osiris\ready
-            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\SSE2\Osiris_SSE2.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
+            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\SSE2\Osiris_BETA_SSE2.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 SSE2
       working-directory: Osiris/ready
-      run: sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
+      run: sha1sum Osiris_BETA_SSE2.dll > Osiris_BETA_SSE2.dll.sha1
       
     - name: Rename AVX
       working-directory: Osiris
@@ -40,17 +40,21 @@ jobs:
       run: |
             ((Get-Content Osiris_AVX.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX.vcxproj
       shell: pwsh
-    - name: MSBuild AVX
+    - name: MSBuild AVX (Beta)
       working-directory: Osiris
       run: msbuild Osiris_AVX.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX\"
+    - name: Rename AVX
+      working-directory: Osiris/Release/AVX
+      run: ren Osiris_AVX.dll Osiris_BETA_AVX.dll
+      shell: cmd
     - name: Move to one folder AVX
       working-directory: Osiris
       run: |
-            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\AVX\Osiris_AVX.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
+            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\AVX\Osiris_BETA_AVX.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 AVX
       working-directory: Osiris/ready
-      run: sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
+      run: sha1sum Osiris_BETA_AVX.dll > Osiris_BETA_AVX.dll.sha1
       
     - name: Rename AVX2
       working-directory: Osiris
@@ -64,17 +68,21 @@ jobs:
       run: |
             ((Get-Content Osiris_AVX2.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX2.vcxproj
       shell: pwsh
-    - name: MSBuild AVX2
+    - name: MSBuild AVX2 (Beta)
       working-directory: Osiris
       run: msbuild Osiris_AVX2.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX2\"
+    - name: Rename AVX2
+      working-directory: Osiris/Release/AVX2
+      run: ren Osiris_AVX2.dll Osiris_BETA_AVX2.dll
+      shell: cmd
     - name: Move to one folder AVX2
       working-directory: Osiris
       run: |
-            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\AVX2\Osiris_AVX2.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
+            Copy-Item -Path D:\a\Osiris\Osiris\Osiris\Release\AVX2\Osiris_BETA_AVX2.dll -Destination D:\a\Osiris\Osiris\Osiris\ready\
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 AVX2
       working-directory: Osiris/ready
-      run: sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
+      run: sha1sum Osiris_BETA_AVX2.dll > Osiris_BETA_AVX2.dll.sha1
       
     - name: Get checker
       run: |
@@ -98,5 +106,5 @@ jobs:
       
     - uses: actions/upload-artifact@v1
       with:
-        name: Osiris Release All
+        name: Osiris Beta All
         path: Osiris/ready
