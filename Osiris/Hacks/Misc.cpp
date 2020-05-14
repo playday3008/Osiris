@@ -894,3 +894,30 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::End();
     }
 }
+
+
+void Misc::teamDamageCounter(GameEvent* event) noexcept {
+    if (!event || !interfaces->engine->isInGame()) return;
+
+    if (interfaces->engine->getPlayerForUserID(event->getInt("attacker")) == localPlayer) { // we attacked.
+        int victim = interfaces->engine->getPlayerForUserID(event->getInt("userid"));
+
+        if (victim == localPlayer) return; // did damage to ourself, does not count.
+
+        Entity* ent = interfaces->entityList->getEntity(victim);
+
+        if (ent && !ent->isEnemy()) { // teammate got hurt
+            switch (fnv::hashRuntime(event->getName())) {
+            case fnv::hash("player_hurt"):
+                teamDamage += event->getInt("dmg_health");
+                break;
+            case fnv::hash("player_death"):
+                teamKills += 1;
+                break;
+            }
+
+            if (config->misc.teamDamageCounter)
+                memory->debugMsg("[ Friendly Fire ] Kills: <%d> Damage: <%d>)\n", teamKills, teamDamage);
+        }
+    }
+}

@@ -6,6 +6,9 @@ struct UserCmd;
 
 namespace Misc
 {
+    inline int teamDamage = 0;
+    inline int teamKills = 0;
+
     void edgejump(UserCmd* cmd) noexcept;
     void slowwalk(UserCmd* cmd) noexcept;
     void inverseRagdollGravity() noexcept;
@@ -44,4 +47,5 @@ namespace Misc
     void killSound(GameEvent& event) noexcept;
     void drawAimbotFov() noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
+    void teamDamageCounter(GameEvent* event) noexcept;
 }

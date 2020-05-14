@@ -285,6 +285,7 @@ public:
         bool revealRanks{ false };
         bool revealMoney{ false };
         bool revealSuspect{ false };
+        bool teamDamageCounter{ false };
         ColorToggle spectatorList;
         ColorToggle watermark;
         bool fixAnimationLOD{ false };
