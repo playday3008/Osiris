@@ -217,7 +217,7 @@ bool Chams::renderPlayers(void* ctx, void* state, const ModelRenderInfo& info, m
                         hooks->modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), customBoneToWorld);
                     applyChams(config->chams[BACKTRACK].materials[i], false, entity->health());
                     if (config->backtrack.drawAllTicks) {
-                        for (int x = 0; x < record->size(); x++) {
+                        for (size_t x = 0; x < record->size(); x++) {
                             hooks->modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), record->at(x).matrix);
                         }
                     }
