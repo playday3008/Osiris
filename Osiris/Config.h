@@ -362,6 +362,8 @@ public:
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };
         bool autoZeus{ false };
+        bool playerBlocker{ false };
+        int playerBlockerKey{ 0 };
         bool fakeDuck{ false };
         int fakeDuckKey{ 0 };
         bool fakeDucking{ false };

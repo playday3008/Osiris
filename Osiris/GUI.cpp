@@ -1231,6 +1231,9 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
             Misc::teamDamage = 0;
         }
     ImGui::Checkbox("Zeusbot", &config->misc.autoZeus);
+    ImGui::Checkbox("Player Blocker", &config->misc.playerBlocker);
+    ImGui::SameLine();
+    hotkey(config->misc.playerBlockerKey);
     ImGui::Checkbox("Fakeduck", &config->misc.fakeDuck);
     ImGui::SameLine();
     hotkey(config->misc.fakeDuckKey);
@@ -1438,8 +1441,8 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("AntiDetection by 0xE232FE;");
     ImGui::Text("Optionally show SniperCrosshair in Scope/Zoom by 0xE232FE;");
     ImGui::Text("Bomb Damage Indicator by ZerGo0;");
+    ImGui::Text("Player Blocker (have BUG (maybe)) by NekoRem;");
     ImGui::Text("LATER:");
-    ImGui::Text("Player Blocker by NekoRem;");
     ImGui::Text("Standalone RCS by tirziz;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
