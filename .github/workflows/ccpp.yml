@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
-    - name: MSBuild SSE2 (Beta)
+    - name: MSBuild SSE2 (BETA)
       working-directory: Osiris
       run: msbuild Osiris.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\SSE2\"
     - name: Rename SSE2
@@ -40,7 +40,7 @@ jobs:
       run: |
             ((Get-Content Osiris_AVX.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX.vcxproj
       shell: pwsh
-    - name: MSBuild AVX (Beta)
+    - name: MSBuild AVX (BETA)
       working-directory: Osiris
       run: msbuild Osiris_AVX.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX\"
     - name: Rename AVX
@@ -68,7 +68,7 @@ jobs:
       run: |
             ((Get-Content Osiris_AVX2.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX2.vcxproj
       shell: pwsh
-    - name: MSBuild AVX2 (Beta)
+    - name: MSBuild AVX2 (BETA)
       working-directory: Osiris
       run: msbuild Osiris_AVX2.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX2\"
     - name: Rename AVX2
