@@ -332,6 +332,7 @@ public:
         float viewmodel_y{ 0.0f };
         float viewmodel_z{ 0.0f };
         bool fakePrime{ false };
+        bool pure{ false };
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };
         bool autoZeus{ false };

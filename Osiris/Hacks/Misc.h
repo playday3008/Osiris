@@ -50,4 +50,5 @@ namespace Misc
     void teamDamageCounter(GameEvent* event) noexcept;
     void MLP() noexcept;
     void customViewmodel() noexcept;
+    void pure() noexcept;
 }

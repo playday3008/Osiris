@@ -944,3 +944,18 @@ void Misc::customViewmodel() noexcept {
     view_y->setValue(config->misc.viewmodel_y);
     view_z->setValue(config->misc.viewmodel_z);
 }
+
+void __fastcall hkCheckFileCRCsWithServer(void* ecx, void* edx)
+{
+    // dont do anything.. to prevent CRC check from happening
+    return;
+}
+
+void Misc::pure() noexcept
+{
+    if (config->misc.pure)
+    {
+        hkCheckFileCRCsWithServer(memory->CheckFileCRCsWithServer, hkCheckFileCRCsWithServer);
+    }
+
+}

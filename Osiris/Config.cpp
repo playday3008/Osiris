@@ -933,6 +933,7 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Custom Viewmodel Y")) misc.viewmodel_y = miscJson["Custom Viewmodel Y"].asFloat();
         if (miscJson.isMember("Custom Viewmodel Z")) misc.viewmodel_z = miscJson["Custom Viewmodel Z"].asFloat();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
+        if (miscJson.isMember("sv_pure")) misc.pure = miscJson["Pure"].asBool();
         if (miscJson.isMember("Draw aimbot FOV")) misc.drawAimbotFov = miscJson["Draw aimbot FOV"].asBool();
         if (miscJson.isMember("Autozeus")) misc.autoZeus = miscJson["Autozeus"].asBool();
         if (miscJson.isMember("Custom Hit Sound")) misc.customHitSound = miscJson["Custom Hit Sound"].asString();
@@ -1733,6 +1734,7 @@ void Config::save(size_t id) const noexcept
         miscJson["Custom Viewmodel Y"] = misc.viewmodel_y;
         miscJson["Custom Viewmodel Z"] = misc.viewmodel_z;
         miscJson["Fake prime"] = misc.fakePrime;
+        miscJson["sv_pure"] = misc.pure;
         miscJson["Draw aimbot FOV"] = misc.drawAimbotFov;
         miscJson["Draw aimbot Actual FOV"] = misc.actualFov;
         miscJson["Autozeus"] = misc.autoZeus;

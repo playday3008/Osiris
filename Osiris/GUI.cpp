@@ -1184,6 +1184,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     if (ImGui::Button("Update Custom Viewmodel"))
         Misc::customViewmodel();
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
+    ImGui::Checkbox("sv_pure Bypass", &config->misc.pure);
     ImGui::Checkbox("Draw aimbot FOV", &config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);
     if (config->misc.teamDamageCounter)
