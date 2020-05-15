@@ -1444,6 +1444,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Bomb Damage Indicator by ZerGo0;");
     ImGui::Text("Player Blocker (have BUG (maybe)) by NekoRem;");
     ImGui::Text("Standalone RCS by tirziz;");
+    ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
     if (ImGui::Button("MLP"))
