@@ -1062,11 +1062,12 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     if (!contentOnly) {
         if (!window.misc)
             return;
-        ImGui::SetNextWindowSize({ 580.0f, 0.0f });
+        ImGui::SetNextWindowSize({ 930.0f, 0.0f });
         ImGui::Begin("Misc (OsirisBETA by PlayDay)", &window.misc, windowFlags);
     }
-    ImGui::Columns(2, nullptr, false);
-    ImGui::SetColumnOffset(1, 230.0f);
+    ImGui::Columns(3, nullptr, false);
+    ImGui::SetColumnOffset(1, 300.0f);
+    ImGui::SetColumnOffset(2, 650.0f);
     ImGui::TextUnformatted("Menu key");
     ImGui::SameLine();
     hotkey(config->misc.menuKey);
@@ -1186,7 +1187,9 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
             ImGui::SetTooltip("audio file must be put in csgo/sound/ directory");
     }
     ImGui::PopID();
+    ImGui::NextColumn();
     ImGui::Combo("Fake Lag", &config->misc.fakeLagMode, "Off\0Normal\0Adaptive\0Random\0Switch");
+    ImGui::Text("Fake Lag bind:");
     ImGui::SameLine();
     hotkey(config->misc.fakeLagKey);
     if (!(config->misc.fakeLagMode == 0))
