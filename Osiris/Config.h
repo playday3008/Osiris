@@ -330,6 +330,7 @@ public:
         std::string fakeItemPlayerName{ "" };
         bool fastPlant{ false };
         ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f };
+        bool bombDamage{ false };
         bool quickReload{ false };
         bool prepareRevolver{ false };
         int prepareRevolverKey{ 0 };

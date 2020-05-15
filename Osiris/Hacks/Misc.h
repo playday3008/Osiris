@@ -53,4 +53,5 @@ namespace Misc
     void pure() noexcept;
     void setName(bool set) noexcept;
     void fakeItem(bool set) noexcept;
+    void drawBombDamage() noexcept;
 }
