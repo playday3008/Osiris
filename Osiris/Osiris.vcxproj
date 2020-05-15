@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AntiDetection.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EventListener.cpp" />
     <ClCompile Include="Hacks\Aimbot.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="SDK\KeyValues.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AntiDetection.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigStructs.h" />
     <ClInclude Include="EventListener.h" />
