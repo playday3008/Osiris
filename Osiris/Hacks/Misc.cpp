@@ -803,7 +803,7 @@ void Misc::drawAimbotFov() noexcept {
             interfaces->surface->setDrawColor(255, 10, 10, 255);
         else interfaces->surface->setDrawColor(10, 255, 10, 255);
         float radius = std::tan(degreesToRadians(config->aimbot[weaponId].fov / 2.f)) / std::tan(degreesToRadians(config->misc.actualFov / 2.f)) * width;
-        interfaces->surface->drawOutlinedCircle(width / 2, heigth / 2, radius, 100);
+        interfaces->surface->drawOutlinedCircle(width / 2, heigth / 2, (int)radius, 100);
     }
 }
 
