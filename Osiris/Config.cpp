@@ -50,6 +50,7 @@ void Config::load(size_t id) noexcept
         if (aimbotJson.isMember("Min damage")) aimbotConfig.minDamage = aimbotJson["Min damage"].asInt();
         if (aimbotJson.isMember("Killshot")) aimbotConfig.killshot = aimbotJson["Killshot"].asBool();
         if (aimbotJson.isMember("Between shots")) aimbotConfig.betweenShots = aimbotJson["Between shots"].asBool();
+        if (aimbotJson.isMember("Standalone RCS")) aimbotConfig.standaloneRCS = aimbotJson["Standalone RCS"].asBool();
     }
 
     for (size_t i = 0; i < triggerbot.size(); i++) {
@@ -1007,6 +1008,7 @@ void Config::save(size_t id) const noexcept
         aimbotJson["Min damage"] = aimbotConfig.minDamage;
         aimbotJson["Killshot"] = aimbotConfig.killshot;
         aimbotJson["Between shots"] = aimbotConfig.betweenShots;
+        aimbotJson["Standalone RCS"] = aimbotConfig.standaloneRCS;
     }
 
     for (size_t i = 0; i < triggerbot.size(); i++) {

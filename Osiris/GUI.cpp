@@ -249,6 +249,7 @@ void GUI::renderAimbotWindow(bool contentOnly) noexcept
     config->aimbot[currentWeapon].minDamage = std::clamp(config->aimbot[currentWeapon].minDamage, 0, 250);
     ImGui::Checkbox("Killshot", &config->aimbot[currentWeapon].killshot);
     ImGui::Checkbox("Between shots", &config->aimbot[currentWeapon].betweenShots);
+    ImGui::Checkbox("Standalone RCS", &config->aimbot[currentWeapon].standaloneRCS);
     ImGui::Columns(1);
     if (!contentOnly)
         ImGui::End();
@@ -1442,7 +1443,6 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Optionally show SniperCrosshair in Scope/Zoom by 0xE232FE;");
     ImGui::Text("Bomb Damage Indicator by ZerGo0;");
     ImGui::Text("Player Blocker (have BUG (maybe)) by NekoRem;");
-    ImGui::Text("LATER:");
     ImGui::Text("Standalone RCS by tirziz;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
