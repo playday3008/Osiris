@@ -1222,7 +1222,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     if (ImGui::Button("Update Custom Viewmodel"))
         Misc::customViewmodel();
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
-    ImGui::Checkbox("sv_pure Bypass", &config->misc.pure);
+    ImGui::Checkbox("Bypass sv_pure", &config->misc.pure);
     ImGui::Checkbox("Draw aimbot FOV", &config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);
     if (config->misc.teamDamageCounter)
@@ -1422,27 +1422,25 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Discord by w1ldac3 (https://discord.gg/cKtFcfu);");
     ImGui::Text(" ");
     ImGui::Text("Functions by:");
-    /*ImGui::Text("Aimbot and Triggerbot activated by 2 selectable keys by ThAsviix24;");
-    ImGui::Text("Max shot and aim inaccuracy to triggerbot by Vonr;");
-    ImGui::Text("Legit AA by notgoodusename;");
+    ImGui::Text("Reworked anti-aim and fakelag, made thirdperson show cmd->viewangles by DoomFishWasTaken;");
+    ImGui::Text("Triggerbot max inaccuracy, Human Bhop, and Aimbot FOV Circles by Vonr;");
+    ImGui::Text("sv_pure Bypass by Cyk-Fad;");
     ImGui::Text("Save/Load/Delete Config Confirmation by ZerGo0;");
-    ImGui::Text("Human BHOP by jimbob88;");
+    ImGui::Text("Fake items (fake unbox and trade messages) by DoomFishWasTaken;");
     ImGui::Text("Friendly fire/team damage counter by xAkiraMiura;");
-    ImGui::Text("Triggerbot hitchance by pubsense;");
-    ImGui::Text("Draw aimbot FOV by NexSqaud;");
-    ImGui::Text("Player Blocker by NekoRem;");
-    ImGui::Text("Dead thirdperson by JDeu;");
-    ImGui::Text("Bomb Damage Indicator by ZerGo0;");
-    ImGui::Text("Provide hotkey for Auto Strafe by simonsmh;");
-    ImGui::Text("mat_fullbright setting in visuals window by RyDeem;");
-    ImGui::Text("Changable gravity to invert gravity function by RyDeem;");
-    ImGui::Text("No zoom on scope by MinecraftGoodGame;");
     ImGui::Text("Hitmarker Damage Indicator by ZerGo0;");
-    ImGui::Text("Draw all backtrack Chams by JDeu;");
-    ImGui::Text("Optionally show SniperCrosshair in Scope/Zoom by 0xE232FE;");
     ImGui::Text("Custom View model Offset by effex1337;");
+    ImGui::Text("Changable gravity to invert gravity function by RyDeem;");
+    ImGui::Text("mat_fullbright setting in visuals window by RyDeem;");
+    ImGui::Text("Draw all backtrack Chams by JDeu;");
+    ImGui::Text("No zoom on scope by MinecraftGoodGame;");
+    ImGui::Text("Provide hotkey for Auto Strafe by simonsmh;");
+    ImGui::Text("AntiDetection by 0xE232FE;");
+    ImGui::Text("Optionally show SniperCrosshair in Scope/Zoom by 0xE232FE;");
+    ImGui::Text("Bomb Damage Indicator by ZerGo0;");
+    ImGui::Text("LATER:");
+    ImGui::Text("Player Blocker by NekoRem;");
     ImGui::Text("Standalone RCS by tirziz;");
-    ImGui::Text("AntiDetection by 0xE232FE;");*/
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
     if (ImGui::Button("MLP"))
