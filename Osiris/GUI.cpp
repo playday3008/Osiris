@@ -1088,6 +1088,11 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::SameLine();
     hotkey(config->misc.slowwalkKey);
     ImGui::Checkbox("Sniper crosshair", &config->misc.sniperCrosshair);
+    if (config->misc.sniperCrosshair)
+    {
+        ImGui::SameLine();
+        ImGui::Checkbox("In scope", &config->misc.sniperCrosshairInscope);
+    }
     ImGui::Checkbox("Recoil crosshair", &config->misc.recoilCrosshair);
     ImGui::Checkbox("Auto pistol", &config->misc.autoPistol);
     ImGui::Checkbox("Auto reload", &config->misc.autoReload);
