@@ -29,6 +29,7 @@ namespace Visuals
     void indicators() noexcept;
     void hitMarkerDamageIndicator(GameEvent* = nullptr) noexcept;
     void fullBright() noexcept;
+    void noZoom() noexcept;
 
     struct HitMarkerInfo {
         float hitMarkerExpTime;
