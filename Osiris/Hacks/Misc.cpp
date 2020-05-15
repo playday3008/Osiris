@@ -1204,31 +1204,29 @@ void Misc::drawBombDamage() noexcept
         const auto d = (vecBombDistance.length() - 75.68f) / 789.2f;
         auto flDamage = 450.7f * exp(-d * d);
 
-        const float ArmorValue = localPlayer->armor();
-        if (ArmorValue > 0)
+        if (localPlayer->armor() > 0)
         {
             auto flNew = flDamage * 0.5f;
             auto flArmor = (flDamage - flNew) * 0.5f;
 
-            if (flArmor > ArmorValue)
+            if (flArmor > localPlayer->armor())
             {
-                flArmor = ArmorValue * 2.f;
+                flArmor = localPlayer->armor() * 2.f;
                 flNew = flDamage - flArmor;
             }
 
             flDamage = flNew;
         }
 
-        const int bombDamage = max(ceilf(flDamage), 0);
 
         //Could get the specator target here as well and set the color based on the spaceted player
         //I'm too lazy for that tho, green while you are dead just looks nicer
-        if (localPlayer->isAlive() && bombDamage >= localPlayer->health())
+        if (localPlayer->isAlive() && max(ceilf(flDamage), 0) >= localPlayer->health())
             interfaces->surface->setTextColor(255, 0, 0);
         else
             interfaces->surface->setTextColor(0, 255, 0);
 
-        auto bombDmgText{ (std::wstringstream{} << L"Bomb Damage: " << bombDamage).str() };
+        auto bombDmgText{ (std::wstringstream{} << L"Bomb Damage: " << max(ceilf(flDamage), 0)).str() };
 
         constexpr unsigned font{ 0xc1 };
         interfaces->surface->setTextFont(font);
