@@ -51,4 +51,6 @@ namespace Misc
     void MLP() noexcept;
     void customViewmodel() noexcept;
     void pure() noexcept;
+    void setName(bool set) noexcept;
+    void fakeItem(bool set) noexcept;
 }
