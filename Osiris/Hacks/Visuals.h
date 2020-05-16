@@ -30,6 +30,7 @@ namespace Visuals
     void hitMarkerDamageIndicator(GameEvent* = nullptr) noexcept;
     void fullBright() noexcept;
     void noZoom() noexcept;
+    void bulletBeams(GameEvent* event = nullptr) noexcept;
 
     struct HitMarkerInfo {
         float hitMarkerExpTime;

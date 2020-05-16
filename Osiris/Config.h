@@ -243,6 +243,7 @@ public:
             false,
             false
         };
+        ColorToggle bulletTracers;
     } visuals;
 
     std::array<item_setting, 36> skinChanger;
@@ -363,6 +364,8 @@ public:
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };
         bool autoZeus{ false };
+        bool autoZeusBaimOnly{ false };
+        int autoZeusMaxPenDist{ 0 };
         bool playerBlocker{ false };
         int playerBlockerKey{ 0 };
         bool fakeDuck{ false };

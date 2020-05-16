@@ -16,6 +16,7 @@ class MoveHelper;
 class MoveData;
 class ViewRender;
 class WeaponSystem;
+class IViewRenderBeams;
 
 struct GlobalVars;
 struct GlowObjectManager;
@@ -72,6 +73,7 @@ public:
     void(__thiscall* keyValuesSetString)(KeyValues* keyValues, const char* value);
     WeaponSystem* weaponSystem;
     void* CheckFileCRCsWithServer;
+    IViewRenderBeams* renderBeams;
 
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept

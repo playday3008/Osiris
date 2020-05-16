@@ -67,7 +67,7 @@ static bool handleTaserPenetration(UserCmd* cmd, Vector& angle, Vector& target) 
 
     interfaces->engineTrace->traceRay({ localPlayer->getEyePosition(), target }, 0x46004009, { localPlayer.get() }, enterTrace);
 
-    if (sqrt(sqrt(enterTrace.startpos.x * enterTrace.startpos.y * enterTrace.startpos.z)) - sqrt(sqrt(target.x * target.y * target.z)) <= 26)
+    if (sqrt(sqrt(enterTrace.startpos.x * enterTrace.startpos.y * enterTrace.startpos.z)) - sqrt(sqrt(target.x * target.y * target.z)) <= config->misc.autoZeusMaxPenDist)
         return true;
     else
         return false;
@@ -142,7 +142,12 @@ void Aimbot::autoZeus(UserCmd* cmd) noexcept
         if (!entity || entity == localPlayer.get() || entity->isDormant() || !entity->isAlive() || !entity->isEnemy() || entity->gunGameImmunity())
             continue;
 
-        auto boneList = std::initializer_list{ 3, 4, 5, 6, 7, 11, 28, 39, 53, 73, 74, 76, 82, 83 };
+        auto boneList = std::initializer_list{ 3, 4 };
+
+        if (!config->misc.autoZeusBaimOnly)
+            boneList = std::initializer_list{ 3, 4, 5, 6, 7, 11, 28, 39, 53, 73, 74, 76, 82, 83 };
+        else
+            boneList = std::initializer_list{ 3, 4, 5 };
 
         for (auto bone : boneList) {
             auto bonePosition = entity->getBonePosition(bone);

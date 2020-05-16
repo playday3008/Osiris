@@ -44,6 +44,7 @@
 #include "SDK/StudioRender.h"
 #include "SDK/Surface.h"
 #include "SDK/UserCmd.h"
+#include "SDK/Beams.h"
 
 static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -399,6 +400,9 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
             Visuals::hitEffect(event);                
             Visuals::hitMarker(event);
             Visuals::hitMarkerDamageIndicator(event);
+            break;
+        case fnv::hash("bullet_impact"):
+            Visuals::bulletBeams(event);
             break;
         case fnv::hash("round_announce_match_start"):
             Misc::teamKills = 0;
