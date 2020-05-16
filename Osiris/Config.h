@@ -110,6 +110,9 @@ public:
         float jitterMin{ 0.0f };
         bool LBYBreaker{ false };
         float LBYAngle{ 0.0f };
+        bool Slowwalk{ false };
+        int slowwalkspeed{ 0 };
+        int slowwalkkey{ 0 };
     } antiAim;
 
     struct Glow {
