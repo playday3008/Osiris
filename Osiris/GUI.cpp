@@ -314,9 +314,9 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
         }
     }
     ImGui::Checkbox("SlowWalk", &config->antiAim.Slowwalk);
-    ImGui::SliderInt("SlowWalkSpeed", &config->antiAim.slowwalkspeed, 0, 64, "%d");
     ImGui::SameLine();
     hotkey(config->antiAim.slowwalkkey);
+    ImGui::SliderFloat("SlowWalkSpeed", &config->antiAim.slowwalkspeed, 0, 64, "%d");
     if (!contentOnly)
         ImGui::End();
 }
