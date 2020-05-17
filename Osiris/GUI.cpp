@@ -1240,7 +1240,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
             Misc::teamKills = 0;
             Misc::teamDamage = 0;
         }
-    ImGui::Checkbox("Zeusbot", &config->misc.autoZeus);
+    ImGui::Checkbox("Zeusbot (CRASH WARNING)", &config->misc.autoZeus);
     if (config->misc.autoZeus)
     {
         ImGui::SetNextItemWidth(120.0f);
