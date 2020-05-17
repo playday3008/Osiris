@@ -315,7 +315,7 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
     }
     ImGui::Checkbox("SlowWalk", &config->antiAim.Slowwalk);
     if (config->antiAim.Slowwalk)
-        config->misc.slowwalk = false;
+        config->misc.slowwalk == false;
     ImGui::SameLine();
     hotkey(config->antiAim.slowwalkkey);
     ImGui::SliderFloat("SlowWalkSpeed", &config->antiAim.slowwalkspeed, 0, 64, "%d");
@@ -1095,7 +1095,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     hotkey(config->misc.edgejumpkey);
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     if (config->misc.slowwalk)
-        config->antiAim.Slowwalk = false;
+        config->antiAim.Slowwalk == false;
     ImGui::SameLine();
     hotkey(config->misc.slowwalkKey);
     ImGui::Checkbox("Sniper crosshair", &config->misc.sniperCrosshair);
