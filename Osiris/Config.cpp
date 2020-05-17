@@ -98,9 +98,6 @@ void Config::load(size_t id) noexcept
         if (antiAimJson.isMember("Jitter Min")) antiAim.jitterMin = antiAimJson["Jitter Min"].asFloat();
         if (antiAimJson.isMember("LBY Breaker")) antiAim.LBYBreaker = antiAimJson["LBY Breaker"].asBool();
         if (antiAimJson.isMember("LBY Angle")) antiAim.LBYAngle = antiAimJson["LBY Angle"].asFloat();
-        if (antiAimJson.isMember("Slow Walk")) antiAim.Slowwalk = antiAimJson["Slow Walk"].asBool();
-        if (antiAimJson.isMember("Slow Walk Speed")) antiAim.slowwalkspeed = antiAimJson["Slow Walk Speed"].asInt();
-        if (antiAimJson.isMember("Slow Walk Key")) antiAim.slowwalkkey = antiAimJson["Slow Walk Key"].asInt();
     }
 
     for (size_t i = 0; i < glow.size(); i++) {
@@ -1075,9 +1072,6 @@ void Config::save(size_t id) const noexcept
         antiAimJson["Jitter Min"] = antiAim.jitterMin;
         antiAimJson["LBY Breaker"] = antiAim.LBYBreaker;
         antiAimJson["LBY Angle"] = antiAim.LBYAngle;
-        antiAimJson["Slow Walk"] = antiAim.Slowwalk;
-        antiAimJson["Slow Walk Speed"] = antiAim.slowwalkspeed;
-        antiAimJson["Slow Walk Key"] = antiAim.slowwalkkey;
     }
 
     for (size_t i = 0; i < glow.size(); i++) {
