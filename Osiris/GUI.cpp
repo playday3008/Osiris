@@ -927,7 +927,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         ImGui::InputInt("StatTrak", &selected_entry.stat_trak);
         ImGui::SliderFloat("Wear", &selected_entry.wear, FLT_MIN, 1.f, "%.10f", 5);
 
-        ImGui::Combo(" ", &selected_entry.paint_kit_vector_index, [](void* data, int idx, const char** out_text) {
+        ImGui::Combo("-", &selected_entry.paint_kit_vector_index, [](void* data, int idx, const char** out_text) {
             *out_text = (itemIndex == 1 ? SkinChanger::gloveKits : SkinChanger::skinKits)[idx].name.c_str();
             return true;
             }, nullptr, (itemIndex == 1 ? SkinChanger::gloveKits : SkinChanger::skinKits).size(), 10);
@@ -954,16 +954,16 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                 std::string text = "1";
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x
                     - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-                if (ImGui::Button("x"))
+                if (ImGui::Button("X"))
                 {
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::Separator();
-                ImGui::InputText("", skin_name, IM_ARRAYSIZE(skin_name));
-                ImGui::Text("Insert a Skin");
+                ImGui::Text("Input a Skin name ONLY(English or Chinese):");
                 if (ImGui::IsItemHovered()) {
                     ImGui::SetTooltip("This search are CaSe-SeNsItIvE");
                 }
+                ImGui::InputText("", skin_name, IM_ARRAYSIZE(skin_name));
                 ImGui::Separator();
                 if (ImGui::Button("Search"))
                 {
@@ -992,6 +992,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                         }
                     }
                 }
+
                 ImGui::SameLine();
                 if (ImGui::Button("Apply"))
                 {
@@ -1004,6 +1005,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                         }
                     }
                 }
+
                 ImGui::ListBox("", &select_current,
                     [](void* data, int idx, const char** out_text)  -> bool
                     {
@@ -1013,11 +1015,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                     },
                     &search_result, search_result.size(), 10);
 
-
-
                 ImGui::EndPopup();
-
-
             }
 
         }
