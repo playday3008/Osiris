@@ -172,8 +172,8 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
 
     Misc::fakeDuck(cmd, sendPacket);
 
-    if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2 | UserCmd::IN_USE)))
-        AntiAim::run(cmd, previousViewAngles, currentViewAngles, sendPacket);
+    //if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2 | UserCmd::IN_USE)))
+    AntiAim::run(cmd, previousViewAngles, currentViewAngles, sendPacket);
 
     auto viewAnglesDelta{ cmd->viewangles - previousViewAngles };
     viewAnglesDelta.normalize();
@@ -253,7 +253,7 @@ static void __stdcall drawModelExecute(void* ctx, void* state, const ModelRender
     static Chams chams;
     if (chams.render(ctx, state, info, customBoneToWorld))
         hooks->modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), customBoneToWorld);
-    interfaces->studioRender->forcedMaterialOverride(nullptr);  
+    interfaces->studioRender->forcedMaterialOverride(nullptr);
 }
 
 static bool __stdcall svCheatsGetBool() noexcept
@@ -270,7 +270,7 @@ static void __stdcall paintTraverse(unsigned int panel, bool forceRepaint, bool 
         Esp::render();
         Misc::drawBombTimer();
         Misc::spectatorList();
-        Misc::watermark();        
+        Misc::watermark();
         Visuals::hitMarker();
         Misc::drawAimbotFov();
         Visuals::hitMarkerDamageIndicator();
@@ -392,7 +392,7 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
         case fnv::hash("player_hurt"):
             Misc::teamDamageCounter(event);
             Misc::playHitSound(*event);
-            Visuals::hitEffect(event);                
+            Visuals::hitEffect(event);
             Visuals::hitMarker(event);
             Visuals::hitMarkerDamageIndicator(event);
             break;
@@ -591,7 +591,7 @@ void Hooks::install() noexcept
     **reinterpret_cast<decltype(present)***>(memory->present) = present;
     originalReset = **reinterpret_cast<decltype(originalReset)**>(memory->reset);
     **reinterpret_cast<decltype(reset)***>(memory->reset) = reset;
-    
+
     bspQuery.init(interfaces->engine->getBSPTreeQuery());
     client.init(interfaces->client);
     clientMode.init(memory->clientMode);

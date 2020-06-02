@@ -299,7 +299,7 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
         if (config->antiAim.yawReal == true)
         {
             ImGui::SetNextItemWidth(240.0f);
-            ImGui::SliderFloat("Body Lean", &config->antiAim.bodyLean, 0.0f, 100.0f, "%.2f", 1);
+            ImGui::SliderFloat("Body Lean", &config->antiAim.bodyLean, -100.0f, 100.0f, "%.2f", 1);
             ImGui::Checkbox("LBY Breaker", &config->antiAim.LBYBreaker);
             if (config->antiAim.LBYBreaker)
             {
@@ -307,7 +307,7 @@ void GUI::renderAntiAimWindow(bool contentOnly) noexcept
             }
         }
         ImGui::SetNextItemWidth(85.0f);
-        ImGui::Combo("Anti-Aim Mode", &config->antiAim.mode, "Static\0Jitter\0Dump Me Test\0");
+        ImGui::Combo("Anti-Aim Mode", &config->antiAim.mode, "Static\0Jitter\0");
         if (config->antiAim.mode == 1)
         {
             ImGui::SetNextItemWidth(240.0f);
