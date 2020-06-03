@@ -1523,7 +1523,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     }
     ImGui::Text("Osiris by danielkrupinski;");
     ImGui::Text("OsirisBETA by PlayDay (playday3008(GitHub)), (FlutterShy);");
-    ImGui::Text("Discord by w1ldac3 (https://discord.gg/cKtFcfu);");
+    ImGui::Text("Discord by w1ldac3 (https://discord.gg/xWEtQAn);");
     ImGui::Text(" ");
     ImGui::Text("Functions by:");
     ImGui::Text("Reworked anti-aim and fakelag, made thirdperson show cmd->viewangles by DoomFishWasTaken;");
