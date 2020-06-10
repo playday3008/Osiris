@@ -52,6 +52,7 @@ Memory::Memory() noexcept
     keyValuesFindKey = relativeToAbsolute<decltype(keyValuesFindKey)>(reinterpret_cast<int*>(findPattern(L"client", "\xE8????\xF7\x45") + 1));
     keyValuesSetString = relativeToAbsolute<decltype(keyValuesSetString)>(reinterpret_cast<int*>(findPattern(L"client", "\xE8????\x89\x77\x38") + 1));
     weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client", "\x8B\x35????\xFF\x10\x0F\xB7\xC0") + 2);
+    getPlayerViewmodelArmConfigForPlayerModel = relativeToAbsolute<decltype(getPlayerViewmodelArmConfigForPlayerModel)>(reinterpret_cast<int*>(findPattern(L"client", "\xE8????\x89\x87????\x6A\x00") + 1));
     CheckFileCRCsWithServer = reinterpret_cast<void*>(findPattern(L"engine.dll", "\x55\x8B\xEC\x81\xEC????\x53\x8B\xD9\x89\x5D\xF8\x80"));
     renderBeams = *reinterpret_cast<IViewRenderBeams**>(findPattern(L"client", "\xB9????\xA1????\xFF\x10\xA1????\xB9" + 1));
 

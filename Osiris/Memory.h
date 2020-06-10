@@ -20,8 +20,8 @@ class IViewRenderBeams;
 
 struct GlobalVars;
 struct GlowObjectManager;
-struct Vector;
 struct Trace;
+struct Vector;
 
 class Memory {
 public:
@@ -72,7 +72,7 @@ public:
     WeaponSystem* weaponSystem;
     void* CheckFileCRCsWithServer;
     IViewRenderBeams* renderBeams;
-
+    std::add_pointer_t<const char** __fastcall(const char* playerModelName)> getPlayerViewmodelArmConfigForPlayerModel;
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept
     {
