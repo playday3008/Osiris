@@ -322,9 +322,6 @@
     <ClInclude Include="json\json-forwards.h">
       <Filter>json</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\SearchEngine.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\SoundInfo.h">
       <Filter>SDK</Filter>
     </ClInclude>
