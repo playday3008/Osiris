@@ -211,6 +211,7 @@ public:
         float brightness{ 0.0f };
         bool fullBright{ 0 };
         int skybox{ 0 };
+        std::string customSkybox;
         ColorToggle world;
         ColorToggle sky;
         bool deagleSpinner{ false };

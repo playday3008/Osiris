@@ -699,6 +699,7 @@ void Config::load(size_t id) noexcept
         if (visualsJson.isMember("brightness")) visuals.brightness = visualsJson["brightness"].asFloat();
         if (visualsJson.isMember("fullBright")) visuals.fullBright = visualsJson["fullBright"].asBool();
         if (visualsJson.isMember("skybox")) visuals.skybox = visualsJson["skybox"].asInt();
+        if (visualsJson.isMember("customSkybox")) visuals.customSkybox = visualsJson["customSkybox"].asString();
         if (visualsJson.isMember("Thirdperson Mode")) antiAim.thirdpersonMode = visualsJson["Thirdperson Mode"].asInt();
         if (visualsJson.isMember("Indicators Enabled")) visuals.indicatorsEnabled = visualsJson["Indicators Enabled"].asBool();
         if (visualsJson.isMember("Desync Indicator")) visuals.selectedIndicators[0] = visualsJson["Desync Indicator"].asBool();
@@ -1561,6 +1562,7 @@ void Config::save(size_t id) const noexcept
         visualsJson["brightness"] = visuals.brightness;
         visualsJson["fullBright"] = visuals.fullBright;
         visualsJson["skybox"] = visuals.skybox;
+        visualsJson["customSkybox"] = visuals.customSkybox;
         visualsJson["Thirdperson Mode"] = config->antiAim.thirdpersonMode;
         visualsJson["Indicators Enabled"] = visuals.indicatorsEnabled;
         visualsJson["Desync Indicator"] = visuals.selectedIndicators[0];
