@@ -18,7 +18,9 @@
 #include "Hooks.h"
 #include "Interfaces.h"
 #include "SDK/InputSystem.h"
+#include "SDK/SearchEngine.h"
 
+void SearchCheck(bool)noexcept;
 constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
 | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
@@ -44,6 +46,59 @@ GUI::GUI() noexcept
 
         fonts.tahoma = io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
         fonts.segoeui = io.Fonts->AddFontFromFileTTF((path / "segoeui.ttf").string().c_str(), 15.0f, &cfg, ranges);
+    }
+}
+
+void SearchCheck(bool changed)noexcept {
+
+    if (changed) {
+
+        if (config->SkinSearch.Searchmode == 0) {
+            SkinChanger::search_result.clear();
+            for (auto skin : SkinChanger::skinKits)
+            {
+                auto skin_copy = skin;
+                char in_buffer[1024];
+
+                strcpy_s<1024U>(in_buffer, skin_copy.name.c_str());
+
+                char* out_buffer = new char[HZ2PY_OUTPUT_BUF_ARRAY_SIZE];
+
+                memset(out_buffer, '\0', sizeof(char) * HZ2PY_OUTPUT_BUF_ARRAY_SIZE);
+
+                gb2312search(in_buffer, out_buffer);
+
+                if (std::string p(out_buffer); p.find(SkinChanger::skin_name) != std::string::npos)
+                {
+                    skin_copy.name = skin_copy.name + " [ " + out_buffer + " ]";
+                    SkinChanger::search_result.push_back(skin_copy);
+                }
+            }
+        }
+        else{
+            SkinChanger::search_result_sticker.clear();
+            for (auto skin : SkinChanger::stickerKits)
+            {
+                char in_buffer[1024];
+                auto skin_copy = skin;
+                strcpy_s<1024U>(in_buffer, skin_copy.name.c_str());
+
+                char* out_buffer = new char[HZ2PY_OUTPUT_BUF_ARRAY_SIZE];
+
+                memset(out_buffer, '\0', sizeof(char) * HZ2PY_OUTPUT_BUF_ARRAY_SIZE);
+
+                gb2312search(in_buffer, out_buffer);
+
+                if (std::string p(out_buffer); p.find(SkinChanger::sticker_name) != std::string::npos)
+                {
+                    skin_copy.name = skin_copy.name + " [ " + out_buffer + " ]";
+                    SkinChanger::search_result_sticker.push_back(skin_copy);
+                }
+            }
+
+
+        }
+
     }
 }
 
@@ -1025,6 +1080,64 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
 
     ImGui::TextUnformatted("nSkinz by namazso");
 
+    ImGui::Separator();
+    ImGui::Combo("SearchMode", &config->SkinSearch.Searchmode, "Skins\0Stickers\0");
+    if (config->SkinSearch.Searchmode == 0) {
+
+        ImGui::Text("SkinSearcher");
+        ImGui::Separator();
+
+        if (ImGui::InputText("", SkinChanger::skin_name, IM_ARRAYSIZE(SkinChanger::skin_name)))
+            SearchCheck(true);
+
+        ImGui::Text("Please Inset A Skin Name");
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        if (ImGui::Button("ApplySelectSkin")) {
+            for (int i = 0; i < SkinChanger::skinKits.size(); i++)
+            {
+                if (SkinChanger::skinKits[i].id == SkinChanger::search_result[SkinChanger::select_current].id)
+                {
+                    selected_entry.paint_kit_vector_index = i;
+                }
+            }
+        }
+
+        ImGui::ListBox("", &selected_entry.paint_kit_vector_index, [](void* data, int idx, const char** out_text)  -> bool
+            {
+                auto& vector = *static_cast<std::vector<SkinChanger::PaintKit>*>(data);
+                *out_text = vector[idx].name.c_str();
+                return true;
+            }, &SkinChanger::search_result, SkinChanger::search_result.size(), 10);
+    }
+    else {
+        auto& selected_sticker = selected_entry.stickers[SkinChanger::selectedStickerSlot];
+        ImGui::Text("StickerSearch");
+            ImGui::Separator();
+            if (ImGui::InputText("", SkinChanger::sticker_name, IM_ARRAYSIZE(SkinChanger::sticker_name)))
+                SearchCheck(true);
+
+            ImGui::Text("Please Inser A StickerName");
+            ImGui::SameLine();
+            if (ImGui::Button("ApplySelectSticker")) {
+                for (int i = 0; i < SkinChanger::stickerKits.size(); i++)
+                {
+                    if (SkinChanger::stickerKits[i].id == SkinChanger::search_result_sticker[SkinChanger::select_current_sitcker].id)
+                    {
+                        selected_sticker.kit_vector_index = i;
+                    }
+                }
+            }
+            ImGui::Separator();
+            ImGui::ListBox("", &SkinChanger::select_current_sitcker, [](void* data, int idx, const char** out_text)  -> bool
+                {
+                    auto& vector = *static_cast<std::vector<SkinChanger::PaintKit>*>(data);
+                    *out_text = vector[idx].name.c_str();
+                    return true;
+                }, &SkinChanger::search_result_sticker, SkinChanger::search_result_sticker.size(), 10);
+    }
+
     if (!contentOnly)
         ImGui::End();
 }
@@ -1478,6 +1591,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Jump Check by zajkos;");
     ImGui::Text("Multipoints by ClaudiuHKS;");
     ImGui::Text("Custom Skybox & Defuse ESP by cailloubr;");
+    ImGui::Text("Skinsearch by Cyk-Fad;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");

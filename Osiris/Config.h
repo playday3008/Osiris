@@ -397,6 +397,10 @@ public:
     } reportbot;
 
     struct {
+        int Searchmode{ 0 };
+    }SkinSearch;
+
+    struct {
         bool thirdPersonAnglesSet{ false };
         Vector fakeAngle;
         Vector realAngle;
