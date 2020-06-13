@@ -708,6 +708,7 @@ void GUI::renderEspWindow(bool contentOnly) noexcept
             ImGuiCustom::colorPicker("Active Weapon", config->esp.players[selected].activeWeapon);
             ImGui::SameLine(spacing);
             ImGui::Checkbox("Dead ESP", &config->esp.players[selected].deadesp);
+            ImGuiCustom::colorPicker("Defuse ESP", config->esp.players[selected].defuseesp);
             ImGui::SliderFloat("Max distance", &config->esp.players[selected].maxDistance, 0.0f, 200.0f, "%.2fm");
             ImGui::Checkbox("Draw multi points", &config->esp.players[selected].drawMultiPoints);
             ImGui::Checkbox("Draw multi points only head", &config->esp.players[selected].drawMultiPointsOnlyHead);
@@ -1567,7 +1568,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Pearlescent chams by sapphire and Mustafa;");
     ImGui::Text("Jump Check by zajkos;");
     ImGui::Text("Multipoints by ClaudiuHKS;");
-    ImGui::Text("Custom Skybox by cailloubr;");
+    ImGui::Text("Custom Skybox & Defuse ESP by cailloubr;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");

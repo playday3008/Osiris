@@ -161,6 +161,7 @@ public:
             ColorToggle money;
             ColorToggle headDot;
             ColorToggle activeWeapon;
+            ColorToggle defuseesp;
             int hpside{ 0 };
             int armorside{ 0 };
             bool deadesp { false };
