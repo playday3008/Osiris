@@ -252,6 +252,7 @@ void GUI::renderAimbotWindow(bool contentOnly) noexcept
     ImGui::InputInt("Min damage", &config->aimbot[currentWeapon].minDamage);
     config->aimbot[currentWeapon].minDamage = std::clamp(config->aimbot[currentWeapon].minDamage, 0, 250);
     ImGui::Checkbox("Killshot", &config->aimbot[currentWeapon].killshot);
+    ImGui::Checkbox("Jump Check", &config->aimbot[currentWeapon].jumpCheck);
     ImGui::Checkbox("Between shots", &config->aimbot[currentWeapon].betweenShots);
     ImGui::Checkbox("Standalone RCS", &config->aimbot[currentWeapon].standaloneRCS);
     ImGui::Columns(1);
@@ -1553,6 +1554,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Player Blocker (have BUG (maybe)) by NekoRem;");
     ImGui::Text("Standalone RCS by tirziz;");
     ImGui::Text("Pearlescent chams by sapphire and Mustafa;");
+    ImGui::Text("Jump Check by zajkos;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");

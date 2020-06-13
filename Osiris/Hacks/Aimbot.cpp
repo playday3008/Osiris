@@ -254,6 +254,9 @@ void Aimbot::run(UserCmd* cmd) noexcept
     if (!config->aimbot[weaponIndex].enabled)
         weaponIndex = 0;
 
+    if (!(localPlayer->flags() & 1) && config->aimbot[weaponIndex].jumpCheck)
+        return;
+
     const auto aimPunch = activeWeapon->requiresRecoilControl() ? localPlayer->getAimPunch() : Vector{ };
 
     if (config->aimbot[weaponIndex].enabled && config->aimbot[weaponIndex].standaloneRCS && !config->aimbot[weaponIndex].silent)

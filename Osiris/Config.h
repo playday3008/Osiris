@@ -36,7 +36,7 @@ public:
         bool rainbow{ false };
         float rainbowSpeed{ 0.6f };
     };
-    
+
     struct ColorToggle : public Color {
         bool enabled{ false };
     };
@@ -62,6 +62,7 @@ public:
         float maxShotInaccuracy{ 1.0f };
         int minDamage{ 1 };
         bool killshot{ false };
+        bool jumpCheck{ false };
         bool betweenShots{ true };
         bool standaloneRCS{ false };
     };
@@ -150,7 +151,7 @@ public:
             ColorToggle distance;
             float maxDistance{ 0.0f };
         };
-       
+
         struct Player : public Shared {
             ColorToggle eyeTraces;
             ColorToggle health;
