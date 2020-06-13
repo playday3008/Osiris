@@ -559,7 +559,7 @@ void GUI::renderChamsWindow(bool contentOnly) noexcept
     ImGui::Separator();
     ImGui::Checkbox("Health based", &chams.healthBased);
     ImGui::Checkbox("Blinking", &chams.blinking);
-    ImGui::Combo("Material", &chams.material, "Normal\0Flat\0Animated\0Platinum\0Glass\0Chrome\0Crystal\0Silver\0Gold\0Plastic\0Glow\0");
+    ImGui::Combo("Material", &chams.material, "Normal\0Flat\0Animated\0Platinum\0Glass\0Chrome\0Crystal\0Silver\0Gold\0Plastic\0Glow\0Pearlescent\0");
     ImGui::Checkbox("Wireframe", &chams.wireframe);
     ImGuiCustom::colorPicker("Color", chams.color.color, nullptr, &chams.color.rainbow, &chams.color.rainbowSpeed);
     ImGui::SetNextItemWidth(220.0f);
@@ -1552,6 +1552,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Bomb Damage Indicator by ZerGo0;");
     ImGui::Text("Player Blocker (have BUG (maybe)) by NekoRem;");
     ImGui::Text("Standalone RCS by tirziz;");
+    ImGui::Text("Pearlescent chams by sapphire and Mustafa;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
