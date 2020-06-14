@@ -1745,7 +1745,7 @@ void Config::save(size_t id) const noexcept
         miscJson["Slowwalk"] = misc.slowwalk;
         miscJson["Slowwalk key"] = misc.slowwalkKey;
         miscJson["Sniper crosshair"] = misc.sniperCrosshair;
-        miscJson["Sniper crosshair in scope"] = misc.sniperCrosshair;
+        miscJson["Sniper crosshair in scope"] = misc.sniperCrosshairInscope;
         miscJson["Recoil crosshair"] = misc.recoilCrosshair;
         miscJson["Auto pistol"] = misc.autoPistol;
         miscJson["Auto reload"] = misc.autoReload;
