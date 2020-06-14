@@ -281,7 +281,7 @@ public:
         int bhopMaxHits{ 20 };
         bool customClanTag{ false };
         bool clocktag{ false };
-        std::string clanTag{ "PonySense  " };
+        char clanTag[16] = "PonySense ";
         bool animatedClanTag{ false };
         bool fastDuck{ false };
         bool moonwalk{ 0 };
