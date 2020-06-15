@@ -224,6 +224,13 @@ public:
         int hitMarker{ 0 };
         float hitMarkerTime{ 0.6f };
         bool hitMarkerDamageIndicator{ false };
+        bool hitMarkerDamageIndicatorCustomize{ false };
+        int hitMarkerDamageIndicatorDist{ 150 };
+        float hitMarkerDamageIndicatorRatio{ 0.0f };
+        int hitMarkerDamageIndicatorAlpha{ 800 };
+        int hitMarkerDamageIndicatorFont{ 31 };
+        int hitMarkerDamageIndicatorTextX{ 60 };
+        int hitMarkerDamageIndicatorTextY{ 150 };
         int playerModelT{ 0 };
         int playerModelCT{ 0 };
 

@@ -405,7 +405,7 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
             Misc::playHitSound(*event);
             Visuals::hitEffect(event);
             Visuals::hitMarker(event);
-            Visuals::hitMarkerDamageIndicator(event);
+            Visuals::hitMarkerSetDamageIndicator(event);
             break;
         case fnv::hash("bullet_impact"):
             Visuals::bulletBeams(event);

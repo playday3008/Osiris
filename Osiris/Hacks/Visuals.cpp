@@ -534,43 +534,50 @@ void Visuals::indicators() noexcept
     }
 }
 
-void Visuals::hitMarkerDamageIndicator(GameEvent* event) noexcept
-{
-    if (!config->visuals.hitMarkerDamageIndicator) return;
+void Visuals::hitMarkerSetDamageIndicator(GameEvent* event) noexcept {
+    if (!localPlayer)
+        return;
 
     static std::vector<HitMarkerInfo> hitMarkerInfo;
 
-    if (event && interfaces->engine->getPlayerForUserID(event->getInt("attacker")) == localPlayer->index())
+    if (config->visuals.hitMarkerDamageIndicator)
     {
-        hitMarkerInfo.push_back({
-            memory->globalVars->realtime + config->visuals.hitMarkerTime, event->getInt("dmg_health")
-            });
-        return;
-    }
-
-    if (hitMarkerInfo.empty() || event) return;
-
-    const auto [width, height] = interfaces->surface->getScreenSize();
-
-    for (size_t i = 0; i < hitMarkerInfo.size(); i++)
-    {
-        const auto diff = hitMarkerInfo.at(i).hitMarkerExpTime - memory->globalVars->realtime;
-
-        if (diff < 0.f)
-        {
-            hitMarkerInfo.erase(hitMarkerInfo.begin() + i);
-            continue;
+        if (event && interfaces->engine->getPlayerForUserID(event->getInt("attacker")) == localPlayer->index()) {
+            hitMarkerInfo.push_back({ memory->globalVars->realtime + config->visuals.hitMarkerTime, event->getInt("dmg_health") });
         }
+    }
+}
 
-        const auto dist = 24;
-        const auto ratio = 1.f - diff / 0.8f;
-        const auto alpha = diff * 255;
 
-        const auto font_id = 17;
-        interfaces->surface->setTextFont(font_id);
-        interfaces->surface->setTextPosition(width / 2 + 6 + ratio * dist / 2, height / 2 + 6 + ratio * dist);
-        interfaces->surface->setTextColor(255, 255, 255, (int)alpha);
-        interfaces->surface->printText(std::to_wstring(hitMarkerInfo.at(i).hitMarkerDmg));
+void Visuals::hitMarkerDamageIndicator() noexcept
+{
+    static std::vector<HitMarkerInfo> hitMarkerInfo;
+    if (config->visuals.hitMarkerDamageIndicator)
+    {
+        if (hitMarkerInfo.empty()) return;
+
+        const auto [width, height] = interfaces->surface->getScreenSize();
+
+        for (size_t i = 0; i < hitMarkerInfo.size(); i++)
+        {
+            const auto diff = hitMarkerInfo.at(i).hitMarkerExpTime - memory->globalVars->realtime;
+
+            if (diff < 0.f)
+            {
+                hitMarkerInfo.erase(hitMarkerInfo.begin() + i);
+                continue;
+            }
+
+            const auto dist = config->visuals.hitMarkerDamageIndicatorDist;
+            const auto ratio = config->visuals.hitMarkerDamageIndicatorRatio - diff;
+            const auto alpha = diff * config->visuals.hitMarkerDamageIndicatorAlpha;
+
+            const auto font_id = config->visuals.hitMarkerDamageIndicatorFont;
+            interfaces->surface->setTextFont(font_id);
+            interfaces->surface->setTextPosition(width / 2 + config->visuals.hitMarkerDamageIndicatorTextX + ratio * dist / 2, height / 2 + config->visuals.hitMarkerDamageIndicatorTextY + ratio * dist);
+            interfaces->surface->setTextColor(255, 255, 255, (int)alpha);
+            interfaces->surface->printText(std::to_wstring(hitMarkerInfo.at(i).hitMarkerDmg));
+        }
     }
 }
 

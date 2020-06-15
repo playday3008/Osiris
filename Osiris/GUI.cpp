@@ -956,6 +956,20 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::Combo("Hit marker", &config->visuals.hitMarker, "None\0Default (Cross)\0");
     ImGui::SliderFloat("Hit marker time", &config->visuals.hitMarkerTime, 0.1f, 1.5f, "%.2fs");
     ImGui::Checkbox("Hit marker indicator", &config->visuals.hitMarkerDamageIndicator);
+    if (config->visuals.hitMarkerDamageIndicator) {
+        ImGui::SameLine();
+        ImGui::Checkbox("Customize Hitmarker", &config->visuals.hitMarkerDamageIndicatorCustomize);
+        if (config->visuals.hitMarkerDamageIndicatorCustomize) {
+            ImGui::InputInt("Font", &config->visuals.hitMarkerDamageIndicatorFont, 1, 294);
+            ImGui::InputInt("Alpha", &config->visuals.hitMarkerDamageIndicatorAlpha, 1, 1000);
+            ImGui::InputInt("Dist", &config->visuals.hitMarkerDamageIndicatorDist, -100, 100);
+            ImGui::InputInt("Text X", &config->visuals.hitMarkerDamageIndicatorTextX, -100, 100);
+            ImGui::InputInt("Text Y", &config->visuals.hitMarkerDamageIndicatorTextY, -100, 100);
+            ImGui::PushID(15);
+            ImGui::SliderFloat(" ", &config->visuals.hitMarkerDamageIndicatorRatio, -1.0f, 1.0f, "Ratio: %.2f");
+            ImGui::PopID();
+        };
+    };
     ImGui::Checkbox("Indicators", &config->visuals.indicatorsEnabled);
     ImGui::SameLine();
     ImGui::PushID(6);

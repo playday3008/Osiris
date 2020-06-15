@@ -762,6 +762,13 @@ void Config::load(size_t id) noexcept
         if (visualsJson.isMember("Hit marker")) visuals.hitMarker = visualsJson["Hit marker"].asInt();
         if (visualsJson.isMember("Hit marker time")) visuals.hitMarkerTime = visualsJson["Hit marker time"].asFloat();
         if (visualsJson.isMember("Hit marker Damage Indicator")) visuals.hitMarkerDamageIndicator = visualsJson["Hit marker Damage Indicator"].asBool();
+        if (visualsJson.isMember("Hit marker Damage Indicator Customize")) visuals.hitMarkerDamageIndicatorCustomize = visualsJson["Hit marker Damage Indicator Customize"].asBool();
+        if (visualsJson.isMember("Hit marker Damage Indicator Dist")) visuals.hitMarkerDamageIndicatorDist = visualsJson["Hit marker Damage Indicator Dist"].asInt();
+        if (visualsJson.isMember("Hit marker Damage Indicator Ratio")) visuals.hitMarkerDamageIndicatorRatio = visualsJson["Hit marker Damage Indicator Ratio"].asFloat();
+        if (visualsJson.isMember("Hit marker Damage Indicator Alpha")) visuals.hitMarkerDamageIndicatorAlpha = visualsJson["Hit marker Damage Indicator Alpha"].asInt();
+        if (visualsJson.isMember("Hit marker Damage Indicator Font")) visuals.hitMarkerDamageIndicatorFont = visualsJson["Hit marker Damage Indicator Font"].asInt();
+        if (visualsJson.isMember("Hit marker Damage Indicator Text X")) visuals.hitMarkerDamageIndicatorTextX = visualsJson["Hit marker Damage Indicator Text X"].asInt();
+        if (visualsJson.isMember("Hit marker Damage Indicator Text Y")) visuals.hitMarkerDamageIndicatorTextY = visualsJson["Hit marker Damage Indicator Text Y"].asInt();
         if (visualsJson.isMember("Playermodel T")) visuals.playerModelT = visualsJson["Playermodel T"].asInt();
         if (visualsJson.isMember("Playermodel CT")) visuals.playerModelCT = visualsJson["Playermodel CT"].asInt();
 
@@ -1640,6 +1647,13 @@ void Config::save(size_t id) const noexcept
         visualsJson["Hit marker"] = visuals.hitMarker;
         visualsJson["Hit marker time"] = visuals.hitMarkerTime;
         visualsJson["Hit marker Damage Indicator"] = visuals.hitMarkerDamageIndicator;
+        visualsJson["Hit marker Damage Indicator Customize"] = visuals.hitMarkerDamageIndicatorCustomize;
+        visualsJson["Hit marker Damage Indicator Dist"] = visuals.hitMarkerDamageIndicatorDist;
+        visualsJson["Hit marker Damage Indicator Ratio"] = visuals.hitMarkerDamageIndicatorRatio;
+        visualsJson["Hit marker Damage Indicator Aplha"] = visuals.hitMarkerDamageIndicatorAlpha;
+        visualsJson["Hit marker Damage Indicator Font"] = visuals.hitMarkerDamageIndicatorFont;
+        visualsJson["Hit marker Damage Indicator Text X"] = visuals.hitMarkerDamageIndicatorTextX;
+        visualsJson["Hit marker Damage Indicator Text Y"] = visuals.hitMarkerDamageIndicatorTextY;
         visualsJson["Playermodel T"] = visuals.playerModelT;
         visualsJson["Playermodel CT"] = visuals.playerModelCT;
 
