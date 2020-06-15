@@ -36,6 +36,14 @@ void Backtrack::update(FrameStage stage) noexcept
 
             records[i].push_front(record);
 
+            int timelimit = config->backtrack.timeLimit;
+            float latency = 0.0f;
+            if (config->backtrack.pingBased)
+                if (auto networkChannel = interfaces->engine->getNetworkChannel(); networkChannel && networkChannel->getLatency(0) > 0.0f)
+                    latency = networkChannel->getLatency(0);
+                timelimit = static_cast<int>(latency * 1000);
+                continue;
+
             while (records[i].size() > 3 && records[i].size() > static_cast<size_t>(timeToTicks(static_cast<float>(config->backtrack.timeLimit) / 1000.f)))
                 records[i].pop_back();
 
