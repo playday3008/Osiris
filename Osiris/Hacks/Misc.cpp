@@ -1173,54 +1173,62 @@ void Misc::fakeItem(bool set) noexcept
         else if (config->misc.fakeItemType == 31)
             item = "Nomad Knife";
         else if (config->misc.fakeItemType == 32)
-            item = "P2000";
+            item = "Nova";
         else if (config->misc.fakeItemType == 33)
-            item = "P250";
+            item = "P2000";
         else if (config->misc.fakeItemType == 34)
-            item = "P90";
+            item = "P250";
         else if (config->misc.fakeItemType == 35)
-            item = "PP-Bizon";
+            item = "P90";
         else if (config->misc.fakeItemType == 36)
-            item = "Paracord Knife";
+            item = "PP-Bizon";
         else if (config->misc.fakeItemType == 37)
-            item = "SCAR-20";
+            item = "Paracord Knife";
         else if (config->misc.fakeItemType == 38)
-            item = "SG 553";
+            item = "R8 Revolver";
         else if (config->misc.fakeItemType == 39)
-            item = "Sawed-Off";
+            item = "SCAR-20";
         else if (config->misc.fakeItemType == 40)
-            item = "Shadow Daggers";
+            item = "SG 553";
         else if (config->misc.fakeItemType == 41)
-            item = "Skeleton Knife";
+            item = "SSG 08";
         else if (config->misc.fakeItemType == 42)
-            item = "Stiletto Knife";
+            item = "Sawed-Off";
         else if (config->misc.fakeItemType == 43)
-            item = "Survival Knife";
+            item = "Shadow Daggers";
         else if (config->misc.fakeItemType == 44)
-            item = "Talon Knife";
+            item = "Skeleton Knife";
         else if (config->misc.fakeItemType == 45)
-            item = "Tec-9";
+            item = "Spectral Shiv";
         else if (config->misc.fakeItemType == 46)
-            item = "UMP-45";
+            item = "Stiletto Knife";
         else if (config->misc.fakeItemType == 47)
-            item = "USP-S";
+            item = "Survival Knife";
         else if (config->misc.fakeItemType == 48)
-            item = "Ursus Knife";
+            item = "Talon Knife";
         else if (config->misc.fakeItemType == 49)
-            item = "XM1014";
+            item = "Tec-9";
         else if (config->misc.fakeItemType == 50)
-            item = "Hand Wraps";
+            item = "UMP-45";
         else if (config->misc.fakeItemType == 51)
-            item = "Moto Gloves";
+            item = "USP-S";
         else if (config->misc.fakeItemType == 52)
-            item = "Specialist Gloves";
+            item = "Ursus Knife";
         else if (config->misc.fakeItemType == 53)
-            item = "Sport Gloves";
+            item = "XM1014";
         else if (config->misc.fakeItemType == 54)
-            item = "Bloodhound Gloves";
+            item = "Hand Wraps";
         else if (config->misc.fakeItemType == 55)
-            item = "Hydra Gloves";
+            item = "Moto Gloves";
         else if (config->misc.fakeItemType == 56)
+            item = "Specialist Gloves";
+        else if (config->misc.fakeItemType == 57)
+            item = "Sport Gloves";
+        else if (config->misc.fakeItemType == 58)
+            item = "Bloodhound Gloves";
+        else if (config->misc.fakeItemType == 59)
+            item = "Hydra Gloves";
+        else if (config->misc.fakeItemType == 60)
             item = "Driver Gloves";
 
         if (config->misc.fakeItemPlayerColor == 0)
