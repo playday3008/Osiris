@@ -584,7 +584,11 @@ void Visuals::hitMarkerDamageIndicator() noexcept
 void Visuals::fullBright() noexcept {
     if (!localPlayer)
         return;
-    interfaces->cvar->findVar("mat_fullbright")->setValue(config->visuals.fullBright ? 1 : 0);
+
+    if (!config->visuals.fullBright)
+        interfaces->cvar->findVar("mat_fullbright")->setValue(config->visuals.fullBright ? 0 : 0);
+    if (config->visuals.fullBright)
+        interfaces->cvar->findVar("mat_fullbright")->setValue(config->visuals.fullBright ? 1 : 0);
 };
 
 void Visuals::noZoom() noexcept
