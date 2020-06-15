@@ -408,7 +408,7 @@ void Visuals::skybox() noexcept
 int GetBlendedColor(int percentage)
 {
     if (percentage < 50)
-        return std::round(percentage * 2.55);
+        return (int)std::round(percentage * 2.55);
     else
         return 255;
 }
@@ -456,7 +456,7 @@ void Visuals::indicators() noexcept
             if (config->antiAim.yawReal && config->antiAim.enabled)
                 desyncAmount = localPlayer->getMaxDesyncAngle() * config->antiAim.bodyLean / 100;
 
-            int desyncGreenPercentage = ((3.4483 * desyncAmount) * -1) / 2;
+            int desyncGreenPercentage = (int)((3.4483 * desyncAmount) * -1) / 2;
             int desyncRedPercentage = 100 - desyncGreenPercentage;
 
             float lby = localPlayer->lby();

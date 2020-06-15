@@ -1111,7 +1111,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         ImGui::SameLine();
 
         if (ImGui::Button("ApplySelectSkin")) {
-            for (int i = 0; i < SkinChanger::skinKits.size(); i++)
+            for (size_t i = 0; i < SkinChanger::skinKits.size(); i++)
             {
                 if (SkinChanger::skinKits[i].id == SkinChanger::search_result[SkinChanger::select_current].id)
                 {
@@ -1137,7 +1137,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             ImGui::Text("Please Inser A StickerName");
             ImGui::SameLine();
             if (ImGui::Button("ApplySelectSticker")) {
-                for (int i = 0; i < SkinChanger::stickerKits.size(); i++)
+                for (size_t i = 0; i < SkinChanger::stickerKits.size(); i++)
                 {
                     if (SkinChanger::stickerKits[i].id == SkinChanger::search_result_sticker[SkinChanger::select_current_sitcker].id)
                     {

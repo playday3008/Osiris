@@ -164,7 +164,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
 
     config->globals.serverTime = memory->globalVars->serverTime();
     config->globals.chokedPackets = interfaces->engine->getNetworkChannel()->chokedPackets;
-    config->globals.tickRate = memory->globalVars->intervalPerTick;
+    config->globals.tickRate = (int)memory->globalVars->intervalPerTick;
 
     if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2)) || config->misc.fakeLagSelectedFlags[0])
         if (config->misc.fakeLagKey == 0 || GetAsyncKeyState(config->misc.fakeLagKey))
