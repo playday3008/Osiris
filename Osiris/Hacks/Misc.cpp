@@ -941,19 +941,86 @@ void Misc::MLP() noexcept
     interfaces->engine->clientCmdUnrestricted(cmd.c_str());
 }
 
-void Misc::customViewmodel() noexcept {
+void Misc::customViewmodelPosition() noexcept {
+
+    bool KnifeOut = 0;
+    bool BombOut = 0;
+
+    if (localPlayer) {
+        if (const auto activeWeapon = localPlayer->getActiveWeapon(); activeWeapon && activeWeapon->getClientClass()->classId == ClassId::Knife)
+            KnifeOut = 1;
+        else
+            KnifeOut = 0;
+        if (const auto activeWeapon = localPlayer->getActiveWeapon(); activeWeapon && activeWeapon->getClientClass()->classId == ClassId::C4)
+            BombOut = 1;
+        else
+            BombOut = 0;
+    }
+
     static ConVar* view_x = interfaces->cvar->findVar("viewmodel_offset_x");
     static ConVar* view_y = interfaces->cvar->findVar("viewmodel_offset_y");
     static ConVar* view_z = interfaces->cvar->findVar("viewmodel_offset_z");
     static ConVar* sv_minspec = interfaces->cvar->findVar("sv_competitive_minspec");
+    static ConVar* cl_righthand = interfaces->cvar->findVar("cl_righthand");
 
     *(int*)((DWORD)&sv_minspec->onChangeCallbacks + 0xC) = 0;
 
-    sv_minspec->setValue(0);
-    view_x->setValue(config->misc.viewmodel_x);
-    view_y->setValue(config->misc.viewmodel_y);
-    view_z->setValue(config->misc.viewmodel_z);
-}
+    if (config->misc.customViewmodelToggle) {
+
+        if (!localPlayer)
+            return;
+
+        sv_minspec->setValue(0);
+
+        if (!BombOut && !KnifeOut) {
+            view_x->setValue(config->misc.viewmodel_x);
+            view_y->setValue(config->misc.viewmodel_y);
+            view_z->setValue(config->misc.viewmodel_z);
+            if (!config->misc.customViewmodelSwitchHand)
+                cl_righthand->setValue(1);
+            else
+                cl_righthand->setValue(0);
+        };
+
+        if (KnifeOut) {
+            view_x->setValue(config->misc.viewmodel_x_knife);
+            view_y->setValue(config->misc.viewmodel_y_knife);
+            view_z->setValue(config->misc.viewmodel_z_knife);
+
+            if (!config->misc.customViewmodelSwitchHandKnife)
+                cl_righthand->setValue(1);
+            else
+                cl_righthand->setValue(0);
+        };
+
+        if (BombOut) {
+            view_x->setValue(0);
+            view_y->setValue(0);
+            view_z->setValue(0);
+        };
+    }
+    else if (!config->misc.customViewmodelToggle) {
+        if (!localPlayer)
+            return;
+
+        sv_minspec->setValue(1);
+        view_x->setValue(0);
+        view_y->setValue(0);
+        view_z->setValue(0);
+    };
+};
+
+void Misc::viewBob() noexcept {
+
+    static ConVar* view_bob = interfaces->cvar->findVar("cl_use_new_headbob");
+
+    if (!config->misc.view_bob) {
+        view_bob->setValue(config->misc.view_bob ? 1 : 1);
+    };
+    if (config->misc.view_bob) {
+        view_bob->setValue(config->misc.view_bob ? 0 : 1);
+    };
+};
 
 void __fastcall hkCheckFileCRCsWithServer(void* ecx, void* edx)
 {

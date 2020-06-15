@@ -162,6 +162,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Visuals::fullBright();
     Misc::playerBlocker(cmd);
     Visuals::physicsTimescale();
+    Misc::viewBob();
 
     config->globals.serverTime = memory->globalVars->serverTime();
     config->globals.chokedPackets = interfaces->engine->getNetworkChannel()->chokedPackets;
@@ -228,6 +229,7 @@ static int __stdcall doPostScreenEffects(int param) noexcept
         Visuals::removeGrass();
         Visuals::remove3dSky();
         Glow::render();
+        Misc::customViewmodelPosition();
     }
     return hooks->clientMode.callOriginal<int, 44>(param);
 }

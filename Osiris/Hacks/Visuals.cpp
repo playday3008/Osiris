@@ -548,7 +548,6 @@ void Visuals::hitMarkerSetDamageIndicator(GameEvent* event) noexcept {
     }
 }
 
-
 void Visuals::hitMarkerDamageIndicator() noexcept
 {
     static std::vector<HitMarkerInfo> hitMarkerInfo;
