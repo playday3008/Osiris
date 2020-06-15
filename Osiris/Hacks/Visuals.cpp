@@ -534,11 +534,16 @@ void Visuals::indicators() noexcept
     }
 }
 
+struct HitMarkerInfo {
+    float hitMarkerExpTime;
+    int hitMarkerDmg;
+};
+
+std::vector<HitMarkerInfo> hitMarkerInfo;
+
 void Visuals::hitMarkerSetDamageIndicator(GameEvent* event) noexcept {
     if (!localPlayer)
         return;
-
-    static std::vector<HitMarkerInfo> hitMarkerInfo;
 
     if (config->visuals.hitMarkerDamageIndicator)
     {
@@ -550,7 +555,6 @@ void Visuals::hitMarkerSetDamageIndicator(GameEvent* event) noexcept {
 
 void Visuals::hitMarkerDamageIndicator() noexcept
 {
-    static std::vector<HitMarkerInfo> hitMarkerInfo;
     if (config->visuals.hitMarkerDamageIndicator)
     {
         if (hitMarkerInfo.empty()) return;

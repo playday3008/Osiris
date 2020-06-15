@@ -33,9 +33,4 @@ namespace Visuals
     void noZoom() noexcept;
     void bulletBeams(GameEvent* event = nullptr) noexcept;
     void physicsTimescale() noexcept;
-
-    struct HitMarkerInfo {
-        float hitMarkerExpTime;
-        int hitMarkerDmg;
-    };
 }
