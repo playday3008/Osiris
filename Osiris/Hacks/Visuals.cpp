@@ -633,9 +633,16 @@ void Visuals::bulletBeams(GameEvent* event) noexcept
     beam_info.m_flSpeed = 0.2f;
     beam_info.m_nStartFrame = 0;
     beam_info.m_flFrameRate = 0.f;
-    beam_info.m_flRed = config->visuals.bulletTracers.color[0] * 255;
-    beam_info.m_flGreen = config->visuals.bulletTracers.color[1] * 255;
-    beam_info.m_flBlue = config->visuals.bulletTracers.color[2] * 255;
+    if (config->visuals.bulletTracers.rainbow) {
+        beam_info.m_flRed = (std::sin(config->visuals.bulletTracers.rainbowSpeed * memory->globalVars->realtime) * 0.5f + 0.5f) * 255;
+        beam_info.m_flGreen = (std::sin(config->visuals.bulletTracers.rainbowSpeed * memory->globalVars->realtime + static_cast<float>(2 * M_PI / 3)) * 0.5f + 0.5f) * 255;
+        beam_info.m_flBlue = (std::sin(config->visuals.bulletTracers.rainbowSpeed * memory->globalVars->realtime + static_cast<float>(4 * M_PI / 3)) * 0.5f + 0.5f) * 255;
+    }
+    else {
+        beam_info.m_flRed = config->visuals.bulletTracers.color[0] * 255;
+        beam_info.m_flGreen = config->visuals.bulletTracers.color[1] * 255;
+        beam_info.m_flBlue = config->visuals.bulletTracers.color[2] * 255;
+    };
     beam_info.m_nSegments = 2;
     beam_info.m_bRenderable = true;
     beam_info.m_nFlags = FBEAM_ONLYNOISEONCE | FBEAM_NOTILE | FBEAM_HALOBEAM;
