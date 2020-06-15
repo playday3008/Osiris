@@ -880,6 +880,16 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
             ImGui::PopItemWidth();
         };
     };
+    ImGui::Checkbox("Physics Timescale", &config->visuals.ragdollTimescaleEnable);
+    if (config->visuals.ragdollTimescaleEnable) {
+        ImGui::SameLine();
+        ImGui::Checkbox("Custom Value", &config->visuals.ragdollTimescaleCustomize);
+        if (config->visuals.ragdollTimescaleCustomize) {
+            ImGui::PushItemWidth(290.0f);
+            ImGui::InputFloat("", &config->visuals.ragdollTimescale, 0, 10, "%.2f");
+            ImGui::PopItemWidth();
+        };
+    };
     ImGui::Checkbox("No fog", &config->visuals.noFog);
     ImGui::Checkbox("No 3d sky", &config->visuals.no3dSky);
     ImGui::Checkbox("No aim punch", &config->visuals.noAimPunch);

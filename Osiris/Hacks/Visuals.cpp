@@ -634,3 +634,15 @@ void Visuals::bulletBeams(GameEvent* event) noexcept
     if (beam)
         memory->renderBeams->DrawBeam(beam);
 }
+
+void Visuals::physicsTimescale() noexcept {
+
+    static ConVar* cl_phys_timescale = interfaces->cvar->findVar("cl_phys_timescale");
+
+    if (!config->visuals.ragdollTimescaleEnable) {
+        cl_phys_timescale->setValue(1);
+    };
+    if (config->visuals.ragdollTimescaleEnable) {
+        cl_phys_timescale->setValue(config->visuals.ragdollTimescale);
+    };
+};
