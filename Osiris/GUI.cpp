@@ -515,8 +515,8 @@ void GUI::renderBacktrackWindow(bool contentOnly) noexcept
     if (!config->backtrack.pingBased) {
         ImGui::PushItemWidth(220.0f);
         ImGui::SliderInt("Time limit", &config->backtrack.timeLimit, 1, 200, "%d ms");
+        ImGui::PopItemWidth();
     };
-    ImGui::PopItemWidth();
     if (!contentOnly)
         ImGui::End();
 }
@@ -1383,48 +1383,37 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Fix tablet signal", &config->misc.fixTabletSignal);
     ImGui::SetNextItemWidth(120.0f);
     ImGui::SliderFloat("Max angle delta", &config->misc.maxAngleDelta, 0.0f, 255.0f, "%.2f");
-    bool customViewmodelMenuSwitch = 0;
     ImGui::Checkbox("Viewmodel Position", &config->misc.customViewmodelToggle);
-    if (!config->misc.customViewmodelToggle) {
-        config->misc.customViewmodelKnifeEnabled = 0;
-    };
-    if (!config->misc.customViewmodelKnifeToggle) {
-        customViewmodelMenuSwitch = 0;
-    };
-    if (config->misc.customViewmodelKnifeToggle) {
-        customViewmodelMenuSwitch = 1;
-    };
-    if (config->misc.customViewmodelToggle && !config->misc.customViewmodelKnifeToggle && !customViewmodelMenuSwitch) {
-        config->misc.customViewmodelKnifeEnabled = 1;
+    if (config->misc.customViewmodelToggle) {
         ImGui::SameLine();
         ImGui::Checkbox("Knife Position", &config->misc.customViewmodelKnifeToggle);
-        ImGui::PushItemWidth(280.0f);
-        ImGui::PushID(1);
-        ImGui::SliderFloat("", &config->misc.viewmodel_x, -20, 20, "Left/Right: %.2f");
-        ImGui::PopID();
-        ImGui::PushID(2);
-        ImGui::SliderFloat("", &config->misc.viewmodel_y, -20, 20, "Close/Far: %.2f");
-        ImGui::PopID();
-        ImGui::PushID(3);
-        ImGui::SliderFloat("", &config->misc.viewmodel_z, -20, 20, "Down/Up: %.2f");
-        ImGui::PopID();
-        ImGui::Checkbox("Right/Left hand Weapon", &config->misc.customViewmodelSwitchHand);
-    };
-    if (config->misc.customViewmodelKnifeToggle && customViewmodelMenuSwitch && config->misc.customViewmodelToggle) {
-        config->misc.customViewmodelKnifeEnabled = 1;
-        ImGui::SameLine();
-        ImGui::Checkbox("Knife Position", &config->misc.customViewmodelKnifeToggle);
-        ImGui::PushItemWidth(280.0f);
-        ImGui::PushID(4);
-        ImGui::SliderFloat("", &config->misc.viewmodel_x_knife, -20, 20, "Left/Right: %.2f");
-        ImGui::PopID();
-        ImGui::PushID(5);
-        ImGui::SliderFloat("", &config->misc.viewmodel_y_knife, -20, 20, "Close/Far: %.2f");
-        ImGui::PopID();
-        ImGui::PushID(6);
-        ImGui::SliderFloat("", &config->misc.viewmodel_z_knife, -20, 20, "Down/Up: %.2f");
-        ImGui::PopID();
-        ImGui::Checkbox("Right/Left hand Knife", &config->misc.customViewmodelSwitchHandKnife);
+        if (!config->misc.customViewmodelKnifeToggle) {
+            ImGui::PushItemWidth(280.0f);
+            ImGui::PushID(1);
+            ImGui::SliderFloat("", &config->misc.viewmodel_x, -20, 20, "Left/Right: %.2f");
+            ImGui::PopID();
+            ImGui::PushID(2);
+            ImGui::SliderFloat("", &config->misc.viewmodel_y, -20, 20, "Close/Far: %.2f");
+            ImGui::PopID();
+            ImGui::PushID(3);
+            ImGui::SliderFloat("", &config->misc.viewmodel_z, -20, 20, "Down/Up: %.2f");
+            ImGui::PopID();
+            ImGui::Checkbox("Right/Left hand Weapon", &config->misc.customViewmodelSwitchHand);
+        }
+        else if (config->misc.customViewmodelKnifeToggle) {
+            ImGui::PushItemWidth(280.0f);
+            ImGui::PushID(4);
+            ImGui::SliderFloat("", &config->misc.viewmodel_x_knife, -20, 20, "Left/Right: %.2f");
+            ImGui::PopID();
+            ImGui::PushID(5);
+            ImGui::SliderFloat("", &config->misc.viewmodel_y_knife, -20, 20, "Close/Far: %.2f");
+            ImGui::PopID();
+            ImGui::PushID(6);
+            ImGui::SliderFloat("", &config->misc.viewmodel_z_knife, -20, 20, "Down/Up: %.2f");
+            ImGui::PopID();
+            ImGui::Checkbox("Right/Left hand Knife", &config->misc.customViewmodelSwitchHandKnife);
+        }
+        ImGui::Checkbox("HeadBob", &config->misc.view_bob);
     };
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
     ImGui::Checkbox("Bypass sv_pure", &config->misc.pure);
