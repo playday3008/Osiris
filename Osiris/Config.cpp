@@ -948,8 +948,17 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Kill message string")) misc.killMessageString = miscJson["Kill message string"].asString();
         if (miscJson.isMember("Name stealer"))  misc.nameStealer = miscJson["Name stealer"].asBool();
         if (miscJson.isMember("Disable HUD blur"))  misc.disablePanoramablur = miscJson["Disable HUD blur"].asBool();
+        if (miscJson.isMember("name Change Selection")) misc.nameChangeSelection = miscJson["name Change Selection"].asInt();
+        if (miscJson.isMember("Custom Name")) misc.customName = miscJson["Custom Name"].asString();
         if (miscJson.isMember("Ban color")) misc.banColor = miscJson["Ban color"].asInt();
         if (miscJson.isMember("Ban text")) misc.banText = miscJson["Ban text"].asString();
+        if (miscJson.isMember("fake Item Player Color")) misc.fakeItemPlayerColor = miscJson["fake Item Player Color"].asInt();
+        if (miscJson.isMember("fake Item Message Type")) misc.fakeItemMessageType = miscJson["fake Item Message Type"].asInt();
+        if (miscJson.isMember("fake Item Type")) misc.fakeItemType = miscJson["fake Item Type"].asInt();
+        if (miscJson.isMember("fake Item Rarity")) misc.fakeItemRarity = miscJson["fake Item Rarity"].asInt();
+        if (miscJson.isMember("fake Item Team")) misc.fakeItemTeam = miscJson["fake Item Team"].asInt();
+        if (miscJson.isMember("fake Item Name")) misc.fakeItemName = miscJson["fake Item Name"].asString();
+        if (miscJson.isMember("fake Item Player Name")) misc.fakeItemPlayerName = miscJson["fake Item Player Name"].asString();
         if (miscJson.isMember("Fast plant")) misc.fastPlant = miscJson["Fast plant"].asBool();
 
         if (const auto& bombTimer{ miscJson["Bomb timer"] }; bombTimer.isObject()) {
@@ -992,9 +1001,10 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Custom Viewmodel Y Knife")) misc.viewmodel_y_knife = miscJson["Custom Viewmodel Y Knife"].asFloat();
         if (miscJson.isMember("Custom Viewmodel Z Knife")) misc.viewmodel_z_knife = miscJson["Custom Viewmodel Z Knife"].asFloat();
         if (miscJson.isMember("Custom Viewmodel Knife Toggle")) misc.customViewmodelKnifeToggle = miscJson["Custom Viewmodel Knife Toggle"].asBool();
+        if (miscJson.isMember("Custom Viewmodel Knife Switch")) misc.customViewmodelMenuSwitch = miscJson["Custom Viewmodel Knife Switch"].asBool();;
         if (miscJson.isMember("Custom Viewmodel Knife Enabled")) misc.customViewmodelKnifeEnabled = miscJson["Custom Viewmodel Knife Enabled"].asBool();
-        if (miscJson.isMember("Custom Viewmodel Knife Switch Hand")) misc.customViewmodelSwitchHand = miscJson["Custom Viewmodel Menu Switch Hand"].asBool();
-        if (miscJson.isMember("Custom Viewmodel Knife Switch Hand Knife")) misc.customViewmodelSwitchHandKnife = miscJson["Custom Viewmodel Switch Hand Knife"].asBool();
+        if (miscJson.isMember("Custom Viewmodel Switch Hand")) misc.customViewmodelSwitchHand = miscJson["Custom Viewmodel Switch Hand"].asBool();
+        if (miscJson.isMember("Custom Viewmodel Switch Hand Knife")) misc.customViewmodelSwitchHandKnife = miscJson["Custom Viewmodel Switch Hand Knife"].asBool();
         if (miscJson.isMember("Custom Viewmodel Bob")) misc.view_bob = miscJson["Custom Viewmodel Bob"].asBool();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
         if (miscJson.isMember("sv_pure")) misc.pure = miscJson["Pure"].asBool();
@@ -1816,8 +1826,17 @@ void Config::save(size_t id) const noexcept
         miscJson["Kill message string"] = misc.killMessageString;
         miscJson["Name stealer"] = misc.nameStealer;
         miscJson["Disable HUD blur"] = misc.disablePanoramablur;
+        miscJson["name Change Selection"] = misc.nameChangeSelection;
+        miscJson["Custom Name"] = misc.customName;
         miscJson["Ban color"] = misc.banColor;
         miscJson["Ban text"] = misc.banText;
+        miscJson["fake Item Player Color"] = misc.fakeItemPlayerColor;
+        miscJson["fake Item Message Type"] = misc.fakeItemMessageType;
+        miscJson["fake Item Type"] = misc.fakeItemType;
+        miscJson["fake Item Rarity"] = misc.fakeItemRarity;
+        miscJson["fake Item Team"] = misc.fakeItemTeam;
+        miscJson["fake Item Name"] = misc.fakeItemName;
+        miscJson["fake Item Player Name"] = misc.fakeItemPlayerName;
         miscJson["Fast plant"] = misc.fastPlant;
 
         {
