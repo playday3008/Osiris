@@ -1649,6 +1649,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Multipoints by ClaudiuHKS;");
     ImGui::Text("Custom Skybox & Defuse ESP by cailloubr;");
     ImGui::Text("Skinsearch by Cyk-Fad;");
+    ImGui::Text("PingBased Backtrack by RyDeem;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
