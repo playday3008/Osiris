@@ -974,7 +974,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::PushID(6);
     ImGuiCustom::MultiCombo("", config->visuals.indicators, config->visuals.selectedIndicators, 4);
     ImGui::PopID();
-    ImGuiCustom::colorPicker("Bullet Tracers", config->visuals.bulletTracers);
+    ImGuiCustom::colorPicker("Bullet Tracers (May crashes)", config->visuals.bulletTracers);
 
     ImGui::Checkbox("Color correction", &config->visuals.colorCorrection.enabled);
     ImGui::SameLine();
