@@ -558,7 +558,7 @@ void GUI::renderGlowWindow(bool contentOnly) noexcept
     ImGui::NextColumn();
     ImGui::SetNextItemWidth(100.0f);
     ImGui::Combo("Style", &config->glow[currentItem].style, "Default\0Rim3d\0Edge\0Edge Pulse\0");
-   
+
     ImGui::Columns(1);
     if (!contentOnly)
         ImGui::End();
@@ -1512,7 +1512,7 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
     auto& configItems = config->getConfigs();
     static int currentConfig = -1;
 
-    if (static_cast<size_t>(currentConfig) >= configItems.size())
+    if (static_cast<std::size_t>(currentConfig) >= configItems.size())
         currentConfig = -1;
 
     static std::string buffer;
@@ -1525,7 +1525,7 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
             buffer = configItems[currentConfig];
 
         ImGui::PushID(0);
-        if (ImGui::InputText("", &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        if (ImGui::InputTextWithHint("", "config name", &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
             if (currentConfig != -1)
                 config->rename(currentConfig, buffer.c_str());
         }
@@ -1602,7 +1602,12 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
 
                 for (auto i = 0; i < IM_ARRAYSIZE(choices); i++)
                     if (ImGui::Selectable(choices[i]))
-                        if (i == 0) config->remove(currentConfig);
+                        if (i == 0) {
+                          config->remove(currentConfig);
+                          currentConfig = -1;
+                          buffer.clear();
+                        }
+
 
                 ImGui::EndPopup();
             }
