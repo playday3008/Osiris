@@ -51,7 +51,6 @@ namespace Misc
     void MLP() noexcept;
     void customViewmodelPosition() noexcept;
     void viewBob() noexcept;
-    void pure() noexcept;
     void setName(bool set) noexcept;
     void fakeItem(bool set) noexcept;
     void drawBombDamage() noexcept;

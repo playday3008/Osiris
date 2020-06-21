@@ -384,7 +384,6 @@ public:
         float viewmodel_z_knife{ 0 };
         bool view_bob{ false };
         bool fakePrime{ false };
-        bool pure{ false };
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };
         bool autoZeus{ false };

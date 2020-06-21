@@ -1415,7 +1415,6 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
         ImGui::Checkbox("HeadBob", &config->misc.view_bob);
     };
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
-    ImGui::Checkbox("Bypass sv_pure", &config->misc.pure);
     ImGui::Checkbox("Draw aimbot FOV", &config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);
     if (config->misc.teamDamageCounter)

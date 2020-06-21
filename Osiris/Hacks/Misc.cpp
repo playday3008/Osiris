@@ -1025,21 +1025,6 @@ void Misc::viewBob() noexcept {
     };
 };
 
-void __fastcall hkCheckFileCRCsWithServer(void* ecx, void* edx)
-{
-    // dont do anything.. to prevent CRC check from happening
-    return;
-}
-
-void Misc::pure() noexcept
-{
-    if (config->misc.pure)
-    {
-        hkCheckFileCRCsWithServer(memory->CheckFileCRCsWithServer, hkCheckFileCRCsWithServer);
-    }
-
-}
-
 void Misc::setName(bool set) noexcept
 {
     static bool shouldSet = false;

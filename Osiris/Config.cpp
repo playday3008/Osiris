@@ -1013,7 +1013,6 @@ void Config::load(size_t id) noexcept
         if (miscJson.isMember("Custom Viewmodel Switch Hand Knife")) misc.customViewmodelSwitchHandKnife = miscJson["Custom Viewmodel Switch Hand Knife"].asBool();
         if (miscJson.isMember("Custom Viewmodel Bob")) misc.view_bob = miscJson["Custom Viewmodel Bob"].asBool();
         if (miscJson.isMember("Fake prime")) misc.fakePrime = miscJson["Fake prime"].asBool();
-        if (miscJson.isMember("sv_pure")) misc.pure = miscJson["Pure"].asBool();
         if (miscJson.isMember("Draw aimbot FOV")) misc.drawAimbotFov = miscJson["Draw aimbot FOV"].asBool();
         if (miscJson.isMember("Autozeus")) misc.autoZeus = miscJson["Autozeus"].asBool();
         if (miscJson.isMember("Autozeus BAIM Only")) misc.autoZeusBaimOnly = miscJson["Autozeus BAIM Only"].asBool();
@@ -1884,7 +1883,6 @@ void Config::save(size_t id) const noexcept
         miscJson["Custom Viewmodel Z Knife"] = misc.viewmodel_z_knife;
         miscJson["Custom Viewmodel Bob"] = misc.view_bob;
         miscJson["Fake prime"] = misc.fakePrime;
-        miscJson["sv_pure"] = misc.pure;
         miscJson["Draw aimbot FOV"] = misc.drawAimbotFov;
         miscJson["Draw aimbot Actual FOV"] = misc.actualFov;
         miscJson["Autozeus"] = misc.autoZeus;

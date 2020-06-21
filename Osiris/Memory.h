@@ -70,7 +70,6 @@ public:
     KeyValues*(__thiscall* keyValuesFindKey)(KeyValues* keyValues, const char* keyName, bool create);
     void(__thiscall* keyValuesSetString)(KeyValues* keyValues, const char* value);
     WeaponSystem* weaponSystem;
-    void* CheckFileCRCsWithServer;
     IViewRenderBeams* renderBeams;
     std::add_pointer_t<const char** __fastcall(const char* playerModelName)> getPlayerViewmodelArmConfigForPlayerModel;
 private:
