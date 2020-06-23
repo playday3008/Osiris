@@ -369,9 +369,9 @@ public:
         bool fixTabletSignal{ false };
         float maxAngleDelta{ 255.0f };
         bool customViewmodelToggle{ false };
-        float viewmodel_x{ 0 };
-        float viewmodel_y{ 0 };
-        float viewmodel_z{ 0 };
+        float viewmodel_x{ 0.0f };
+        float viewmodel_y{ 0.0f };
+        float viewmodel_z{ 0.0f };
         bool customViewmodelKnifeToggle{ false };
         bool customViewmodelKnifeOut{ false };
         bool customViewmodelKnifeEnabled{ false };
@@ -379,9 +379,9 @@ public:
         bool customViewmodelBombEquiped{ false };
         bool customViewmodelSwitchHand{ false };
         bool customViewmodelSwitchHandKnife{ false };
-        float viewmodel_x_knife{ 0 };
-        float viewmodel_y_knife{ 0 };
-        float viewmodel_z_knife{ 0 };
+        float viewmodel_x_knife{ 0.0f };
+        float viewmodel_y_knife{ 0.0f };
+        float viewmodel_z_knife{ 0.0f };
         bool view_bob{ false };
         bool fakePrime{ false };
         bool drawAimbotFov{ false };
