@@ -58,6 +58,7 @@ void EventListener::fireGameEvent(GameEvent* event)
         Visuals::hitMarker(event);
         Misc::teamDamageCounter(event);
         Visuals::hitMarkerSetDamageIndicator(event);
+        break;
     case fnv::hash("bullet_impact"):
         Visuals::bulletBeams(event);
         break;
