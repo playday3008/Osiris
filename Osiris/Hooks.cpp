@@ -410,27 +410,11 @@ static void __stdcall setDrawColor(int r, int g, int b, int a) noexcept
 
 static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
 {
+    // TODO: remove this hook after testing the new method of overriding knife icon
     if (event) {
         switch (fnv::hashRuntime(event->getName())) {
         case fnv::hash("player_death"):
-            Misc::teamDamageCounter(event);
-            Misc::killMessage(*event);
-            Misc::killSound(*event);
-            SkinChanger::overrideHudIcon(*event);
-            break;
-        case fnv::hash("player_hurt"):
-            Misc::teamDamageCounter(event);
-            Misc::playHitSound(*event);
-            Visuals::hitEffect(event);
-            Visuals::hitMarker(event);
-            Visuals::hitMarkerSetDamageIndicator(event);
-            break;
-        case fnv::hash("bullet_impact"):
-            Visuals::bulletBeams(event);
-            break;
-        case fnv::hash("round_announce_match_start"):
-            Misc::teamKills = 0;
-            Misc::teamDamage = 0;
+            // SkinChanger::overrideHudIcon(*event);
             break;
         }
     }
