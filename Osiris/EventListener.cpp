@@ -59,12 +59,5 @@ void EventListener::fireGameEvent(GameEvent* event)
         Misc::teamDamageCounter(event);
         Visuals::hitMarkerSetDamageIndicator(event);
         break;
-    case fnv::hash("bullet_impact"):
-        Visuals::bulletBeams(event);
-        break;
-    case fnv::hash("round_announce_match_start"):
-        Misc::teamKills = 0;
-        Misc::teamDamage = 0;
-        break;
     }
 }

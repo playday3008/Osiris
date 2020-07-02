@@ -416,6 +416,13 @@ static bool __stdcall fireEventClientSide(GameEvent* event) noexcept
         case fnv::hash("player_death"):
             // SkinChanger::overrideHudIcon(*event);
             break;
+        case fnv::hash("bullet_impact"):
+            Visuals::bulletBeams(event);
+            break;
+        case fnv::hash("round_announce_match_start"):
+            Misc::teamKills = 0;
+            Misc::teamDamage = 0;
+            break;
         }
     }
     return hooks->gameEventManager.callOriginal<bool, 9>(event);
