@@ -42,7 +42,7 @@ static void renderSnaplines(Entity* entity, const Config::Esp::Shared& config) n
         return;
 
     if (config.snaplines.rainbow)
-        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.snaplines.rainbowSpeed));
+        interfaces->surface->setDrawColor(rainbowColor(config.snaplines.rainbowSpeed));
     else
         interfaces->surface->setDrawColor(config.snaplines.color);
 
@@ -65,7 +65,7 @@ static void renderEyeTraces(Entity* entity, const Config::Esp::Player& config) n
         Vector start, end;
         if (worldToScreen(trace.startpos, start) && worldToScreen(trace.endpos, end)) {
             if (config.eyeTraces.rainbow)
-                interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.eyeTraces.rainbowSpeed));
+                interfaces->surface->setDrawColor(rainbowColor(config.eyeTraces.rainbowSpeed));
             else
                 interfaces->surface->setDrawColor(config.eyeTraces.color);
 
@@ -128,7 +128,7 @@ static void renderBox(const BoundingBox& bbox, const Config::Esp::Shared& config
 {
     if (config.box.enabled) {
         if (config.box.rainbow)
-            interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.box.rainbowSpeed));
+            interfaces->surface->setDrawColor(rainbowColor(config.box.rainbowSpeed));
         else
             interfaces->surface->setDrawColor(config.box.color);
 
@@ -138,7 +138,7 @@ static void renderBox(const BoundingBox& bbox, const Config::Esp::Shared& config
 
             if (config.outline.enabled) {
                 if (config.outline.rainbow)
-                    interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                    interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                 else
                     interfaces->surface->setDrawColor(config.outline.color);
 
@@ -158,7 +158,7 @@ static void renderBox(const BoundingBox& bbox, const Config::Esp::Shared& config
 
             if (config.outline.enabled) {
                 if (config.outline.rainbow)
-                    interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                    interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                 else
                     interfaces->surface->setDrawColor(config.outline.color);
 
@@ -238,7 +238,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
             const auto maxHealth{ (std::max)((gameType->getInt() == 6 ? survivalMaxHealth->getInt() : 100), entity->health()) };
 
             if (config.healthBar.rainbow)
-                interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.healthBar.rainbowSpeed));
+                interfaces->surface->setDrawColor(rainbowColor(config.healthBar.rainbowSpeed));
             else
                 interfaces->surface->setDrawColor(config.healthBar.color);
 
@@ -246,7 +246,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
                 interfaces->surface->drawFilledRect(drawPositionLeft - 3, bbox.y0 + abs(bbox.y1 - bbox.y0) * (maxHealth - entity->health()) / static_cast<float>(maxHealth), drawPositionLeft, bbox.y1);
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -259,7 +259,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -272,7 +272,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
                 interfaces->surface->drawFilledRect(drawPositionRight - 3, bbox.y0 + abs(bbox.y1 - bbox.y0) * (maxHealth - entity->health()) / static_cast<float>(maxHealth), drawPositionRight, bbox.y1);
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -285,7 +285,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
         if (config.armorBar.enabled) {
             if (config.armorBar.rainbow)
-                interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.armorBar.rainbowSpeed));
+                interfaces->surface->setDrawColor(rainbowColor(config.armorBar.rainbowSpeed));
             else
                 interfaces->surface->setDrawColor(config.armorBar.color);
 
@@ -294,7 +294,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -307,7 +307,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -321,7 +321,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
                 if (config.outline.enabled) {
                     if (config.outline.rainbow)
-                        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.outline.rainbowSpeed));
+                        interfaces->surface->setDrawColor(rainbowColor(config.outline.rainbowSpeed));
                     else
                         interfaces->surface->setDrawColor(config.outline.color);
 
@@ -338,7 +338,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
                     const auto [width, height] { interfaces->surface->getTextSize(config.font, name) };
                     interfaces->surface->setTextFont(config.font);
                     if (config.name.rainbow)
-                        interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.name.rainbowSpeed));
+                        interfaces->surface->setTextColor(rainbowColor(config.name.rainbowSpeed));
                     else
                         interfaces->surface->setTextColor(config.name.color);
 
@@ -352,7 +352,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
             const auto [width, height] { interfaces->surface->getTextSize(config.font, L"Defuser") };
             interfaces->surface->setTextFont(config.font);
             if (config.defuseesp.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.defuseesp.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.defuseesp.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.defuseesp.color);
             interfaces->surface->setTextPosition((bbox.x0 + bbox.x1 - 7) / 2, bbox.y0);
@@ -375,7 +375,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
             const auto [width, height] { interfaces->surface->getTextSize(config.font, name) };
             interfaces->surface->setTextFont(config.font);
             if (config.activeWeapon.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.activeWeapon.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.activeWeapon.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.activeWeapon.color);
 
@@ -395,7 +395,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
         if (config.health.enabled) {
             if (config.health.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.health.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.health.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.health.color);
 
@@ -412,7 +412,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
         if (config.armor.enabled) {
             if (config.armor.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.armor.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.armor.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.armor.color);
 
@@ -429,7 +429,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
         if (config.money.enabled) {
             if (config.money.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.money.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.money.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.money.color);
 
@@ -447,7 +447,7 @@ static void renderPlayerBox(Entity* entity, const Config::Esp::Player& config) n
 
         if (config.distance.enabled && localPlayer) {
             if (config.distance.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.distance.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.distance.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.distance.color);
 
@@ -510,7 +510,7 @@ static void renderWeaponBox(Entity* entity, const Config::Esp::Weapon& config) n
         const auto [width, height] { interfaces->surface->getTextSize(config.font, name) };
         interfaces->surface->setTextFont(config.font);
         if (config.name.rainbow)
-            interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.name.rainbowSpeed));
+            interfaces->surface->setTextColor(rainbowColor(config.name.rainbowSpeed));
         else
             interfaces->surface->setTextColor(config.name.color);
 
@@ -525,7 +525,7 @@ static void renderWeaponBox(Entity* entity, const Config::Esp::Weapon& config) n
         const auto [width, height] { interfaces->surface->getTextSize(config.font, text.c_str()) };
         interfaces->surface->setTextFont(config.font);
         if (config.ammo.rainbow)
-            interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.ammo.rainbowSpeed));
+            interfaces->surface->setTextColor(rainbowColor(config.ammo.rainbowSpeed));
         else
             interfaces->surface->setTextColor(config.ammo.color);
         interfaces->surface->setTextPosition((bbox.x0 + bbox.x1 - width) / 2, bbox.y1 + 6);
@@ -541,7 +541,7 @@ static void renderWeaponBox(Entity* entity, const Config::Esp::Weapon& config) n
         return;
 
     if (config.distance.rainbow)
-        interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.distance.rainbowSpeed));
+        interfaces->surface->setTextColor(rainbowColor(config.distance.rainbowSpeed));
     else
         interfaces->surface->setTextColor(config.distance.color);
 
@@ -557,7 +557,7 @@ static void renderEntityBox(Entity* entity, const Config::Esp::Shared& config, c
             const auto [width, height] { interfaces->surface->getTextSize(config.font, name) };
             interfaces->surface->setTextFont(config.font);
             if (config.name.rainbow)
-                interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.name.rainbowSpeed));
+                interfaces->surface->setTextColor(rainbowColor(config.name.rainbowSpeed));
             else
                 interfaces->surface->setTextColor(config.name.color);
 
@@ -571,7 +571,7 @@ static void renderEntityBox(Entity* entity, const Config::Esp::Shared& config, c
             return;
 
         if (config.distance.rainbow)
-            interfaces->surface->setTextColor(rainbowColor(memory->globalVars->realtime, config.distance.rainbowSpeed));
+            interfaces->surface->setTextColor(rainbowColor(config.distance.rainbowSpeed));
         else
             interfaces->surface->setTextColor(config.distance.color);
 
@@ -592,7 +592,7 @@ static void renderHeadDot(Entity* entity, const Config::Esp::Player& config) noe
         return;
 
     if (config.headDot.rainbow)
-        interfaces->surface->setDrawColor(rainbowColor(memory->globalVars->realtime, config.headDot.rainbowSpeed));
+        interfaces->surface->setDrawColor(rainbowColor(config.headDot.rainbowSpeed));
     else
         interfaces->surface->setDrawColor(config.headDot.color);
 

@@ -157,11 +157,15 @@
     </ClCompile>
     <ClCompile Include="Hooks\VmtHook.cpp">
       <Filter>Hooks</Filter>
+    </ClCompile>
     <ClCompile Include="AntiDetection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hacks\Multipoints.cpp">
       <Filter>Hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Utils.cpp">
+      <Filter>SDK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
