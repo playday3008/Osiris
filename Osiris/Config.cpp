@@ -491,6 +491,8 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::boolean>(j, "Moonwalk", m.moonwalk);
     read<value_t::boolean>(j, "Edge Jump", m.edgejump);
     read_number(j, "Edge Jump Key", m.edgejumpkey);
+    read<value_t::boolean>(j, "Jump Bug", m.jumpbug);
+    read_number(j, "Jump Bug Key", m.jumpbugkey);
     read<value_t::boolean>(j, "Slowwalk", m.slowwalk);
     read_number(j, "Slowwalk key", m.slowwalkKey);
     read<value_t::object>(j, "Noscope crosshair", m.noscopeCrosshair);
@@ -857,6 +859,8 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Moonwalk", moonwalk);
     WRITE("Edge Jump", edgejump);
     WRITE("Edge Jump Key", edgejumpkey);
+    WRITE("Jump Bug", jumpbug);
+    WRITE("Jump Bug Key", jumpbugkey);
     WRITE("Slowwalk", slowwalk);
     WRITE("Slowwalk key", slowwalkKey);
     WRITE("Noscope crosshair", noscopeCrosshair);

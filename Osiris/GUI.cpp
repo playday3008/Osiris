@@ -1216,6 +1216,9 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Edge Jump", &config->misc.edgejump);
     ImGui::SameLine();
     hotkey(config->misc.edgejumpkey);
+    ImGui::Checkbox("Jump Bug", &config->misc.jumpbug);
+    ImGui::SameLine();
+    hotkey(config->misc.jumpbugkey);
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     ImGui::SameLine();
     hotkey(config->misc.slowwalkKey);
