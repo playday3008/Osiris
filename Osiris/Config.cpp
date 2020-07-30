@@ -272,6 +272,7 @@ static void from_json(const json& j, Config::Aimbot& a)
     read_number(j, "Max shot inaccuracy", a.maxShotInaccuracy);
     read_number(j, "Min damage", a.minDamage);
     read<value_t::boolean>(j, "Killshot", a.killshot);
+    read<value_t::boolean>(j, "Jump Check", a.jumpCheck);
     read<value_t::boolean>(j, "Between shots", a.betweenShots);
 }
 
@@ -734,6 +735,7 @@ static void to_json(json& j, const Config::Aimbot& o, const Config::Aimbot& dumm
     WRITE("Max shot inaccuracy", maxShotInaccuracy);
     WRITE("Min damage", minDamage);
     WRITE("Killshot", killshot);
+    WRITE("Jump Check", jumpCheck);
     WRITE("Between shots", betweenShots);
 }
 
