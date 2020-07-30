@@ -162,6 +162,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Backtrack::run(cmd);
     Misc::edgejump(cmd);
     Misc::jumpbug(cmd);
+    Misc::playerBlocker(cmd);
     Misc::moonwalk(cmd);
 
     if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))) {

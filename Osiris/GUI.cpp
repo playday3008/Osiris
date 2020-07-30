@@ -1369,6 +1369,9 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
             Misc::teamKills = 0;
             Misc::teamDamage = 0;
         }
+    ImGui::Checkbox("Player Blocker", &config->misc.playerBlocker);
+    ImGui::SameLine();
+    hotkey(config->misc.playerBlockerKey);
     ImGui::Checkbox("Purchase List", &config->misc.purchaseList.enabled);
     ImGui::SameLine();
 
