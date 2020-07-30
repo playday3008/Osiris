@@ -289,6 +289,8 @@ static void from_json(const json& j, Config::Triggerbot& t)
     read_number(j, "Min damage", t.minDamage);
     read<value_t::boolean>(j, "Killshot", t.killshot);
     read_number(j, "Burst Time", t.burstTime);
+    read_number(j, "Max aim inaccuracy", t.maxAimInaccuracy);
+    read_number(j, "Max shot inaccuracy", t.maxShotInaccuracy);
 }
 
 static void from_json(const json& j, Config::Backtrack& b)
@@ -749,6 +751,8 @@ static void to_json(json& j, const Config::Triggerbot& o, const Config::Triggerb
     WRITE("Min damage", minDamage);
     WRITE("Killshot", killshot);
     WRITE("Burst Time", burstTime);
+    WRITE("Max aim inaccuracy", maxAimInaccuracy);
+    WRITE("Max shot inaccuracy", maxShotInaccuracy);
 }
 
 static void to_json(json& j, const Config::Backtrack& o, const Config::Backtrack& dummy = {})
