@@ -531,6 +531,7 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::boolean>(j, "Fix tablet signal", m.fixTabletSignal);
     read_number(j, "Max angle delta", m.maxAngleDelta);
     read<value_t::boolean>(j, "Fake prime", m.fakePrime);
+    read<value_t::boolean>(j, "Team Damage Counter", m.teamDamageCounter);
     read<value_t::boolean>(j, "Fix tablet signal", m.fixTabletSignal);
     read<value_t::object>(j, "Custom Hit Sound", m.customHitSound);
     read_number(j, "Kill sound", m.killSound);
@@ -900,6 +901,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Fix tablet signal", fixTabletSignal);
     WRITE("Max angle delta", maxAngleDelta);
     WRITE("Fake prime", fakePrime);
+    WRITE("Team Damage Counter", teamDamageCounter);
     WRITE("Fix tablet signal", fixTabletSignal);
     WRITE("Custom Hit Sound", customHitSound);
     WRITE("Kill sound", killSound);
