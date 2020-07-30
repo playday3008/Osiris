@@ -150,6 +150,7 @@ public:
         bool noGrass{ false };
         bool noShadows{ false };
         bool wireframeSmoke{ false };
+        ColorToggle showvelocity;
         bool zoom{ false };
         int zoomKey{ 0 };
         bool thirdperson{ false };
