@@ -389,6 +389,7 @@ static void from_json(const json& j, Config::Visuals& v)
     read_number(j, "Flash reduction", v.flashReduction);
     read_number(j, "Brightness", v.brightness);
     read_number(j, "Skybox", v.skybox);
+    read<value_t::object>(j, "customSkybox", v.customSkybox);
     read<value_t::object>(j, "World", v.world);
     read<value_t::object>(j, "Sky", v.sky);
     read<value_t::boolean>(j, "Deagle spinner", v.deagleSpinner);
@@ -967,6 +968,7 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("Flash reduction", flashReduction);
     WRITE("Brightness", brightness);
     WRITE("Skybox", skybox);
+    WRITE("customSkybox", customSkybox);
     WRITE("World", world);
     WRITE("Sky", sky);
     WRITE("Deagle spinner", deagleSpinner);
