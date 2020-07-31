@@ -1510,20 +1510,17 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
                     updateColors();
                     SkinChanger::scheduleHudUpdate();
                     Misc::updateClanTag(true);
-                    ImGui::EndPopup();
                 }
-                if (ImGui::Selectable("Cancel"))
-                    ImGui::EndPopup();
+                if (ImGui::Selectable("Cancel")) {/*nothing to do*/ }
+                ImGui::EndPopup();
             }
             if (ImGui::Button("Save selected", { 100.0f, 25.0f }))
                 ImGui::OpenPopup("Config to save");
             if (ImGui::BeginPopup("Config to save")) {
-                if (ImGui::Selectable("Confirm")) {
+                if (ImGui::Selectable("Confirm"))
                     config->save(currentConfig);
-                    ImGui::EndPopup();
-                }
-                if (ImGui::Selectable("Cancel"))
-                    ImGui::EndPopup();
+                if (ImGui::Selectable("Cancel")) {/*nothing to do*/ }
+                ImGui::EndPopup();
             }
             if (ImGui::Button("Delete selected", { 100.0f, 25.0f }))
                 ImGui::OpenPopup("Config to delete");
@@ -1532,10 +1529,9 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
                     config->remove(currentConfig);
                     currentConfig = -1;
                     buffer.clear();
-                    ImGui::EndPopup();
                 }
-                if (ImGui::Selectable("Cancel"))
-                    ImGui::EndPopup();
+                if (ImGui::Selectable("Cancel")) {/*nothing to do*/}
+                ImGui::EndPopup();
             }
         }
         ImGui::Columns(1);
