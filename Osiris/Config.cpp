@@ -381,6 +381,7 @@ static void from_json(const json& j, Config::Visuals& v)
     read<value_t::boolean>(j, "Zoom", v.noScopeOverlay);
     read_number(j, "Zoom key", v.zoomKey);
     read<value_t::boolean>(j, "Thirdperson", v.thirdperson);
+    read<value_t::boolean>(j, "Dead thirdperson", v.deadThirdperson);
     read_number(j, "Thirdperson key", v.thirdpersonKey);
     read_number(j, "Thirdperson distance", v.thirdpersonDistance);
     read_number(j, "Viewmodel FOV", v.viewmodelFov);
@@ -968,6 +969,7 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("Zoom", noScopeOverlay);
     WRITE("Zoom key", zoomKey);
     WRITE("Thirdperson", thirdperson);
+    WRITE("Dead thirdperson", deadThirdperson);
     WRITE("Thirdperson key", thirdpersonKey);
     WRITE("Thirdperson distance", thirdpersonDistance);
     WRITE("Viewmodel FOV", viewmodelFov);
