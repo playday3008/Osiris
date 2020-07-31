@@ -829,8 +829,10 @@ void Misc::jumpbug(UserCmd* cmd) noexcept {
 
         if (unduck) {
             JumpDone = false;
-            cmd->buttons &= ~UserCmd::IN_DUCK;
-            // cmd->buttons |= UserCmd::IN_JUMP; // If you want to hold JB key only.
+            if (config->misc.jumpbughold)
+                cmd->buttons |= UserCmd::IN_JUMP; // If you want to hold JB key only.
+            else
+                cmd->buttons &= ~UserCmd::IN_DUCK;
             unduck = false;
         }
 
@@ -965,8 +967,6 @@ void Misc::showVelocity() noexcept
     interfaces->surface->setTextPosition(width / 2 - 6, height - 200);
     interfaces->surface->printText(velocitywstr);
 }
-
-
 
 void Misc::drawBombDamage() noexcept
 {
