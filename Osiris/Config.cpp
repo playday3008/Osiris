@@ -378,6 +378,9 @@ static void from_json(const json& j, Config::Visuals& v)
     read<value_t::boolean>(j, "No shadows", v.noShadows);
     read<value_t::boolean>(j, "Wireframe smoke", v.wireframeSmoke);
     read<value_t::object>(j, "Show velocity", v.showvelocity);
+    read<value_t::boolean>(j, "Show velocity Custom", v.showvelocityM);
+    read_number(j, "Show velocity Pos X", v.showvelocityPosX);
+    read_number(j, "Show velocity Pos Y", v.showvelocityPosY);
     read<value_t::boolean>(j, "Zoom", v.noScopeOverlay);
     read_number(j, "Zoom key", v.zoomKey);
     read<value_t::boolean>(j, "Thirdperson", v.thirdperson);
@@ -966,6 +969,9 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("No shadows", noShadows);
     WRITE("Wireframe smoke", wireframeSmoke);
     WRITE("Show velocity", showvelocity);
+    WRITE("Show velocity Custom", showvelocityM);
+    WRITE("Show velocity Pos X", showvelocityPosX);
+    WRITE("Show velocity Pos Y", showvelocityPosY);
     WRITE("Zoom", noScopeOverlay);
     WRITE("Zoom key", zoomKey);
     WRITE("Thirdperson", thirdperson);

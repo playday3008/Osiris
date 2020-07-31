@@ -151,6 +151,11 @@ public:
         bool noShadows{ false };
         bool wireframeSmoke{ false };
         ColorToggle showvelocity;
+        bool showvelocityM{ false };
+        int showvelocityPosX{ 0 };
+        int showvelocityPosY{ 0 };
+        int showvelocityResX;
+        int showvelocityResY;
         bool zoom{ false };
         int zoomKey{ 0 };
         bool thirdperson{ false };

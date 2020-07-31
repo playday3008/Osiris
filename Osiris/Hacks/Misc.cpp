@@ -964,7 +964,12 @@ void Misc::showVelocity() noexcept
         interfaces->surface->setTextColor((config->visuals.showvelocity.color));
 
     const auto [width, height] = interfaces->surface->getScreenSize();
-    interfaces->surface->setTextPosition(width / 2 - 6, height - 200);
+    config->visuals.showvelocityResX = width;
+    config->visuals.showvelocityResY = height;
+    if (config->visuals.showvelocityM)
+        interfaces->surface->setTextPosition(config->visuals.showvelocityPosX, config->visuals.showvelocityPosY);
+    else
+        interfaces->surface->setTextPosition(width / 2 - 6, height - 200);
     interfaces->surface->printText(velocitywstr);
 }
 
