@@ -417,10 +417,7 @@ void Visuals::physicsTimescale() noexcept {
 
     static ConVar* cl_phys_timescale = interfaces->cvar->findVar("cl_phys_timescale");
 
-    if (config->visuals.ragdollTimescale)
-        cl_phys_timescale->setValue(config->visuals.ragdollTimescaleValue);
-    else
-        cl_phys_timescale->setValue(1);
+    cl_phys_timescale->setValue(config->visuals.ragdollTimescale ? config->visuals.ragdollTimescaleValue : 1);
 }
 
 void Visuals::fullBright() noexcept {
