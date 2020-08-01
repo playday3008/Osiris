@@ -365,6 +365,8 @@ static void from_json(const json& j, Config::Visuals& v)
 {
     read<value_t::boolean>(j, "Disable post-processing", v.disablePostProcessing);
     read<value_t::boolean>(j, "Inverse ragdoll gravity", v.inverseRagdollGravity);
+    read<value_t::boolean>(j, "Inverse ragdoll gravity Custom", v.inverseRagdollGravityCustomize);
+    read_number(j, "Inverse ragdoll gravity Value", v.inverseRagdollGravityValue);
     read<value_t::boolean>(j, "No fog", v.noFog);
     read<value_t::boolean>(j, "No 3d sky", v.no3dSky);
     read<value_t::boolean>(j, "No aim punch", v.noAimPunch);
@@ -957,6 +959,8 @@ static void to_json(json& j, const Config::Visuals& o)
 
     WRITE("Disable post-processing", disablePostProcessing);
     WRITE("Inverse ragdoll gravity", inverseRagdollGravity);
+    WRITE("Inverse ragdoll gravity Custom", inverseRagdollGravityCustomize);
+    WRITE("Inverse ragdoll gravity Value", inverseRagdollGravityValue);
     WRITE("No fog", noFog);
     WRITE("No 3d sky", no3dSky);
     WRITE("No aim punch", noAimPunch);
