@@ -426,3 +426,47 @@ void Visuals::fullBright() noexcept {
 
     full_bright->setValue(config->visuals.fullBright ? 1 : 0);
 }
+
+struct HitMarkerInfo {
+    float hitMarkerExpTime;
+    int hitMarkerDmg;
+};
+
+std::vector<HitMarkerInfo> hitMarkerInfo;
+
+void Visuals::hitMarkerSetDamageIndicator(GameEvent* event) noexcept {
+    if (!localPlayer)
+        return;
+
+    if (config->visuals.hitMarkerDamageIndicator)
+        if (event && interfaces->engine->getPlayerForUserID(event->getInt("attacker")) == localPlayer->index()) 
+            hitMarkerInfo.push_back({ memory->globalVars->realtime + config->visuals.hitMarkerTime, event->getInt("dmg_health") });
+}
+
+void Visuals::hitMarkerDamageIndicator() noexcept
+{
+    if (config->visuals.hitMarkerDamageIndicator) {
+        if (hitMarkerInfo.empty()) return;
+
+        const auto [width, height] = interfaces->surface->getScreenSize();
+
+        for (size_t i = 0; i < hitMarkerInfo.size(); i++) {
+            const auto diff = hitMarkerInfo.at(i).hitMarkerExpTime - memory->globalVars->realtime;
+
+            if (diff < 0.f) {
+                hitMarkerInfo.erase(hitMarkerInfo.begin() + i);
+                continue;
+            }
+
+            const auto dist = config->visuals.hitMarkerDamageIndicatorDist;
+            const auto ratio = config->visuals.hitMarkerDamageIndicatorRatio - diff;
+            const auto alpha = diff * config->visuals.hitMarkerDamageIndicatorAlpha;
+
+            const auto font_id = config->visuals.hitMarkerDamageIndicatorFont;
+            interfaces->surface->setTextFont(font_id);
+            interfaces->surface->setTextPosition(width / 2 + config->visuals.hitMarkerDamageIndicatorTextX + ratio * dist / 2, height / 2 + config->visuals.hitMarkerDamageIndicatorTextY + ratio * dist);
+            interfaces->surface->setTextColor(255, 255, 255, (int)alpha);
+            interfaces->surface->printText(std::to_wstring(hitMarkerInfo.at(i).hitMarkerDmg));
+        }
+    }
+}
