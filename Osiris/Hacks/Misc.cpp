@@ -79,7 +79,7 @@ void Misc::inverseRagdollGravity() noexcept
 {
     static auto ragdollGravity = interfaces->cvar->findVar("cl_ragdoll_gravity");
     if (config->visuals.inverseRagdollGravityCustomize)
-        ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? config.visuals.inverseRagdollGravityValue : 600);
+        ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? config->visuals.inverseRagdollGravityValue : 600);
     else
         ragdollGravity->setValue(config->visuals.inverseRagdollGravity ? -600 : 600);
 }
