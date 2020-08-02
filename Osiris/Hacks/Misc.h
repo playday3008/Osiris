@@ -54,4 +54,5 @@ namespace Misc
     void playerBlocker(UserCmd* cmd) noexcept;
     void customViewmodelPosition() noexcept;
     void viewBob() noexcept;
+    void MLP() noexcept;
 }
