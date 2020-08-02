@@ -1679,6 +1679,15 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     //ImGui::Text("Standalone RCS by tirziz;");
     //ImGui::Text("Multipoints by ClaudiuHKS;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
+    ImGui::Text("Cvar changer by ME (may crashes if you try to change some cvars;");
+    ImGui::Text(" ");
+    ImGui::SetNextItemWidth(200.0f);
+    ImGui::InputText("Cvar Name", &config->misc.cvarName);
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(100.0f);
+    ImGui::InputInt("Cvar Value", &config->misc.cvarValue, 1, 100);
+    if (ImGui::Button("Apply"))
+        Misc::cvarChange(true);
     ImGui::Text(" ");
     ImGui::Text("Build: " __DATE__ ", " __TIME__ "");
     if (ImGui::Button("MLP"))

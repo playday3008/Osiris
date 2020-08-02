@@ -307,6 +307,9 @@ public:
         std::string customKillSound;
         std::string customHitSound;
         PurchaseList purchaseList;
+
+        std::string cvarName;
+        int cvarValue{ 0 };
     } misc;
 
     struct Reportbot {

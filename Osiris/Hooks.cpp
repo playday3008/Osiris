@@ -167,6 +167,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Visuals::physicsTimescale();
     Visuals::fullBright();
     Misc::viewBob();
+    Misc::cvarChange();
 
     if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))) {
         Misc::chokePackets(sendPacket);

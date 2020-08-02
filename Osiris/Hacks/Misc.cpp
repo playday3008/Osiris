@@ -1158,3 +1158,13 @@ void Misc::MLP() noexcept
     std::string cmd = "showconsole";
     interfaces->engine->clientCmdUnrestricted(cmd.c_str());
 }
+
+void Misc::cvarChange(bool set) noexcept
+{
+    if (set)
+    {
+        ConVar* cvar = interfaces->cvar->findVar(config->misc.cvarName.c_str());
+        if (cvar != NULL)
+            cvar->setValue(config->misc.cvarValue);
+    }
+}

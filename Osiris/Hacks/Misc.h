@@ -55,4 +55,5 @@ namespace Misc
     void customViewmodelPosition() noexcept;
     void viewBob() noexcept;
     void MLP() noexcept;
+    void cvarChange(bool = false) noexcept;
 }
