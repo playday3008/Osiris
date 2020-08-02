@@ -1413,10 +1413,17 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     }
     ImGui::PopID();
     ImGui::SetNextItemWidth(90.0f);
-    ImGui::InputInt("Choked packets", &config->misc.chokedPackets, 1, 5);
-    config->misc.chokedPackets = std::clamp(config->misc.chokedPackets, 0, 64);
+    if (!config->misc.pingBasedChoked) {
+        ImGui::InputInt("Choked packets", &config->misc.chokedPackets, 1, 5);
+        config->misc.chokedPackets = std::clamp(config->misc.chokedPackets, 0, 64);
+    }
+    else {
+        ImGui::Text("Choked packets: %d", config->misc.pingBasedChokedVal);
+    }
     ImGui::SameLine();
     hotkey(config->misc.chokedPacketsKey);
+    ImGui::SameLine();
+    ImGui::Checkbox("Ping Based", &config->misc.pingBasedChoked);
     ImGui::Text("Quick healthshot");
     ImGui::SameLine();
     hotkey(config->misc.quickHealthshotKey);
@@ -1666,6 +1673,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("AntiDetection by 0xE232FE;");
     ImGui::Text("No zoom on scope by MinecraftGoodGame;");
     ImGui::Text("Provide hotkey for Auto Strafe by simonsmh;");
+    ImGui::Text("PingBased Choked packets by ME;");
     //ImGui::Text("Reworked anti-aim and fakelag, made thirdperson show cmd->viewangles by DoomFishWasTaken;");
     //ImGui::Text("sv_pure Bypass by Cyk-Fad;");
     //ImGui::Text("Fake items (fake unbox and trade messages) by DoomFishWasTaken;");

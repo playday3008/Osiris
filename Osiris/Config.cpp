@@ -556,6 +556,7 @@ static void from_json(const json& j, Config::Misc& m)
     read_number(j, "Hit sound", m.hitSound);
     read_number(j, "Choked packets", m.chokedPackets);
     read_number(j, "Choked packets key", m.chokedPacketsKey);
+    read<value_t::boolean>(j, "Choked packets Ping Based", m.pingBasedChoked);
     read_number(j, "Quick healthshot key", m.quickHealthshotKey);
     read<value_t::boolean>(j, "Grenade predict", m.nadePredict);
     read<value_t::boolean>(j, "Fix tablet signal", m.fixTabletSignal);
@@ -950,6 +951,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Hit sound", hitSound);
     WRITE("Choked packets", chokedPackets);
     WRITE("Choked packets key", chokedPacketsKey);
+    WRITE("Choked packets Ping Based", pingBasedChoked);
     WRITE("Quick healthshot key", quickHealthshotKey);
     WRITE("Grenade predict", nadePredict);
     WRITE("Fix tablet signal", fixTabletSignal);
