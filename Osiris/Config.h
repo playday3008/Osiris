@@ -231,6 +231,7 @@ public:
         int menuKey{ 0x2D }; // VK_INSERT
         bool antiAfkKick{ false };
         bool autoStrafe{ false };
+        int autoStrafeKey{ 0 };
         bool bunnyHop{ false };
         int bhopHitchance{ 100 };
         int bhopMinHits{ 0 };

@@ -506,6 +506,7 @@ static void from_json(const json& j, Config::Misc& m)
     read_number(j, "Menu key", m.menuKey);
     read<value_t::boolean>(j, "Anti AFK kick", m.antiAfkKick);
     read<value_t::boolean>(j, "Auto strafe", m.autoStrafe);
+    read_number(j, "Auto strafe Key", m.autoStrafeKey);
     read<value_t::boolean>(j, "Bunny hop", m.bunnyHop);
     read_number(j, "Bhop hitchance", m.bhopHitchance);
     read_number(j, "Min hits", m.bhopMinHits);
@@ -897,6 +898,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Menu key", menuKey);
     WRITE("Anti AFK kick", antiAfkKick);
     WRITE("Auto strafe", autoStrafe);
+    WRITE("Auto strafe Key", autoStrafeKey);
     WRITE("Bunny hop", bunnyHop);
     WRITE("Bhop hitchance", bhopHitchance);
     WRITE("Min hits", bhopMinHits);

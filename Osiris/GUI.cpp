@@ -1322,6 +1322,8 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
 
     ImGui::Checkbox("Anti AFK kick", &config->misc.antiAfkKick);
     ImGui::Checkbox("Auto strafe", &config->misc.autoStrafe);
+    ImGui::SameLine();
+    hotkey(config->misc.autoStrafeKey);
     ImGui::Checkbox("Bunny hop", &config->misc.bunnyHop);
     ImGui::SliderInt("Bhop hitchance", &config->misc.bhopHitchance, 0, 100, "%d%");
     ImGui::SliderInt("Min hits", &config->misc.bhopMinHits, 0, 20, "%d%");
