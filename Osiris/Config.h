@@ -234,8 +234,8 @@ public:
         int autoStrafeKey{ 0 };
         bool bunnyHop{ false };
         int bhopHitchance{ 100 };
-        int bhopMinHits{ 0 };
-        int bhopMaxHits{ 0 };
+        int bhopMinHits{ 20 };
+        int bhopMaxHits{ 20 };
         bool customClanTag{ false };
         bool clocktag{ false };
         char clanTag[16];
