@@ -166,6 +166,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd) noexcept
     Misc::moonwalk(cmd);
     Visuals::physicsTimescale();
     Visuals::fullBright();
+    Misc::viewBob();
 
     if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))) {
         Misc::chokePackets(sendPacket);
@@ -202,6 +203,7 @@ static int __stdcall doPostScreenEffects(int param) noexcept
         Visuals::updateBrightness();
         Visuals::remove3dSky();
         Glow::render();
+        Misc::customViewmodelPosition();
     }
     return hooks->clientMode.callOriginal<int, 44>(param);
 }

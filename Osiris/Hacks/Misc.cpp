@@ -1088,3 +1088,60 @@ void Misc::playerBlocker(UserCmd* cmd) noexcept
 
     }
 }
+
+void Misc::customViewmodelPosition() noexcept {
+
+    bool KnifeOut = false;
+    bool BombOut = false;
+
+    if (localPlayer) {
+        const auto activeWeapon = localPlayer->getActiveWeapon();
+        KnifeOut = ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::Knife) ? true : false);
+        BombOut = ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::C4) ? true : false);
+    }
+
+    static ConVar* view_x = interfaces->cvar->findVar("viewmodel_offset_x");
+    static ConVar* view_y = interfaces->cvar->findVar("viewmodel_offset_y");
+    static ConVar* view_z = interfaces->cvar->findVar("viewmodel_offset_z");
+    static ConVar* sv_minspec = interfaces->cvar->findVar("sv_competitive_minspec");
+    static ConVar* cl_righthand = interfaces->cvar->findVar("cl_righthand");
+
+    *(int*)((DWORD)&sv_minspec->onChangeCallbacks + 0xC) = 0;
+
+    if (!localPlayer)
+        return;
+    
+    sv_minspec->setValue(config->misc.customViewmodelToggle ? 0 : 1);
+
+    if (config->misc.customViewmodelToggle) {
+        if (!BombOut && !KnifeOut) {
+            view_x->setValue(config->misc.viewmodel_x);
+            view_y->setValue(config->misc.viewmodel_y);
+            view_z->setValue(config->misc.viewmodel_z);
+            cl_righthand->setValue(config->misc.customViewmodelSwitchHand ? 0 : 1);
+        };
+
+        if (KnifeOut) {
+            view_x->setValue(config->misc.viewmodel_x_knife);
+            view_y->setValue(config->misc.viewmodel_y_knife);
+            view_z->setValue(config->misc.viewmodel_z_knife);
+            cl_righthand->setValue(config->misc.customViewmodelSwitchHandKnife ? 0 : 1);
+        };
+
+        if (BombOut) {
+            view_x->setValue(0);
+            view_y->setValue(0);
+            view_z->setValue(0);
+        };
+    }
+    else {
+        view_x->setValue(0);
+        view_y->setValue(0);
+        view_z->setValue(0);
+    };
+}
+
+void Misc::viewBob() noexcept {
+    static ConVar* view_bob = interfaces->cvar->findVar("cl_use_new_headbob");
+    view_bob->setValue(config->misc.view_bob ? 0 : 1);
+};

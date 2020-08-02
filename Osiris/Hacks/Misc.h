@@ -52,4 +52,6 @@ namespace Misc
     void showVelocity() noexcept;
     void drawBombDamage() noexcept;
     void playerBlocker(UserCmd* cmd) noexcept;
+    void customViewmodelPosition() noexcept;
+    void viewBob() noexcept;
 }
