@@ -409,7 +409,7 @@ static void from_json(const json& j, Config::Visuals& v)
     read_number(j, "Hit effect time", v.hitEffectTime);
     read_number(j, "Hit marker", v.hitMarker);
     read_number(j, "Hit marker time", v.hitMarkerTime);
-    read<value_t::boolean>(j, "Hit marker damage indicator", v.hitMarkerDamageIndicator);
+    read<value_t::object>(j, "Hit marker damage indicator", v.hitMarkerDamageIndicator);
     read<value_t::boolean>(j, "Hit marker damage indicator Customize", v.hitMarkerDamageIndicatorCustomize);
     read_number(j, "Hit marker damage indicator Font", v.hitMarkerDamageIndicatorFont);
     read_number(j, "Hit marker damage indicator Alpha", v.hitMarkerDamageIndicatorAlpha);

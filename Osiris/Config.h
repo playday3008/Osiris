@@ -184,7 +184,7 @@ public:
         float hitEffectTime{ 0.6f };
         int hitMarker{ 0 };
         float hitMarkerTime{ 0.6f };
-        bool hitMarkerDamageIndicator{ false };
+        ColorToggle hitMarkerDamageIndicator;
         bool hitMarkerDamageIndicatorCustomize{ false };
         int hitMarkerDamageIndicatorFont{ 31 };
         int hitMarkerDamageIndicatorAlpha{ 800 };

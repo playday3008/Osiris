@@ -1011,8 +1011,8 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderFloat("Hit effect time", &config->visuals.hitEffectTime, 0.1f, 1.5f, "%.2fs");
     ImGui::Combo("Hit marker", &config->visuals.hitMarker, "None\0Default (Cross)\0");
     ImGui::SliderFloat("Hit marker time", &config->visuals.hitMarkerTime, 0.1f, 1.5f, "%.2fs");
-    ImGui::Checkbox("Hit marker damage indicator", &config->visuals.hitMarkerDamageIndicator);
-    if (config->visuals.hitMarkerDamageIndicator) {
+    ImGuiCustom::colorPicker("Hit marker damage indicator", config->visuals.hitMarkerDamageIndicator);
+    if (config->visuals.hitMarkerDamageIndicator.enabled) {
         ImGui::SameLine();
         ImGui::Checkbox("Customize Hitmarker", &config->visuals.hitMarkerDamageIndicatorCustomize);
         if (config->visuals.hitMarkerDamageIndicatorCustomize) {
@@ -1417,9 +1417,8 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
         ImGui::InputInt("Choked packets", &config->misc.chokedPackets, 1, 5);
         config->misc.chokedPackets = std::clamp(config->misc.chokedPackets, 0, 64);
     }
-    else {
+    else
         ImGui::Text("Choked packets: %d", config->misc.pingBasedChokedVal);
-    }
     ImGui::SameLine();
     hotkey(config->misc.chokedPacketsKey);
     ImGui::SameLine();
