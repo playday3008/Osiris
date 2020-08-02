@@ -86,6 +86,8 @@ public:
         bool drawAllTicks{ false };
         bool pingBased{ false };
         int timeLimit{ 200 };
+        bool fakeLatency{ false };
+        int fakeLatencyAmmount{ 200 };
     } backtrack;
 
     struct AntiAim {
@@ -298,6 +300,7 @@ public:
         float viewmodel_z_knife{ 0 };
         bool view_bob{ false };
         bool fakePrime{ false };
+        bool svpurebypass{ false };
         bool drawAimbotFov{ false };
         float actualFov{ 0.0f };
         bool teamDamageCounter{ false };

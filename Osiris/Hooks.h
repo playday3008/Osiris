@@ -35,6 +35,7 @@ public:
     HookType sound;
     HookType surface;
     HookType viewRender;
+    HookType networkChannel;
 
     HookType svCheats;
 private:

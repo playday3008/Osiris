@@ -425,6 +425,10 @@ void GUI::renderBacktrackWindow(bool contentOnly) noexcept
         ImGui::SliderInt("Time limit", &config->backtrack.timeLimit, 1, 200, "%d ms");
         ImGui::PopItemWidth();
     };
+    ImGui::Checkbox("Enabled Fake Latency", &config->backtrack.fakeLatency);
+    ImGui::PushItemWidth(220.0f);
+    ImGui::SliderInt("Latency Ammount", &config->backtrack.fakeLatencyAmmount, 1, 200, "%d ms");
+    ImGui::PopItemWidth();
     if (!contentOnly)
         ImGui::End();
 }
@@ -1462,6 +1466,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
         ImGui::Checkbox("HeadBob", &config->misc.view_bob);
     };
     ImGui::Checkbox("Fake prime", &config->misc.fakePrime);
+    ImGui::Checkbox("Bypass sv_pure", &config->misc.svpurebypass);
     ImGui::Checkbox("Draw aimbot FOV", &config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);
     if (config->misc.teamDamageCounter)
@@ -1680,6 +1685,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     //ImGui::Text("Multipoints by ClaudiuHKS;");
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text("Cvar changer by ME (may crashes if you try to change some cvars;");
+    ImGui::Text("Bypass sv_pure and fake latency and better backtrack by notgoodusename;");
     ImGui::Text(" ");
     ImGui::SetNextItemWidth(200.0f);
     ImGui::InputText("Cvar Name", &config->misc.cvarName);
