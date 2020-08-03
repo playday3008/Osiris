@@ -1330,10 +1330,7 @@ void Misc::fakeItem(bool set) noexcept
 
 void Misc::doorSpam(UserCmd* cmd) noexcept {
 
-    if (!localPlayer)
-        return;
-
-    if (!config->misc.doorSpam)
+    if (!localPlayer || !config->misc.doorSpam || localPlayer->isDefusing())
         return;
 
     static bool doorSpam = true;
