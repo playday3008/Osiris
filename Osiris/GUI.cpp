@@ -1335,6 +1335,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Auto strafe", &config->misc.autoStrafe);
     ImGui::SameLine();
     hotkey(config->misc.autoStrafeKey);
+    ImGui::Combo("Auto strafe style", &config->misc.autoStrafeStyle, "Legit\0Normal\0");
     ImGui::Checkbox("Bunny hop", &config->misc.bunnyHop);
     ImGui::SliderInt("Bhop hitchance", &config->misc.bhopHitchance, 0, 100, "%d%");
     ImGui::SliderInt("Min hits", &config->misc.bhopMinHits, 0, 20, "%d%");
@@ -1716,6 +1717,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text("Cvar changer by ME (may crashes if you try to change some cvars;");
     ImGui::Text("Bypass sv_pure and fake latency and better backtrack by notgoodusename;");
+    ImGui::Text("AutoStrafe new style by notgoodusename;");
     ImGui::Text("mat_disable_bloom by RyDeem;");
     ImGui::Text(" ");
     ImGui::SetNextItemWidth(200.0f);

@@ -235,6 +235,7 @@ public:
         bool antiAfkKick{ false };
         bool autoStrafe{ false };
         int autoStrafeKey{ 0 };
+        int autoStrafeStyle{ 0 };
         bool bunnyHop{ false };
         int bhopHitchance{ 100 };
         int bhopMinHits{ 20 };
