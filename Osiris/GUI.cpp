@@ -1384,10 +1384,19 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     if (ImGui::InputText("", config->misc.clanTag, sizeof(config->misc.clanTag)))
         Misc::updateClanTag(true);
     ImGui::PopID();
+    ImGui::Checkbox("Chat spam", &config->misc.chatSpam);
+    ImGui::SameLine();
+    ImGui::Checkbox("Random", &config->misc.chatSpamRandom);
+    ImGui::SameLine();
+    ImGui::SliderInt("Delay", &config->misc.chatSpamDelay, 1, 60, "%d s");
+    ImGui::TextUnformatted("Phrases");
+    ImGui::PushID(1);
+    ImGui::InputTextMultiline("", &config->misc.chatSpamPhrases, { 280.0f, 120.0f });
+    ImGui::PopID();
     ImGui::Checkbox("Kill message", &config->misc.killMessage);
     ImGui::SameLine();
     ImGui::PushItemWidth(120.0f);
-    ImGui::PushID(1);
+    ImGui::PushID(2);
     ImGui::InputText("", &config->misc.killMessageString);
     ImGui::PopID();
     ImGui::Checkbox("Name stealer", &config->misc.nameStealer);
@@ -1721,6 +1730,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("AutoStrafe new style by notgoodusename;");
     ImGui::Text("mat_disable_bloom by RyDeem;");
     ImGui::Text("Door spam by notgoodusename and ME;");
+    ImGui::Text("Chat Spam by ClaudiuHKS;");
     ImGui::Text(" ");
     ImGui::SetNextItemWidth(200.0f);
     ImGui::InputText("Cvar Name", &config->misc.cvarName);

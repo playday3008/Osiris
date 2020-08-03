@@ -520,6 +520,10 @@ static void from_json(const json& j, Config::Misc& m)
     if (j.contains("Clan tag"))
         strncpy_s(m.clanTag, j["Clan tag"].get<std::string>().c_str(), _TRUNCATE);
     read<value_t::boolean>(j, "Animated clan tag", m.animatedClanTag);
+    read<value_t::boolean>(j, "Chat spam", m.chatSpam);
+    read<value_t::boolean>(j, "Chat spam random", m.chatSpamRandom);
+    read_number(j, "Chat spam delay", m.chatSpamDelay);
+    read<value_t::object>(j, "Chat spam phrases", m.chatSpamPhrases);
     read<value_t::boolean>(j, "Fast duck", m.fastDuck);
     read<value_t::boolean>(j, "Moonwalk", m.moonwalk);
     read<value_t::boolean>(j, "Edge Jump", m.edgejump);
@@ -931,6 +935,10 @@ static void to_json(json& j, const Config::Misc& o)
         j["Clan tag"] = o.clanTag;
 
     WRITE("Animated clan tag", animatedClanTag);
+    WRITE("Chat spam", chatSpam);
+    WRITE("Chat spam random", chatSpamRandom);
+    WRITE("Chat spam delay", chatSpamDelay);
+    WRITE("Chat spam phrases", chatSpamPhrases);
     WRITE("Fast duck", fastDuck);
     WRITE("Moonwalk", moonwalk);
     WRITE("Edge Jump", edgejump);

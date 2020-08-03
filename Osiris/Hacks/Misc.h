@@ -59,4 +59,5 @@ namespace Misc
     void setName(bool set) noexcept;
     void fakeItem(bool = false) noexcept;
     void doorSpam(UserCmd* cmd) noexcept;
+    void chatSpam() noexcept;
 }
