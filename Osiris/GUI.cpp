@@ -1355,6 +1355,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     ImGui::SameLine();
     hotkey(config->misc.slowwalkKey);
+    ImGui::Checkbox("Door spam", &config->misc.doorSpam);
     ImGuiCustom::colorPicker("Noscope crosshair", config->misc.noscopeCrosshair);
     ImGui::Checkbox("Recoil crosshair", &config->misc.recoilCrosshair);
     ImGui::Checkbox("Auto pistol", &config->misc.autoPistol);
@@ -1719,6 +1720,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Bypass sv_pure and fake latency and better backtrack by notgoodusename;");
     ImGui::Text("AutoStrafe new style by notgoodusename;");
     ImGui::Text("mat_disable_bloom by RyDeem;");
+    ImGui::Text("Door spam by notgoodusename and ME;");
     ImGui::Text(" ");
     ImGui::SetNextItemWidth(200.0f);
     ImGui::InputText("Cvar Name", &config->misc.cvarName);

@@ -58,4 +58,5 @@ namespace Misc
     void cvarChange(bool = false) noexcept;
     void setName(bool set) noexcept;
     void fakeItem(bool = false) noexcept;
+    void doorSpam(UserCmd* cmd) noexcept;
 }
