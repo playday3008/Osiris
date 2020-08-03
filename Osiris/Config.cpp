@@ -571,6 +571,8 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::boolean>(j, "Custom Viewmodel Knife", m.customViewmodelKnifeToggle);
     read<value_t::boolean>(j, "Custom Viewmodel Switch", m.customViewmodelSwitchHand);
     read<value_t::boolean>(j, "Custom Viewmodel Switch Knife", m.customViewmodelSwitchHandKnife);
+    read_number(j, "Custom Viewmodel Switch Bind", m.customViewmodelSwitchHandBind);
+    read_number(j, "Custom Viewmodel Switch Knife Bind", m.customViewmodelSwitchHandKnifeBind);
     read_number(j, "Custom Viewmodel Knife X", m.viewmodel_x_knife);
     read_number(j, "Custom Viewmodel Knife Y", m.viewmodel_y_knife);
     read_number(j, "Custom Viewmodel Knife Z", m.viewmodel_z_knife);
@@ -969,6 +971,8 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Custom Viewmodel Knife", customViewmodelKnifeToggle);
     WRITE("Custom Viewmodel Switch", customViewmodelSwitchHand);
     WRITE("Custom Viewmodel Switch Knife", customViewmodelSwitchHandKnife);
+    WRITE("Custom Viewmodel Switch Bind", customViewmodelSwitchHandBind);
+    WRITE("Custom Viewmodel Switch Knife Bind", customViewmodelSwitchHandKnifeBind);
     WRITE("Custom Viewmodel Knife X", viewmodel_x_knife);
     WRITE("Custom Viewmodel Knife Y", viewmodel_y_knife);
     WRITE("Custom Viewmodel Knife Z", viewmodel_z_knife);

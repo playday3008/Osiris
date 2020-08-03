@@ -290,12 +290,18 @@ public:
         bool fixTabletSignal{ false };
         float maxAngleDelta{ 255.0f };
         bool customViewmodelToggle{ false };
+        float viewmodel_x_orig{ 1 };
+        float viewmodel_y_orig{ 1 };
+        float viewmodel_z_orig{ -1 };
+        bool viewmodel_get_orig{ false };
         float viewmodel_x{ 0 };
         float viewmodel_y{ 0 };
         float viewmodel_z{ 0 };
         bool customViewmodelKnifeToggle{ false };
         bool customViewmodelSwitchHand{ false };
         bool customViewmodelSwitchHandKnife{ false };
+        int customViewmodelSwitchHandBind{ 0 };
+        int customViewmodelSwitchHandKnifeBind{ 0 };
         float viewmodel_x_knife{ 0 };
         float viewmodel_y_knife{ 0 };
         float viewmodel_z_knife{ 0 };

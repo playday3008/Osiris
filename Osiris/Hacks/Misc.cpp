@@ -1096,14 +1096,14 @@ void Misc::playerBlocker(UserCmd* cmd) noexcept
 
 void Misc::customViewmodelPosition() noexcept {
 
-    bool KnifeOut = false;
-    bool BombOut = false;
+    short int C4KnifeOut = 0;
 
-    if (localPlayer) {
+    if (localPlayer && config->misc.customViewmodelToggle) {
         const auto activeWeapon = localPlayer->getActiveWeapon();
-        KnifeOut = ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::Knife) ? true : false);
-        BombOut = ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::C4) ? true : false);
+        C4KnifeOut = ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::Knife) ? 1 : ((activeWeapon && activeWeapon->getClientClass()->classId == ClassId::C4) ? 2 : 0));
     }
+    else
+        C4KnifeOut = 2;
 
     static ConVar* view_x = interfaces->cvar->findVar("viewmodel_offset_x");
     static ConVar* view_y = interfaces->cvar->findVar("viewmodel_offset_y");
@@ -1113,37 +1113,41 @@ void Misc::customViewmodelPosition() noexcept {
 
     *(int*)((DWORD)&sv_minspec->onChangeCallbacks + 0xC) = 0;
 
-    if (!localPlayer)
-        return;
-    
+    if (!config->misc.viewmodel_get_orig) {
+        config->misc.viewmodel_x_orig = view_x->getFloat();
+        config->misc.viewmodel_y_orig = view_y->getFloat();
+        config->misc.viewmodel_z_orig = view_z->getFloat();
+        config->misc.viewmodel_get_orig = true;
+    }
+
     sv_minspec->setValue(config->misc.customViewmodelToggle ? 0 : 1);
 
-    if (config->misc.customViewmodelToggle) {
-        if (!BombOut && !KnifeOut) {
-            view_x->setValue(config->misc.viewmodel_x);
-            view_y->setValue(config->misc.viewmodel_y);
-            view_z->setValue(config->misc.viewmodel_z);
+    switch (C4KnifeOut) {
+    case 0:
+        view_x->setValue(config->misc.viewmodel_x);
+        view_y->setValue(config->misc.viewmodel_y);
+        view_z->setValue(config->misc.viewmodel_z);
+        if (config->misc.customViewmodelSwitchHandBind == 0)
             cl_righthand->setValue(config->misc.customViewmodelSwitchHand ? 0 : 1);
-        };
-
-        if (KnifeOut) {
-            view_x->setValue(config->misc.viewmodel_x_knife);
-            view_y->setValue(config->misc.viewmodel_y_knife);
-            view_z->setValue(config->misc.viewmodel_z_knife);
+        else
+            if (GetAsyncKeyState(config->misc.customViewmodelSwitchHandBind))
+                config->misc.customViewmodelSwitchHand = !config->misc.customViewmodelSwitchHand;
+        break;
+    case 1:
+        view_x->setValue(config->misc.viewmodel_x_knife);
+        view_y->setValue(config->misc.viewmodel_y_knife);
+        view_z->setValue(config->misc.viewmodel_z_knife);
+        if (config->misc.customViewmodelSwitchHandKnifeBind == 0)
             cl_righthand->setValue(config->misc.customViewmodelSwitchHandKnife ? 0 : 1);
-        };
-
-        if (BombOut) {
-            view_x->setValue(0);
-            view_y->setValue(0);
-            view_z->setValue(0);
-        };
+        else
+            if (GetAsyncKeyState(config->misc.customViewmodelSwitchHandKnifeBind))
+                config->misc.customViewmodelSwitchHandKnife = !config->misc.customViewmodelSwitchHandKnife;
+        break;
+    default:
+        view_x->setValue(config->misc.viewmodel_x_orig);
+        view_y->setValue(config->misc.viewmodel_y_orig);
+        view_z->setValue(config->misc.viewmodel_z_orig);
     }
-    else {
-        view_x->setValue(0);
-        view_y->setValue(0);
-        view_z->setValue(0);
-    };
 }
 
 void Misc::viewBob() noexcept {
