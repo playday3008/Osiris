@@ -248,6 +248,7 @@ static int __stdcall doPostScreenEffects(int param) noexcept
         Visuals::remove3dSky();
         Glow::render();
         Misc::customViewmodelPosition();
+        Visuals::removeBloom();
     }
     return hooks->clientMode.callOriginal<int, 44>(param);
 }
