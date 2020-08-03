@@ -1691,6 +1691,7 @@ void GUI::renderBETAWindow(bool contentOnly) noexcept
     ImGui::Text("Osiris-Injector by danielkrupinski and ME;");
     ImGui::Text("Cvar changer by ME (may crashes if you try to change some cvars;");
     ImGui::Text("Bypass sv_pure and fake latency and better backtrack by notgoodusename;");
+    ImGui::Text("mat_disable_bloom by RyDeem;");
     ImGui::Text(" ");
     ImGui::SetNextItemWidth(200.0f);
     ImGui::InputText("Cvar Name", &config->misc.cvarName);
