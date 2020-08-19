@@ -851,6 +851,9 @@ void GUI::renderStreamProofESPWindow(bool contentOnly) noexcept
             }
 
             ImGui::PopID();
+        
+            ImGui::SameLine(spacing);
+            ImGui::Checkbox("Health Bar", &playerConfig.healthBar);
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->streamProofESP.weapons[currentItem];
             ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
@@ -953,7 +956,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderFloat("", &config->visuals.brightness, 0.0f, 1.0f, "Brightness: %.2f");
     ImGui::PopID();
     ImGui::PopItemWidth();
-    ImGui::Combo("Skybox", &config->visuals.skybox, "Default\0cs_baggage_skybox_\0cs_tibet\0embassy\0italy\0jungle\0nukeblank\0office\0sky_cs15_daylight01_hdr\0sky_cs15_daylight02_hdr\0sky_cs15_daylight03_hdr\0sky_cs15_daylight04_hdr\0sky_csgo_cloudy01\0sky_csgo_night_flat\0sky_csgo_night02\0sky_day02_05_hdr\0sky_day02_05\0sky_dust\0sky_l4d_rural02_ldr\0sky_venice\0vertigo_hdr\0vertigo\0vertigoblue_hdr\0vietnam\0sky_lunacy\0");
+    ImGui::Combo("Skybox", &config->visuals.skybox, Helpers::getSkyboxes().data(), Helpers::getSkyboxes().size());
     ImGuiCustom::colorPicker("World color", config->visuals.world);
     ImGuiCustom::colorPicker("Sky color", config->visuals.sky);
     ImGui::Checkbox("Deagle spinner", &config->visuals.deagleSpinner);
