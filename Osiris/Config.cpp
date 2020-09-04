@@ -511,6 +511,7 @@ static void from_json(const json& j, PurchaseList& pl)
 static void from_json(const json& j, PreserveKillfeed& o)
 {
     read(j, "Enabled", o.enabled);
+    read(j, "Only Headshots", o.onlyHeadshots);
 }
 
 static void from_json(const json& j, Config::Misc& m)
@@ -883,6 +884,7 @@ static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = 
 static void to_json(json& j, const PreserveKillfeed& o, const PreserveKillfeed& dummy = {})
 {
     WRITE("Enabled", enabled);
+    WRITE("Only Headshots", onlyHeadshots);
 }
 
 static void to_json(json& j, const Config::Misc& o)
