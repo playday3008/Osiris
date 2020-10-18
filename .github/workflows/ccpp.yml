@@ -9,8 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
     - name: MSBuild SSE2
       working-directory: Osiris
       run: msbuild Osiris.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\SSE2\"
