@@ -1,3 +1,4 @@
+#include <cwctype>
 #include <fstream>
 #include <functional>
 #include <string>
@@ -953,7 +954,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderFloat("", &config->visuals.brightness, 0.0f, 1.0f, "Brightness: %.2f");
     ImGui::PopID();
     ImGui::PopItemWidth();
-    ImGui::Combo("Skybox", &config->visuals.skybox, Helpers::getSkyboxes().data(), Helpers::getSkyboxes().size());
+    ImGui::Combo("Skybox", &config->visuals.skybox, Helpers::skyboxList.data(), Helpers::skyboxList.size());
     ImGuiCustom::colorPicker("World color", config->visuals.world);
     ImGuiCustom::colorPicker("Sky color", config->visuals.sky);
     ImGui::Checkbox("Deagle spinner", &config->visuals.deagleSpinner);
@@ -1024,17 +1025,11 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         if (ImGui::ListBoxHeader("Paint Kit")) {
             const auto& kits = itemIndex == 1 ? SkinChanger::getGloveKits() : SkinChanger::getSkinKits();
 
-            const std::locale original;
-            std::locale::global(std::locale{ "en_US.utf8" });
-
-            const auto& facet = std::use_facet<std::ctype<wchar_t>>(std::locale{});
             std::wstring filterWide(filter.length(), L'\0');
             const auto newLen = mbstowcs(filterWide.data(), filter.c_str(), filter.length());
             if (newLen != static_cast<std::size_t>(-1))
                 filterWide.resize(newLen);
-            std::transform(filterWide.begin(), filterWide.end(), filterWide.begin(), [&facet](wchar_t w) { return facet.toupper(w); });
-
-            std::locale::global(original);
+            std::transform(filterWide.begin(), filterWide.end(), filterWide.begin(), [](wchar_t w) { return std::towupper(w); });
 
             for (std::size_t i = 0; i < kits.size(); ++i) {
                 if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
@@ -1107,17 +1102,11 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         if (ImGui::ListBoxHeader("Sticker")) {
             const auto& kits = SkinChanger::getStickerKits();
 
-            const std::locale original;
-            std::locale::global(std::locale{ "en_US.utf8" });
-
-            const auto& facet = std::use_facet<std::ctype<wchar_t>>(std::locale{});
             std::wstring filterWide(filter.length(), L'\0');
             const auto newLen = mbstowcs(filterWide.data(), filter.c_str(), filter.length());
             if (newLen != static_cast<std::size_t>(-1))
                 filterWide.resize(newLen);
-            std::transform(filterWide.begin(), filterWide.end(), filterWide.begin(), [&facet](wchar_t w) { return facet.toupper(w); });
-
-            std::locale::global(original);
+            std::transform(filterWide.begin(), filterWide.end(), filterWide.begin(), [](wchar_t w) { return std::towupper(w); });
 
             for (std::size_t i = 0; i < kits.size(); ++i) {
                 if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
@@ -1239,6 +1228,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Reveal suspect", &config->misc.revealSuspect);
     ImGuiCustom::colorPicker("Spectator list", config->misc.spectatorList);
     ImGuiCustom::colorPicker("Watermark", config->misc.watermark);
+    ImGuiCustom::colorPicker("Offscreen Enemies", config->misc.offscreenEnemies.color, &config->misc.offscreenEnemies.enabled);
     ImGui::Checkbox("Fix animation LOD", &config->misc.fixAnimationLOD);
     ImGui::Checkbox("Fix bone matrix", &config->misc.fixBoneMatrix);
     ImGui::Checkbox("Fix movement", &config->misc.fixMovement);

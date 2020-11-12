@@ -33,7 +33,7 @@ Memory::Memory() noexcept
     setAbsOrigin = relativeToAbsolute<decltype(setAbsOrigin)>(findPattern(L"client", "\xE8????\xEB\x19\x8B\x07") + 1);
     listLeaves = findPattern(L"client", "\x56\x52\xFF\x50\x18") + 5;
     dispatchSound = reinterpret_cast<int*>(findPattern(L"engine", "\x74\x0B\xE8????\x8B\x3D") + 3);
-    traceToExit = reinterpret_cast<decltype(traceToExit)>(findPattern(L"client", "\x55\x8B\xEC\x83\xEC\x30\xF3\x0F\x10\x75"));
+    traceToExit = findPattern(L"client", "\x55\x8B\xEC\x83\xEC\x30\xF3\x0F\x10\x75");
     viewRender = **reinterpret_cast<ViewRender***>(findPattern(L"client", "\x8B\x0D????\xFF\x75\x0C\x8B\x45\x08") + 2);
     drawScreenEffectMaterial = relativeToAbsolute<uintptr_t>(findPattern(L"client", "\xE8????\x83\xC4\x0C\x8D\x4D\xF8") + 1);
     submitReport = reinterpret_cast<decltype(submitReport)>(findPattern(L"client", "\x55\x8B\xEC\x83\xE4\xF8\x83\xEC\x28\x8B\x4D\x08"));
@@ -50,7 +50,7 @@ Memory::Memory() noexcept
     keyValuesFindKey = relativeToAbsolute<decltype(keyValuesFindKey)>(findPattern(L"client", "\xE8????\xF7\x45") + 1);
     keyValuesSetString = relativeToAbsolute<decltype(keyValuesSetString)>(findPattern(L"client", "\xE8????\x89\x77\x38") + 1);
     weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client", "\x8B\x35????\xFF\x10\x0F\xB7\xC0") + 2);
-    getPlayerViewmodelArmConfigForPlayerModel = relativeToAbsolute<decltype(getPlayerViewmodelArmConfigForPlayerModel)>(findPattern(L"client", "\xE8????\x89\x87????\x6A\x00") + 1);
+    getPlayerViewmodelArmConfigForPlayerModel = relativeToAbsolute<decltype(getPlayerViewmodelArmConfigForPlayerModel)>(findPattern(L"client", "\xE8????\x89\x87????\x6A") + 1);
     getEventDescriptor = relativeToAbsolute<decltype(getEventDescriptor)>(findPattern(L"engine", "\xE8????\x8B\xD8\x85\xDB\x75\x27") + 1);
     activeChannels = *reinterpret_cast<ActiveChannels**>(findPattern(L"engine", "\x8B\x1D????\x89\x5C\x24\x48") + 2);
     channels = *reinterpret_cast<Channel**>(findPattern(L"engine", "\x81\xC2????\x8B\x72\x54") + 2);

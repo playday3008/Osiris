@@ -46,8 +46,10 @@ void GameData::update() noexcept
 
     localPlayerData.update();
 
-    if (!localPlayer)
+    if (!localPlayer) {
+        projectileData.clear();
         return;
+    }
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
 
@@ -269,15 +271,18 @@ void ProjectileData::update(Entity* projectile) noexcept
 {
     static_cast<BaseData&>(*this) = { projectile };
 
-    if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
+    if (const auto& pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
 PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
+    origin = entity->getAbsOrigin();
+    inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
+
     if (localPlayer) {
         enemy = memory->isOtherEnemy(entity, localPlayer.get());
-        visible = entity->visibleTo(localPlayer.get());
+        visible = inViewFrustum && entity->visibleTo(localPlayer.get());
     }
 
     constexpr auto isEntityAudible = [](int entityIndex) noexcept {
