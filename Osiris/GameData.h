@@ -101,13 +101,18 @@ struct ProjectileData : BaseData {
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept;
 
+    void update(Entity* entity) noexcept;
+
+    bool dormant;
     bool enemy = false;
     bool visible = false;
     bool audible;
     bool spotted;
     bool inViewFrustum;
+    bool alive;
     float flashDuration;
     int health;
+    int handle;
     char name[128];
     Vector headMins, headMaxs;
     Vector origin;
