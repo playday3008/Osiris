@@ -93,6 +93,12 @@ jobs:
             Add-Content -path "D:\a\Osiris\Osiris\Osiris\ready\Open CFG folder (Открыть папку с КФГ).bat" -value "@echo off`r`necho `"Wait a second`"`r`nIF EXIST %USERPROFILE%\Documents\Osiris (`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n) ELSE (`r`nmkdir %USERPROFILE%\Documents\Osiris`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n)`r`nstart `"`" https://youtu.be/xY3oX_cpAVs"
       shell: pwsh
       
+    - name: Push to Discord
+      run: |
+            Compress-Archive -Path D:\a\Osiris\Osiris\Osiris\ready\* -DestinationPath "D:\a\Osiris\Osiris\Osiris\Osiris Release Windows (${{github.run_id}}).zip"
+            cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@D:\a\Osiris\Osiris\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
+      shell: pwsh
+      
     - uses: actions/upload-artifact@v1
       with:
         name: Osiris Release All
