@@ -13,7 +13,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
     - name: MSBuild SSE2
       working-directory: Osiris
-      run: msbuild Osiris.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\SSE2\"
+      run: msbuild Osiris.vcxproj /p:Configuration=Release /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\SSE2\"
     - name: Rename SSE2
       working-directory: Osiris/Release/SSE2
       run: ren Osiris.dll Osiris_SSE2.dll
@@ -42,7 +42,7 @@ jobs:
       shell: pwsh
     - name: MSBuild AVX
       working-directory: Osiris
-      run: msbuild Osiris_AVX.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX\"
+      run: msbuild Osiris_AVX.vcxproj /p:Configuration=Release /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX\"
     - name: Move to one folder AVX
       working-directory: Osiris
       run: |
@@ -66,7 +66,7 @@ jobs:
       shell: pwsh
     - name: MSBuild AVX2
       working-directory: Osiris
-      run: msbuild Osiris_AVX2.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX2\"
+      run: msbuild Osiris_AVX2.vcxproj /p:Configuration=Release /v:m /p:OutDir="D:\a\Osiris\Osiris\Osiris\Release\AVX2\"
     - name: Move to one folder AVX2
       working-directory: Osiris
       run: |
