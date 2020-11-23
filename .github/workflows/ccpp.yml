@@ -81,8 +81,8 @@ jobs:
             git clone --branch junk https://github.com/playday3008/OG-Injector.git
             cd .\OG-Injector\OG-Injector
             & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
-            Remove-Item -Path JunkDef.h
-            Move-Item -Path junk.h -Destination JunkDef.h
+            Remove-Item -Path JunkDef.hpp
+            Move-Item -Path junk.h -Destination JunkDef.hpp
             ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
             msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
             Copy-Item -Path D:\a\Osiris\Osiris\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "D:\a\Osiris\Osiris\Osiris\ready\OG-Injector.exe"
