@@ -85,7 +85,7 @@ jobs:
             Move-Item -Path junk.h -Destination JunkDef.hpp
             ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
             msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
-            Copy-Item -Path D:\a\Osiris\Osiris\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "D:\a\Osiris\Osiris\Osiris\ready\OG-Injector.exe"
+            Copy-Item -Path D:\a\Osiris\Osiris\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "D:\a\Osiris\Osiris\Osiris\ready\OG-Injector(Osiris).exe"
       shell: pwsh
       
     - name: Open CFG folder (BAT)
