@@ -78,14 +78,14 @@ jobs:
       
     - name: Get Injector
       run: |
-            git clone https://github.com/playday3008/Osiris-GOESP-inj.git
-            cd .\Osiris-GOESP-inj\src
+            git clone https://github.com/playday3008/OG-Injector.git
+            cd .\OG-Injector\OG-Injector
             & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
-            Remove-Item -Path Osiris-inj\JunkDef.h
-            Move-Item -Path junk.h -Destination Osiris-inj\JunkDef.h
-            cd .\Osiris-inj
-            msbuild Osiris-inj.vcxproj /p:Configuration=Release /p:VisualStudioVersion=16.0 /v:m
-            Copy-Item -Path D:\a\Osiris\Osiris\Osiris-GOESP-inj\src\Osiris-inj\Release\Osiris-inj.exe -Destination "D:\a\Osiris\Osiris\Osiris\ready\Osiris-Injector.exe"
+            Remove-Item -Path JunkDef.h
+            Move-Item -Path junk.h -Destination JunkDef.h
+            ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
+            msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
+            Copy-Item -Path D:\a\Osiris\Osiris\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "D:\a\Osiris\Osiris\Osiris\ready\OG-Injector.exe"
       shell: pwsh
       
     - name: Open CFG folder (BAT)
