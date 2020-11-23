@@ -78,7 +78,7 @@ jobs:
       
     - name: Get Injector
       run: |
-            git clone https://github.com/playday3008/OG-Injector.git
+            git clone --branch junk https://github.com/playday3008/OG-Injector.git
             cd .\OG-Injector\OG-Injector
             & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
             Remove-Item -Path JunkDef.h
