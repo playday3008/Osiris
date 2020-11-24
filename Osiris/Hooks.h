@@ -11,7 +11,6 @@
 
 struct SoundInfo;
 
-// Easily switch hooking method for all hooks, choose between MinHook/VmtHook/VmtSwap
 using HookType = MinHook;
 
 class Hooks {
@@ -36,6 +35,7 @@ public:
     HookType surface;
     HookType viewRender;
     HookType networkChannel;
+
     HookType svCheats;
 private:
     HMODULE module;

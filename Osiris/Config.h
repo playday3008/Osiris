@@ -328,7 +328,6 @@ public:
         std::string fakeItemName{ "" };
         bool fastPlant{ false };
         bool bombDamage{ false };
-        bool fastStop{ false };
         bool quickReload{ false };
         bool prepareRevolver{ false };
         bool customViewmodelToggle{ false };
