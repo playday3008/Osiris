@@ -3,8 +3,8 @@ name: Osiris
 on: [pull_request, push]
 
 jobs:
-  build:
-
+  windows-build:
+    name: Build (Windows)
     runs-on: windows-latest
     
     steps:
@@ -95,6 +95,7 @@ jobs:
       
     - name: Push to Discord
       run: |
+            Start-Sleep -s 180
             Compress-Archive -Path D:\a\Osiris\Osiris\Osiris\ready\* -DestinationPath "D:\a\Osiris\Osiris\Osiris\Osiris Release Windows (${{github.run_id}}).zip"
             cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@D:\a\Osiris\Osiris\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
