@@ -9,6 +9,7 @@
 #include "imgui/imgui.h"
 #include "Hacks/SkinChanger.h"
 #include "ConfigStructs.h"
+#include "InputUtil.h"
 
 class Config {
 public:
@@ -20,6 +21,8 @@ public:
     void rename(size_t, const char*) noexcept;
     void reset() noexcept;
     void listConfigs() noexcept;
+    void createConfigDir() const noexcept;
+    void openConfigDir() const noexcept;
 
     constexpr auto& getConfigs() noexcept
     {
@@ -38,9 +41,6 @@ public:
 
     struct Aimbot {
         bool enabled{ false };
-        bool onKey{ false };
-        int key{ 0 };
-        int keyMode{ 0 };
         bool aimlock{ false };
         bool silent{ false };
         bool friendlyFire{ false };
@@ -60,6 +60,9 @@ public:
         bool betweenShots{ true };
     };
     std::array<Aimbot, 40> aimbot;
+    bool aimbotOnKey{ false };
+    int aimbotKey{ 0 };
+    int aimbotKeyMode{ 0 };
 
     struct Triggerbot {
         bool enabled = false;
@@ -199,9 +202,9 @@ public:
     } style;
 
     struct Misc {
-        Misc() { }
+        Misc() { clanTag[0] = '\0'; }
 
-        int menuKey{ 0x2D }; // VK_INSERT
+        KeyBind menuKey = KeyBind::INSERT;
         bool antiAfkKick{ false };
         bool autoStrafe{ false };
         bool bunnyHop{ false };

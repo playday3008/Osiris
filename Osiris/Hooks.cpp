@@ -77,22 +77,10 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
         return true;
     }(window);
 
-    if (msg == WM_KEYDOWN && LOWORD(wParam) == config->misc.menuKey
-        || ((msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) && config->misc.menuKey == VK_LBUTTON)
-        || ((msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK) && config->misc.menuKey == VK_RBUTTON)
-        || ((msg == WM_MBUTTONDOWN || msg == WM_MBUTTONDBLCLK) && config->misc.menuKey == VK_MBUTTON)
-        || ((msg == WM_XBUTTONDOWN || msg == WM_XBUTTONDBLCLK) && config->misc.menuKey == HIWORD(wParam) + 4)) {
-        gui->open = !gui->open;
-        if (!gui->open) {
-            // ImGui::GetIO().MouseDown[0] = false;
-            interfaces->inputSystem->resetInputState();
-        }
-    }
-
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
 
-    interfaces->inputSystem->enableInput(!gui->open);
+    interfaces->inputSystem->enableInput(!gui->isOpen());
 
     return CallWindowProcW(hooks->originalWndProc, window, msg, wParam, lParam);
 }
@@ -114,7 +102,9 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     Misc::recoilCrosshair(ImGui::GetBackgroundDrawList());
     Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
 
-    if (gui->open)
+    gui->handleToggle();
+
+    if (gui->isOpen())
         gui->render();
 
     ImGui::EndFrame();
@@ -237,7 +227,7 @@ static float __STDCALL getViewModelFov(LINUX_ARGS(void* thisptr)) noexcept
     return hooks->clientMode.callOriginal<float, IS_WIN32() ? 35 : 36>() + additionalFov;
 }
 
-static void __STDCALL drawModelExecute(void* ctx, void* state, const ModelRenderInfo& info, matrix3x4* customBoneToWorld) noexcept
+static void __STDCALL drawModelExecute(LINUX_ARGS(void* thisptr,) void* ctx, void* state, const ModelRenderInfo& info, matrix3x4* customBoneToWorld) noexcept
 {
     if (interfaces->studioRender->isForcedMaterialOverride())
         return hooks->modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), customBoneToWorld);
@@ -248,6 +238,7 @@ static void __STDCALL drawModelExecute(void* ctx, void* state, const ModelRender
     static Chams chams;
     if (!chams.render(ctx, state, info, customBoneToWorld))
         hooks->modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), customBoneToWorld);
+
     interfaces->studioRender->forcedMaterialOverride(nullptr);
 }
 
@@ -277,10 +268,8 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
     if (interfaces->engine->isConnected() && !interfaces->engine->isInGame())
         Misc::changeName(true, nullptr, 0.0f);
 
-#ifdef _WIN32
     if (stage == FrameStage::START)
         GameData::update();
-#endif
 
     if (stage == FrameStage::RENDER_START) {
 #ifdef _WIN32
@@ -302,41 +291,29 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
         Visuals::applyZoom(stage);
         Misc::fixAnimationLOD(stage);
         Backtrack::update(stage);
-#ifdef _WIN32
         SkinChanger::run(stage);
-#endif
     }
     hooks->client.callOriginal<void, 37>(stage);
 }
 
-struct SoundData {
-    std::byte pad[4];
-    int entityIndex;
-    int channel;
-    const char* soundEntry;
-    std::byte pad1[8];
-    float volume;
-    std::byte pad2[44];
-};
-
-static void __STDCALL emitSound(SoundData data) noexcept
+static void __STDCALL emitSound(LINUX_ARGS(void* thisptr,) void* filter, int entityIndex, int channel, const char* soundEntry, unsigned int soundEntryHash, const char* sample, float volume, int seed, int soundLevel, int flags, int pitch, const Vector& origin, const Vector& direction, void* utlVecOrigins, bool updatePositions, float soundtime, int speakerentity, void* soundParams) noexcept
 {
-    auto modulateVolume = [&data](int(*get)(int)) {
-        if (const auto entity = interfaces->entityList->getEntity(data.entityIndex); localPlayer && entity && entity->isPlayer()) {
-            if (data.entityIndex == localPlayer->index())
-                data.volume *= get(0) / 100.0f;
+    auto modulateVolume = [&](int(*get)(int)) {
+        if (const auto entity = interfaces->entityList->getEntity(entityIndex); localPlayer && entity && entity->isPlayer()) {
+            if (entityIndex == localPlayer->index())
+                volume *= get(0) / 100.0f;
             else if (!entity->isOtherEnemy(localPlayer.get()))
-                data.volume *= get(1) / 100.0f;
+                volume *= get(1) / 100.0f;
             else
-                data.volume *= get(2) / 100.0f;
+                volume *= get(2) / 100.0f;
         }
     };
 
     modulateVolume([](int index) { return config->sound.players[index].masterVolume; });
 
-    if (strstr(data.soundEntry, "Weapon") && strstr(data.soundEntry, "Single")) {
+    if (strstr(soundEntry, "Weapon") && strstr(soundEntry, "Single")) {
         modulateVolume([](int index) { return config->sound.players[index].weaponVolume; });
-    } else if (config->misc.autoAccept && !strcmp(data.soundEntry, "UIPanorama.popup_accept_match_beep")) {
+    } else if (config->misc.autoAccept && !strcmp(soundEntry, "UIPanorama.popup_accept_match_beep")) {
         memory->acceptMatch("");
 #ifdef _WIN32
         auto window = FindWindowW(L"Valve001", NULL);
@@ -345,8 +322,8 @@ static void __STDCALL emitSound(SoundData data) noexcept
         ShowWindow(window, SW_RESTORE);
 #endif
     }
-    data.volume = std::clamp(data.volume, 0.0f, 1.0f);
-    hooks->sound.callOriginal<void, 5>(data);
+    volume = std::clamp(volume, 0.0f, 1.0f);
+    hooks->sound.callOriginal<void, IS_WIN32() ? 5 : 6>(filter, entityIndex, channel, soundEntry, soundEntryHash, sample, volume, seed, soundLevel, flags, pitch, std::cref(origin), std::cref(direction), utlVecOrigins, updatePositions, soundtime, speakerentity, soundParams);
 }
 
 static bool __STDCALL shouldDrawFog(LINUX_ARGS(void* thisptr)) noexcept
@@ -369,16 +346,16 @@ static bool __STDCALL shouldDrawFog(LINUX_ARGS(void* thisptr)) noexcept
     return !config->visuals.noFog;
 }
 
-static bool __STDCALL shouldDrawViewModel() noexcept
+static bool __STDCALL shouldDrawViewModel(LINUX_ARGS(void* thisptr)) noexcept
 {
     if (config->visuals.zoom && localPlayer && localPlayer->fov() < 45 && localPlayer->fovStart() < 45)
         return false;
-    return hooks->clientMode.callOriginal<bool, 27>();
+    return hooks->clientMode.callOriginal<bool, IS_WIN32() ? 27 : 28>();
 }
 
 static void __STDCALL lockCursor() noexcept
 {
-    if (gui->open)
+    if (gui->isOpen())
         return interfaces->surface->unlockCursor();
     return hooks->surface.callOriginal<void, 67>();
 }
@@ -561,15 +538,10 @@ static void swapWindow(SDL_Window* window) noexcept
         Misc::recoilCrosshair(ImGui::GetBackgroundDrawList());
         Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
 
-        if (gui->open)
-            gui->render();
+        gui->handleToggle();
 
-        if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
-            gui->open = !gui->open;
-            if (!gui->open)
-                interfaces->inputSystem->resetInputState();
-            ImGui::GetIO().MouseDrawCursor = gui->open;
-        }
+        if (gui->isOpen())
+            gui->render();
     }
 
     ImGui::EndFrame();
@@ -601,9 +573,7 @@ void Hooks::install() noexcept
 #endif
     
 #ifdef _WIN32
-    modelRender.init(interfaces->modelRender);
     panel.init(interfaces->panel);
-    sound.init(interfaces->sound);
     bspQuery.init(interfaces->engine->getBSPTreeQuery());
 #endif
 
@@ -614,6 +584,7 @@ void Hooks::install() noexcept
     clientMode.hookAt(IS_WIN32() ? 17 : 18, shouldDrawFog);
     clientMode.hookAt(IS_WIN32() ? 18 : 19, overrideView);
     clientMode.hookAt(IS_WIN32() ? 24 : 25, createMove);
+    clientMode.hookAt(IS_WIN32() ? 27 : 28, shouldDrawViewModel);
     clientMode.hookAt(IS_WIN32() ? 35 : 36, getViewModelFov);
     clientMode.hookAt(IS_WIN32() ? 44 : 45, doPostScreenEffects);
     clientMode.hookAt(IS_WIN32() ? 58 : 61, updateColorCorrectionWeights);
@@ -623,9 +594,15 @@ void Hooks::install() noexcept
     engine.hookAt(101, getScreenAspectRatio);
     engine.hookAt(IS_WIN32() ? 218 : 219, getDemoPlaybackParameters);
 
+    modelRender.init(interfaces->modelRender);
+    modelRender.hookAt(21, drawModelExecute);
+
+    sound.init(interfaces->sound);
+    sound.hookAt(IS_WIN32() ? 5 : 6, emitSound);
+
     surface.init(interfaces->surface);
     surface.hookAt(IS_WIN32() ? 15 : 14, setDrawColor);
-
+    
     svCheats.init(interfaces->cvar->findVar("sv_cheats"));
     svCheats.hookAt(IS_WIN32() ? 13 : 16, svCheatsGetBool);
 
@@ -635,10 +612,7 @@ void Hooks::install() noexcept
 
 #ifdef _WIN32
     bspQuery.hookAt(6, listLeavesInBox);
-    clientMode.hookAt(27, shouldDrawViewModel);
-    modelRender.hookAt(21, drawModelExecute);
     panel.hookAt(41, paintTraverse);
-    sound.hookAt(5, emitSound);
     surface.hookAt(67, lockCursor);
 
     if (DWORD oldProtection; VirtualProtect(memory->dispatchSound, 4, PAGE_EXECUTE_READWRITE, &oldProtection)) {
@@ -672,19 +646,25 @@ static DWORD WINAPI unload(HMODULE moduleHandle) noexcept
     FreeLibraryAndExitThread(moduleHandle, 0);
 }
 
+#endif
+
 void Hooks::uninstall() noexcept
 {
+#ifdef _WIN32
     if constexpr (std::is_same_v<HookType, MinHook>) {
         MH_DisableHook(MH_ALL_HOOKS);
         MH_Uninitialize();
     }
+#endif
 
+#ifdef _WIN32
     bspQuery.restore();
+    panel.restore();
+#endif
     client.restore();
     clientMode.restore();
     engine.restore();
     modelRender.restore();
-    panel.restore();
     sound.restore();
     surface.restore();
     svCheats.restore();
@@ -694,6 +674,7 @@ void Hooks::uninstall() noexcept
 
     Glow::clearCustomObjects();
 
+#ifdef _WIN32
     SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(originalWndProc));
     **reinterpret_cast<void***>(memory->present) = originalPresent;
     **reinterpret_cast<void***>(memory->reset) = originalReset;
@@ -705,9 +686,13 @@ void Hooks::uninstall() noexcept
 
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(unload), moduleHandle, 0, nullptr))
         CloseHandle(thread);
+#else
+    *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent) = pollEvent;
+    *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow) = swapWindow;
+#endif
 }
 
-#else
+#ifndef _WIN32
 
 static int pollEvent(SDL_Event* event) noexcept
 {
@@ -727,23 +712,10 @@ static int pollEvent(SDL_Event* event) noexcept
 
     const auto result = hooks->pollEvent(event);
 
-    if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->open)
+    if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->isOpen())
         event->type = 0;
 
     return result;
-}
-
-void Hooks::uninstall() noexcept
-{
-    client.restore();
-    clientMode.restore();
-    engine.restore();
-    surface.restore();
-    svCheats.restore();
-    viewRender.restore();
-
-    *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent) = pollEvent;
-    *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow) = swapWindow;
 }
 
 Hooks::Hooks() noexcept

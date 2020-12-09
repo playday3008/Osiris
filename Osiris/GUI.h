@@ -9,8 +9,10 @@ class GUI {
 public:
     GUI() noexcept;
     void render() noexcept;
-    bool open = false;
+    void handleToggle() noexcept;
+    bool isOpen() noexcept { return open; }
 private:
+    bool open = false;
     static void hotkey(int&) noexcept;
     void updateColors() const noexcept;
     void renderMenuBar() noexcept;
@@ -49,6 +51,8 @@ private:
         ImFont* tahoma = nullptr;
         ImFont* segoeui = nullptr;
     } fonts;
+
+    float timeToNextConfigRefresh = 0.1f;
 };
 
 inline std::unique_ptr<GUI> gui;

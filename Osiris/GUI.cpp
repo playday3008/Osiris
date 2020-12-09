@@ -83,6 +83,31 @@ void GUI::updateColors() const noexcept
     }
 }
 
+#include "InputUtil.h"
+
+static void hotkey2(KeyBind& key) noexcept
+{
+    ImGui::Text("[ %s ]", key.toString());
+
+    if (!ImGui::IsItemHovered())
+        return;
+
+    ImGui::SetTooltip("Press any key to change keybind");
+    key.setToPressedKey();
+}
+
+void GUI::handleToggle() noexcept
+{
+    if (config->misc.menuKey.isPressed()) {
+        open = !open;
+        if (!open)
+            interfaces->inputSystem->resetInputState();
+#ifndef _WIN32
+        ImGui::GetIO().MouseDrawCursor = gui->open;
+#endif
+    }
+}
+
 void GUI::hotkey(int& key) noexcept
 {
     key ? ImGui::Text("[ %s ]", interfaces->inputSystem->virtualKeyToString(key)) : ImGui::TextUnformatted("[ key ]");
@@ -93,7 +118,7 @@ void GUI::hotkey(int& key) noexcept
     ImGui::SetTooltip("Press any key to change keybind");
     ImGuiIO& io = ImGui::GetIO();
     for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++)
-        if (ImGui::IsKeyPressed(i) && i != config->misc.menuKey)
+        if (ImGui::IsKeyPressed(i))// && i != config->misc.menuKey)
 #ifdef _WIN32
             key = i != VK_ESCAPE ? i : 0;
 #else
@@ -101,7 +126,7 @@ void GUI::hotkey(int& key) noexcept
 #endif
 
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
-        if (ImGui::IsMouseDown(i) && i + (i > 1 ? 2 : 1) != config->misc.menuKey)
+        if (ImGui::IsMouseDown(i))// && i + (i > 1 ? 2 : 1) != config->misc.menuKey)
             key = i + (i > 1 ? 2 : 1);
 }
 
@@ -235,13 +260,13 @@ void GUI::renderAimbotWindow(bool contentOnly) noexcept
     ImGui::Separator();
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 220.0f);
-    ImGui::Checkbox("On key", &config->aimbot[currentWeapon].onKey);
+    ImGui::Checkbox("On key", &config->aimbotOnKey);
     ImGui::SameLine();
-    hotkey(config->aimbot[currentWeapon].key);
+    hotkey(config->aimbotKey);
     ImGui::SameLine();
     ImGui::PushID(2);
     ImGui::PushItemWidth(70.0f);
-    ImGui::Combo("", &config->aimbot[currentWeapon].keyMode, "Hold\0Toggle\0");
+    ImGui::Combo("", &config->aimbotKeyMode, "Hold\0Toggle\0");
     ImGui::PopItemWidth();
     ImGui::PopID();
     ImGui::Checkbox("Aimlock", &config->aimbot[currentWeapon].aimlock);
@@ -1218,8 +1243,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::SetColumnOffset(1, 230.0f);
     ImGui::TextUnformatted("Menu key");
     ImGui::SameLine();
-    hotkey(config->misc.menuKey);
-
+    hotkey2(config->misc.menuKey);
     ImGui::Checkbox("Anti AFK kick", &config->misc.antiAfkKick);
     ImGui::Checkbox("Auto strafe", &config->misc.autoStrafe);
     ImGui::Checkbox("Bunny hop", &config->misc.bunnyHop);
@@ -1382,8 +1406,11 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
     if (!contentOnly) {
         if (!window.config)
             return;
-        ImGui::SetNextWindowSize({ 290.0f, 0.0f });
-        ImGui::Begin("Config", &window.config, windowFlags);
+        ImGui::SetNextWindowSize({ 320.0f, 0.0f });
+        if (!ImGui::Begin("Config", &window.config, windowFlags)) {
+            ImGui::End();
+            return;
+        }
     }
 
     ImGui::Columns(2, nullptr, false);
@@ -1394,16 +1421,21 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
 
     ImGui::PushItemWidth(160.0f);
 
-    if (ImGui::Button("Reload configs", { 160.0f, 25.0f }))
-        config->listConfigs();
-
     auto& configItems = config->getConfigs();
     static int currentConfig = -1;
 
+    static std::string buffer;
+
+    timeToNextConfigRefresh -= ImGui::GetIO().DeltaTime;
+    if (timeToNextConfigRefresh <= 0.0f) {
+        config->listConfigs();
+        if (const auto it = std::find(configItems.begin(), configItems.end(), buffer); it != configItems.end())
+            currentConfig = std::distance(configItems.begin(), it);
+        timeToNextConfigRefresh = 0.1f;
+    }
+
     if (static_cast<std::size_t>(currentConfig) >= configItems.size())
         currentConfig = -1;
-
-    static std::string buffer;
 
     if (ImGui::ListBox("", &currentConfig, [](void* data, int idx, const char** out_text) {
         auto& vector = *static_cast<std::vector<std::string>*>(data);
@@ -1421,6 +1453,9 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
         ImGui::NextColumn();
 
         ImGui::PushItemWidth(100.0f);
+
+        if (ImGui::Button("Open config directory"))
+            config->openConfigDir();
 
         if (ImGui::Button("Create config", { 100.0f, 25.0f }))
             config->add(buffer.c_str());
@@ -1464,8 +1499,11 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
                 config->save(currentConfig);
             if (ImGui::Button("Delete selected", { 100.0f, 25.0f })) {
                 config->remove(currentConfig);
-                currentConfig = -1;
-                buffer.clear();
+
+                if (static_cast<std::size_t>(currentConfig) < configItems.size())
+                    buffer = configItems[currentConfig];
+                else
+                    buffer.clear();
             }
         }
         ImGui::Columns(1);
