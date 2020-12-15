@@ -22,7 +22,12 @@ struct Key {
 };
 
 // indices must match KeyBind::KeyCode enum, and has to be sorted alphabetically
-constexpr auto keyMap = std::to_array<Key>({
+static constexpr auto keyMap = std::to_array<Key>({
+    { "'", WIN32_LINUX(VK_OEM_7, SDL_SCANCODE_APOSTROPHE) },
+    { ",", WIN32_LINUX(VK_OEM_COMMA, SDL_SCANCODE_COMMA) },
+    { "-", WIN32_LINUX(VK_OEM_MINUS, SDL_SCANCODE_MINUS) },
+    { ".", WIN32_LINUX(VK_OEM_PERIOD, SDL_SCANCODE_PERIOD) },
+    { "/", WIN32_LINUX(VK_OEM_2, SDL_SCANCODE_SLASH) },
     { "0", WIN32_LINUX('0', SDL_SCANCODE_0) },
     { "1", WIN32_LINUX('1', SDL_SCANCODE_1) },
     { "2", WIN32_LINUX('2', SDL_SCANCODE_2) },
@@ -33,14 +38,20 @@ constexpr auto keyMap = std::to_array<Key>({
     { "7", WIN32_LINUX('7', SDL_SCANCODE_7) },
     { "8", WIN32_LINUX('8', SDL_SCANCODE_8) },
     { "9", WIN32_LINUX('9', SDL_SCANCODE_9) },
+    { ";", WIN32_LINUX(VK_OEM_1, SDL_SCANCODE_SEMICOLON) },
+    { "=", WIN32_LINUX(VK_OEM_PLUS, SDL_SCANCODE_EQUALS) },
     { "A", WIN32_LINUX('A', SDL_SCANCODE_A) },
     { "ADD", WIN32_LINUX(VK_ADD, SDL_SCANCODE_KP_PLUS) },
     { "B", WIN32_LINUX('B', SDL_SCANCODE_B) },
     { "C", WIN32_LINUX('C', SDL_SCANCODE_C) },
     { "D", WIN32_LINUX('D', SDL_SCANCODE_D) },
     { "DECIMAL", WIN32_LINUX(VK_DECIMAL, SDL_SCANCODE_KP_DECIMAL) },
+    { "DELETE", WIN32_LINUX(VK_DELETE, SDL_SCANCODE_DELETE) },
     { "DIVIDE", WIN32_LINUX(VK_DIVIDE, SDL_SCANCODE_KP_DIVIDE) },
+    { "DOWN", WIN32_LINUX(VK_DOWN, SDL_SCANCODE_DOWN) },
     { "E", WIN32_LINUX('E', SDL_SCANCODE_E) },
+    { "END", WIN32_LINUX(VK_END, SDL_SCANCODE_END) },
+    { "ENTER", WIN32_LINUX(VK_RETURN, SDL_SCANCODE_RETURN) },
     { "F", WIN32_LINUX('F', SDL_SCANCODE_F) },
     { "F1", WIN32_LINUX(VK_F1, SDL_SCANCODE_F1) },
     { "F10", WIN32_LINUX(VK_F10, SDL_SCANCODE_F10) },
@@ -56,11 +67,16 @@ constexpr auto keyMap = std::to_array<Key>({
     { "F9", WIN32_LINUX(VK_F9, SDL_SCANCODE_F9) },
     { "G", WIN32_LINUX('G', SDL_SCANCODE_G) },
     { "H", WIN32_LINUX('H', SDL_SCANCODE_H) },
+    { "HOME", WIN32_LINUX(VK_HOME, SDL_SCANCODE_HOME) },
     { "I", WIN32_LINUX('I', SDL_SCANCODE_I) },
     { "INSERT", WIN32_LINUX(VK_INSERT, SDL_SCANCODE_INSERT) },
     { "J", WIN32_LINUX('J', SDL_SCANCODE_J) },
     { "K", WIN32_LINUX('K', SDL_SCANCODE_K) },
     { "L", WIN32_LINUX('L', SDL_SCANCODE_L) },
+    { "LALT", WIN32_LINUX(VK_LMENU, SDL_SCANCODE_LALT) },
+    { "LCTRL", WIN32_LINUX(VK_LCONTROL, SDL_SCANCODE_LCTRL) },
+    { "LEFT", WIN32_LINUX(VK_LEFT, SDL_SCANCODE_LEFT) },
+    { "LSHIFT", WIN32_LINUX(VK_LSHIFT, SDL_SCANCODE_LSHIFT) },
     { "M", WIN32_LINUX('M', SDL_SCANCODE_M) },
     { "MOUSE1", 0 },
     { "MOUSE2", 1 },
@@ -84,20 +100,33 @@ constexpr auto keyMap = std::to_array<Key>({
     { "NUMPAD_9", WIN32_LINUX(VK_NUMPAD9, SDL_SCANCODE_KP_9) },
     { "O", WIN32_LINUX('O', SDL_SCANCODE_O) },
     { "P", WIN32_LINUX('P', SDL_SCANCODE_P) },
+    { "PAGE_DOWN", WIN32_LINUX(VK_NEXT, SDL_SCANCODE_PAGEDOWN) },
+    { "PAGE_UP", WIN32_LINUX(VK_PRIOR, SDL_SCANCODE_PAGEUP) },
     { "Q", WIN32_LINUX('Q', SDL_SCANCODE_Q) },
     { "R", WIN32_LINUX('R', SDL_SCANCODE_R) },
+    { "RALT", WIN32_LINUX(VK_RMENU, SDL_SCANCODE_RALT) },
+    { "RCTRL", WIN32_LINUX(VK_RCONTROL, SDL_SCANCODE_RCTRL) },
+    { "RIGHT", WIN32_LINUX(VK_RIGHT, SDL_SCANCODE_RIGHT) },
+    { "RSHIFT", WIN32_LINUX(VK_RSHIFT, SDL_SCANCODE_RSHIFT) },
     { "S", WIN32_LINUX('S', SDL_SCANCODE_S) },
     { "SPACE", WIN32_LINUX(VK_SPACE, SDL_SCANCODE_SPACE) },
     { "SUBTRACT", WIN32_LINUX(VK_SUBTRACT, SDL_SCANCODE_KP_MINUS) },
     { "T", WIN32_LINUX('T', SDL_SCANCODE_T) },
+    { "TAB", WIN32_LINUX(VK_TAB, SDL_SCANCODE_TAB) },
     { "U", WIN32_LINUX('U', SDL_SCANCODE_U) },
+    { "UP", WIN32_LINUX(VK_UP, SDL_SCANCODE_UP) },
     { "V", WIN32_LINUX('V', SDL_SCANCODE_V) },
     { "W", WIN32_LINUX('W', SDL_SCANCODE_W) },
     { "X", WIN32_LINUX('X', SDL_SCANCODE_X) },
     { "Y", WIN32_LINUX('Y', SDL_SCANCODE_Y) },
     { "Z", WIN32_LINUX('Z', SDL_SCANCODE_X) },
-    { "`", WIN32_LINUX(VK_OEM_3, SDL_SCANCODE_GRAVE) },
+    { "[", WIN32_LINUX(VK_OEM_4, SDL_SCANCODE_LEFTBRACKET) },
+    { "\\", WIN32_LINUX(VK_OEM_5, SDL_SCANCODE_BACKSLASH) },
+    { "]", WIN32_LINUX(VK_OEM_6, SDL_SCANCODE_RIGHTBRACKET) },
+    { "`", WIN32_LINUX(VK_OEM_3, SDL_SCANCODE_GRAVE) }
 });
+
+static_assert(keyMap.size() == KeyBind::MAX);
 
 KeyBind::KeyBind(KeyCode keyCode) noexcept
 {
@@ -173,6 +202,9 @@ void KeyBind::setToPressedKey() noexcept
                 auto it = std::find_if(keyMap.begin(), keyMap.end(), [i](const Key& key) { return key.code == i; });
                 if (it != keyMap.end()) {
                     keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+                    // Treat AltGr as RALT
+                    if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
+                        keyCode = KeyCode::RALT;
                     return;
                 }
             }
