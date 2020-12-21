@@ -10,11 +10,11 @@ enum class WeaponId : short;
 
 template <typename T>
 struct UtlMemory {
-	T& operator[](int i) noexcept { return memory[i]; };
+    T& operator[](int i) noexcept { return memory[i]; };
 
-	T* memory;
-	int allocationCount;
-	int growSize;
+    T* memory;
+    int allocationCount;
+    int growSize;
 };
 
 template <typename Key, typename Value>
@@ -29,13 +29,13 @@ struct Node {
 
 template <typename Key, typename Value>
 struct UtlMap {
-	void* lessFunc;
-	UtlMemory<Node<Key, Value>> memory;
+    void* lessFunc;
+    UtlMemory<Node<Key, Value>> memory;
     int root;
-	int numElements;
+    int numElements;
     int firstFree;
     int lastAlloc;
-	Node<Key, Value>* elements;
+    Node<Key, Value>* elements;
 };
 
 struct String {
@@ -60,10 +60,11 @@ struct StickerKit {
     String itemName;
 };
 
-class EconItemDefintion {
+class EconItemDefinition {
 public:
     VIRTUAL_METHOD(WeaponId, getWeaponId, 0, (), (this))
     VIRTUAL_METHOD(const char*, getItemBaseName, 2, (), (this))
+    VIRTUAL_METHOD(const char*, getItemTypeName, 3, (), (this))
 };
 
 struct ItemListEntry {
@@ -91,24 +92,30 @@ public:
     VIRTUAL_METHOD(int, getItemPaintKit, 6, (int index), (this, index))
 };
 
+struct EconItemQualityDefinition {
+    int value;
+    const char* name;
+    unsigned weight;
+    bool explicitMatchesOnly;
+    bool canSupportSet;
+    const char* hexColor;
+};
+
 class ItemSchema {
 public:
-#ifdef _WIN32
-    PAD(0x288)
-#else
-    PAD(0x370)
-#endif
-
+    PAD(WIN32_LINUX(0x88, 0xB8))
+    UtlMap<int, EconItemQualityDefinition> qualities;
+    PAD(WIN32_LINUX(0x1DC, 0x288))
     UtlMap<int, PaintKit*> paintKits;
     UtlMap<int, StickerKit*> stickerKits;
 
-    VIRTUAL_METHOD(EconItemDefintion*, getItemDefinitionInterface, 4, (WeaponId id), (this, id))
+    VIRTUAL_METHOD(EconItemDefinition*, getItemDefinitionInterface, 4, (WeaponId id), (this, id))
     VIRTUAL_METHOD(const char*, getRarityName, 19, (uint8_t rarity), (this, rarity))
     VIRTUAL_METHOD(int, getItemSetCount, 28, (), (this))
     VIRTUAL_METHOD(EconItemSetDefinition*, getItemSet, 29, (int index), (this, index))
     VIRTUAL_METHOD(EconLootListDefinition*, getLootList, 32, (int index), (this, index))
     VIRTUAL_METHOD(int, getLootListCount, 34, (), (this))
-    VIRTUAL_METHOD(EconItemDefintion*, getItemDefinitionByName, 42, (const char* name), (this, name))
+    VIRTUAL_METHOD(EconItemDefinition*, getItemDefinitionByName, 42, (const char* name), (this, name))
 };
 
 class ItemSystem {

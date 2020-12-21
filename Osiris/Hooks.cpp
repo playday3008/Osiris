@@ -101,6 +101,8 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     Misc::noscopeCrosshair(ImGui::GetBackgroundDrawList());
     Misc::recoilCrosshair(ImGui::GetBackgroundDrawList());
     Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
+    Misc::drawBombTimer();
+    Visuals::hitMarker(nullptr, ImGui::GetBackgroundDrawList());
 
     gui->handleToggle();
 
@@ -253,10 +255,8 @@ static bool __FASTCALL svCheatsGetBool(void* _this) noexcept
 static void __STDCALL paintTraverse(unsigned int panel, bool forceRepaint, bool allowForce) noexcept
 {
     if (interfaces->panel->getName(panel) == "MatSystemTopPanel") {
-        Misc::drawBombTimer();
         Misc::spectatorList();
         Misc::watermark();
-        Visuals::hitMarker();
     }
     hooks->panel.callOriginal<void, 41>(panel, forceRepaint, allowForce);
 }
@@ -272,9 +272,7 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
         GameData::update();
 
     if (stage == FrameStage::RENDER_START) {
-#ifdef _WIN32
         Misc::preserveKillfeed();
-#endif
         Misc::disablePanoramablur();
         Visuals::colorWorld();
         Misc::fakePrime();
@@ -537,6 +535,8 @@ static void swapWindow(SDL_Window* window) noexcept
         Misc::noscopeCrosshair(ImGui::GetBackgroundDrawList());
         Misc::recoilCrosshair(ImGui::GetBackgroundDrawList());
         Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
+        Misc::drawBombTimer();
+        Visuals::hitMarker(nullptr, ImGui::GetBackgroundDrawList());
 
         gui->handleToggle();
 

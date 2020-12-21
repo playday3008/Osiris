@@ -23,8 +23,9 @@
 * SOFTWARE.
 */
 #pragma once
-#include <map>
-#include <vector>
+
+#include <array>
+#include <string>
 
 enum ItemDefinitionIndex : int
 {
@@ -136,20 +137,9 @@ namespace game_data
         const char* name = nullptr;
     };
 
-    struct quality_name
-    {
-        constexpr quality_name(const int index, const char* name) :
-            index(index),
-            name(name)
-        {}
-
-        int index = 0;
-        const char* name = nullptr;
-    };
-
     const weapon_info* get_weapon_info(int defindex);
 
-    constexpr weapon_name knife_names[]{
+    constexpr auto knife_names = std::to_array<weapon_name>({
         {0, "Default"},
         {WEAPON_KNIFE_BAYONET, "Bayonet"},
         {WEAPON_KNIFE_CSS, "Classic Knife"},
@@ -170,10 +160,9 @@ namespace game_data
         {WEAPON_KNIFE_GYPSY_JACKKNIFE, "Navaja Knife"},
         {WEAPON_KNIFE_STILETTO, "Stiletto Knife"},
         {WEAPON_KNIFE_WIDOWMAKER, "Talon Knife"}
-    };
+    });
 
-
-    constexpr weapon_name glove_names[]{
+    constexpr auto glove_names = std::to_array<weapon_name>({
         {0, "Default"},
         {GLOVE_STUDDED_BROKENFANG, "Brokenfang"},
         {GLOVE_STUDDED_BLOODHOUND, "Bloodhound"},
@@ -185,9 +174,9 @@ namespace game_data
         {GLOVE_MOTORCYCLE, "Motorcycle"},
         {GLOVE_SPECIALIST, "Specialist"},
         {GLOVE_HYDRA, "Hydra"}
-    };
+    });
 
-    constexpr weapon_name weapon_names[]{
+    constexpr auto weapon_names = std::to_array<weapon_name>({
         {WEAPON_KNIFE, "Knife"},
         {GLOVE_T_SIDE, "Glove"},
         {7, "AK-47"},
@@ -224,19 +213,5 @@ namespace game_data
         {24, "UMP-45"},
         {61, "USP-S"},
         {25, "XM1014"},
-    };
-
-    constexpr quality_name quality_names[]{
-        {0, "Default"},
-        {1, "Genuine"},
-        {2, "Vintage"},
-        {3, "Unusual"},
-        {5, "Community"},
-        {6, "Developer"},
-        {7, "Self-Made"},
-        {8, "Customized"},
-        {9, "Strange"},
-        {10, "Completed"},
-        {12, "Tournament"}
-    };
+    });
 }
