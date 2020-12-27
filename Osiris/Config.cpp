@@ -59,6 +59,8 @@ Config::Config(const char* name) noexcept
     listConfigs();
     misc.clanTag[0] = '\0';
 
+    load(u8"default.json", false);
+
 #ifdef _WIN32
     LOGFONTW logfont;
     logfont.lfCharSet = ANSI_CHARSET;
@@ -610,9 +612,14 @@ static void from_json(const json& j, Config::Misc::Reportbot& r)
 
 void Config::load(size_t id, bool incremental) noexcept
 {
+    load((const char8_t*)configs[id].c_str(), incremental);
+}
+
+void Config::load(const char8_t* name, bool incremental) noexcept
+{
     json j;
 
-    if (std::ifstream in{ path / (const char8_t*)configs[id].c_str() }; in.good())
+    if (std::ifstream in{ path / name }; in.good())
         in >> j;
     else
         return;

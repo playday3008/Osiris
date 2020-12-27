@@ -1054,6 +1054,20 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
     auto& selected_entry = config->skinChanger[itemIndex];
     selected_entry.itemIdIndex = itemIndex;
 
+    constexpr auto rarityColor = [](int rarity) {
+        constexpr auto rarityColors = std::to_array<ImU32>({
+            IM_COL32(0,     0,   0,   0),
+            IM_COL32(176, 195, 217, 255),
+            IM_COL32( 94, 152, 217, 255),
+            IM_COL32( 75, 105, 255, 255),
+            IM_COL32(136,  71, 255, 255),
+            IM_COL32(211,  44, 230, 255),
+            IM_COL32(235,  75,  75, 255),
+            IM_COL32(228, 174,  57, 255)
+        });
+        return rarityColors[static_cast<std::size_t>(rarity) < rarityColors.size() ? rarity : 0];
+    };
+
     {
         ImGui::SameLine();
         ImGui::Checkbox("Enabled", &selected_entry.enabled);
@@ -1073,6 +1087,8 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             static std::array<std::string, game_data::weapon_names.size()> filters;
             auto& filter = filters[itemIndex];
             ImGui::InputTextWithHint("", "Search", &filter);
+            if (ImGui::IsItemHovered() || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
+                ImGui::SetKeyboardFocusHere(-1);
             ImGui::PopID();
 
             const std::wstring filterWide = Helpers::toUpper(Helpers::toWideString(filter));
@@ -1081,12 +1097,12 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                     if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
                         ImGui::PushID(i);
                         const auto selected = i == selected_entry.paint_kit_vector_index;
-                        if (ImGui::Selectable(kits[i].name.c_str(), selected)) {
+                        if (ImGui::SelectableWithBullet(kits[i].name.c_str(), rarityColor(kits[i].rarity), selected)) {
                             selected_entry.paint_kit_vector_index = i;
                             ImGui::CloseCurrentPopup();
                         }
-                        if (selected)
-                            ImGui::SetItemDefaultFocus();
+                        if (selected && ImGui::IsWindowAppearing())
+                            ImGui::SetScrollHereY();
                         ImGui::PopID();
                     }
                 }
@@ -1103,14 +1119,14 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
 
         if (itemIndex == 0) {
             ImGui::Combo("Knife", &selected_entry.definition_override_vector_index, [](void* data, int idx, const char** out_text) {
-                *out_text = game_data::knife_names[idx].name;
+                *out_text = SkinChanger::getKnifeTypes()[idx].name.c_str();
                 return true;
-                }, nullptr, game_data::knife_names.size(), 5);
+                }, nullptr, SkinChanger::getKnifeTypes().size(), 5);
         } else if (itemIndex == 1) {
             ImGui::Combo("Glove", &selected_entry.definition_override_vector_index, [](void* data, int idx, const char** out_text) {
-                *out_text = game_data::glove_names[idx].name;
+                *out_text = SkinChanger::getGloveTypes()[idx].name.c_str();
                 return true;
-                }, nullptr, game_data::glove_names.size(), 5);
+                }, nullptr, SkinChanger::getGloveTypes().size(), 5);
         } else {
             static auto unused_value = 0;
             selected_entry.definition_override_vector_index = 0;
@@ -1156,6 +1172,8 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             static std::array<std::string, game_data::weapon_names.size()> filters;
             auto& filter = filters[itemIndex];
             ImGui::InputTextWithHint("", "Search", &filter);
+            if (ImGui::IsItemHovered() || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
+                ImGui::SetKeyboardFocusHere(-1);
             ImGui::PopID();
 
             const std::wstring filterWide = Helpers::toUpper(Helpers::toWideString(filter));
@@ -1164,12 +1182,12 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                     if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
                         ImGui::PushID(i);
                         const auto selected = i == selected_sticker.kit_vector_index;
-                        if (ImGui::Selectable(kits[i].name.c_str(), selected)) {
+                        if (ImGui::SelectableWithBullet(kits[i].name.c_str(), rarityColor(kits[i].rarity), selected)) {
                             selected_sticker.kit_vector_index = i;
                             ImGui::CloseCurrentPopup();
                         }
-                        if (selected)
-                            ImGui::SetItemDefaultFocus();
+                        if (selected && ImGui::IsWindowAppearing())
+                            ImGui::SetScrollHereY();
                         ImGui::PopID();
                     }
                 }

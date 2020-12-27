@@ -50,6 +50,12 @@ struct PaintKit {
     String name;
     String description;
     String itemName;
+    String sameNameFamilyAggregate;
+    String pattern;
+    String normal;
+    String logoMaterial;
+    bool baseDiffuseOverride;
+    int rarity;
 };
 
 struct StickerKit {
@@ -65,6 +71,18 @@ public:
     VIRTUAL_METHOD(WeaponId, getWeaponId, 0, (), (this))
     VIRTUAL_METHOD(const char*, getItemBaseName, 2, (), (this))
     VIRTUAL_METHOD(const char*, getItemTypeName, 3, (), (this))
+    VIRTUAL_METHOD(const char*, getWorldDisplayModel, 7, (), (this))
+    VIRTUAL_METHOD(std::uint8_t, getRarity, 12, (), (this))
+
+    int getCapabilities() noexcept
+    {
+        return *reinterpret_cast<int*>(this + WIN32_LINUX(0x148, 0x1F8));
+    }
+
+    bool isPaintable() noexcept
+    {
+        return getCapabilities() & 1; // ITEM_CAP_PAINTABLE
+    }
 };
 
 struct ItemListEntry {
@@ -101,11 +119,22 @@ struct EconItemQualityDefinition {
     const char* hexColor;
 };
 
+struct AlternateIconData {
+    String simpleName;
+    String largeSimpleName;
+    String iconURLSmall;
+    String iconURLLarge;
+};
+
 class ItemSchema {
 public:
     PAD(WIN32_LINUX(0x88, 0xB8))
     UtlMap<int, EconItemQualityDefinition> qualities;
-    PAD(WIN32_LINUX(0x1DC, 0x288))
+    PAD(WIN32_LINUX(0x48, 0x60))
+    UtlMap<int, EconItemDefinition*> itemsSorted;
+    PAD(WIN32_LINUX(0x104, 0x168))
+    UtlMap<std::uint64_t, AlternateIconData> alternateIcons;
+    PAD(WIN32_LINUX(0x48, 0x60))
     UtlMap<int, PaintKit*> paintKits;
     UtlMap<int, StickerKit*> stickerKits;
 
