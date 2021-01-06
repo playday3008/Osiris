@@ -95,12 +95,6 @@
     <ClCompile Include="SDK\GlobalVars.cpp">
       <Filter>SDK</Filter>
     </ClCompile>
-    <ClCompile Include="nSkinz\item_definitions.cpp">
-      <Filter>nSkinz</Filter>
-    </ClCompile>
-    <ClCompile Include="nSkinz\Utilities\Platform.cpp">
-      <Filter>nSkinz</Filter>
-    </ClCompile>
     <ClCompile Include="Hacks\AntiAim.cpp">
       <Filter>Hacks</Filter>
     </ClCompile>
@@ -319,17 +313,11 @@
     <ClInclude Include="SDK\VarMapping.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="nSkinz\Utilities\Platform.hpp">
-      <Filter>nSkinz</Filter>
-    </ClInclude>
     <ClInclude Include="nSkinz\item_definitions.hpp">
       <Filter>nSkinz</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Localize.h">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="nSkinz\Utilities\vmt_smart_hook.hpp">
-      <Filter>nSkinz</Filter>
     </ClInclude>
     <ClInclude Include="SDK\GameEvent.h">
       <Filter>SDK</Filter>

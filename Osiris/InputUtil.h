@@ -23,6 +23,7 @@ public:
         A,
         ADD,
         B,
+        BACKSPACE,
         C,
         D,
         DECIMAL,
@@ -118,7 +119,7 @@ public:
     bool isPressed() const noexcept;
     bool isDown() const noexcept;
 
-    void setToPressedKey() noexcept;
+    bool setToPressedKey() noexcept;
 private:
     KeyCode keyCode;
 };

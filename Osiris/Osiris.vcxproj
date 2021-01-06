@@ -38,8 +38,6 @@
     <ClCompile Include="MinHook\hook.c" />
     <ClCompile Include="MinHook\trampoline.c" />
     <ClCompile Include="Netvars.cpp" />
-    <ClCompile Include="nSkinz\item_definitions.cpp" />
-    <ClCompile Include="nSkinz\Utilities\Platform.cpp" />
     <ClCompile Include="Osiris.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hacks\Misc.cpp" />
@@ -91,8 +89,6 @@
     <ClInclude Include="Netvars.h" />
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="nSkinz\item_definitions.hpp" />
-    <ClInclude Include="nSkinz\Utilities\Platform.hpp" />
-    <ClInclude Include="nSkinz\Utilities\vmt_smart_hook.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SDK\AnimState.h" />
     <ClInclude Include="SDK\Client.h" />

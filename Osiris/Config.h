@@ -62,7 +62,7 @@ public:
     };
     std::array<Aimbot, 40> aimbot;
     bool aimbotOnKey{ false };
-    int aimbotKey{ 0 };
+    KeyBind aimbotKey = KeyBind::NONE;
     int aimbotKeyMode{ 0 };
 
     struct Triggerbot {
@@ -118,6 +118,8 @@ public:
     std::unordered_map<std::string, Chams> chams;
 
     struct StreamProofESP {
+        KeyBind toggleKey = KeyBind::NONE;
+
         std::unordered_map<std::string, Player> allies;
         std::unordered_map<std::string, Player> enemies;
         std::unordered_map<std::string, Weapon> weapons;
@@ -151,7 +153,7 @@ public:
         bool zoom{ false };
         int zoomKey{ 0 };
         bool thirdperson{ false };
-        int thirdpersonKey{ 0 };
+        KeyBind thirdpersonKey = KeyBind::NONE;
         int thirdpersonDistance{ 0 };
         int viewmodelFov{ 0 };
         int fov{ 0 };

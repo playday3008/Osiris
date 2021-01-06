@@ -5,8 +5,10 @@
 #include <vector>
 
 #include "../nSkinz/item_definitions.hpp"
+#include "../SDK/WeaponId.h"
 
 enum class FrameStage;
+class Entity;
 class GameEvent;
 
 namespace SkinChanger
@@ -51,6 +53,8 @@ namespace SkinChanger
     const std::vector<Quality>& getQualities() noexcept;
     const std::vector<Item>& getGloveTypes() noexcept;
     const std::vector<Item>& getKnifeTypes() noexcept;
+
+    void fixKnifeAnimation(Entity* viewModelWeapon, long& sequence) noexcept;
 }
 
 

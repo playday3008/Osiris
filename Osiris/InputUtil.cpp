@@ -43,6 +43,7 @@ static constexpr auto keyMap = std::to_array<Key>({
     { "A", WIN32_LINUX('A', SDL_SCANCODE_A) },
     { "ADD", WIN32_LINUX(VK_ADD, SDL_SCANCODE_KP_PLUS) },
     { "B", WIN32_LINUX('B', SDL_SCANCODE_B) },
+    { "BACKSPACE", WIN32_LINUX(VK_BACK, SDL_SCANCODE_BACKSPACE) },
     { "C", WIN32_LINUX('C', SDL_SCANCODE_C) },
     { "D", WIN32_LINUX('D', SDL_SCANCODE_D) },
     { "DECIMAL", WIN32_LINUX(VK_DECIMAL, SDL_SCANCODE_KP_DECIMAL) },
@@ -181,19 +182,22 @@ bool KeyBind::isDown() const noexcept
     return static_cast<std::size_t>(keyCode) < keyMap.size() && ImGui::IsKeyDown(keyMap[keyCode].code);
 }
 
-void KeyBind::setToPressedKey() noexcept
+bool KeyBind::setToPressedKey() noexcept
 {
     if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Escape])) {
         keyCode = KeyCode::NONE;
+        return true;
     } else if (ImGui::GetIO().MouseWheel < 0.0f) {
         keyCode = KeyCode::MOUSEWHEEL_DOWN;
+        return true;
     } else if (ImGui::GetIO().MouseWheel > 0.0f) {
         keyCode = KeyCode::MOUSEWHEEL_UP;
+        return true;
     } else {
         for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
             if (ImGui::IsMouseClicked(i)) {
                 keyCode = KeyCode(KeyCode::MOUSE1 + i);
-                return;
+                return true;
             }
         }
 
@@ -205,9 +209,10 @@ void KeyBind::setToPressedKey() noexcept
                     // Treat AltGr as RALT
                     if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
                         keyCode = KeyCode::RALT;
-                    return;
+                    return true;
                 }
             }
         }
     }
+    return false;
 }

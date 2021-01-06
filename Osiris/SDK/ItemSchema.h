@@ -71,6 +71,7 @@ public:
     VIRTUAL_METHOD(WeaponId, getWeaponId, 0, (), (this))
     VIRTUAL_METHOD(const char*, getItemBaseName, 2, (), (this))
     VIRTUAL_METHOD(const char*, getItemTypeName, 3, (), (this))
+    VIRTUAL_METHOD(const char*, getPlayerDisplayModel, 6, (), (this))
     VIRTUAL_METHOD(const char*, getWorldDisplayModel, 7, (), (this))
     VIRTUAL_METHOD(std::uint8_t, getRarity, 12, (), (this))
 
@@ -82,6 +83,11 @@ public:
     bool isPaintable() noexcept
     {
         return getCapabilities() & 1; // ITEM_CAP_PAINTABLE
+    }
+
+    const char* getDefinitionName() noexcept
+    {
+        return *reinterpret_cast<const char**>(this + WIN32_LINUX(0x1BC, 0x2B0));
     }
 };
 
