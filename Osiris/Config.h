@@ -72,14 +72,13 @@ public:
         bool ignoreFlash = false;
         bool ignoreSmoke = false;
         bool killshot = false;
-        bool onKey = false;
-        int key = 0;
         int hitgroup = 0;
         int shotDelay = 0;
         int minDamage = 1;
         float burstTime = 0.0f;
     };
     std::array<Triggerbot, 40> triggerbot;
+    KeyBind triggerbotHoldKey = KeyBind::NONE;
 
     struct Backtrack {
         bool enabled{ false };
@@ -119,6 +118,7 @@ public:
 
     struct StreamProofESP {
         KeyBind toggleKey = KeyBind::NONE;
+        KeyBind holdKey = KeyBind::NONE;
 
         std::unordered_map<std::string, Player> allies;
         std::unordered_map<std::string, Player> enemies;
@@ -151,7 +151,7 @@ public:
         bool noShadows{ false };
         bool wireframeSmoke{ false };
         bool zoom{ false };
-        int zoomKey{ 0 };
+        KeyBind zoomKey = KeyBind::NONE;
         bool thirdperson{ false };
         KeyBind thirdpersonKey = KeyBind::NONE;
         int thirdpersonDistance{ 0 };
@@ -242,8 +242,8 @@ public:
         bool oppositeHandKnife = false;
         PreserveKillfeed preserveKillfeed;
         char clanTag[16];
-        int edgejumpkey{ 0 };
-        int slowwalkKey{ 0 };
+        KeyBind edgejumpkey = KeyBind::NONE;
+        KeyBind slowwalkKey = KeyBind::NONE;
         ColorToggleThickness noscopeCrosshair;
         ColorToggleThickness recoilCrosshair;
         ColorToggle spectatorList;
@@ -253,10 +253,10 @@ public:
         int banColor{ 6 };
         std::string banText{ "Cheater has been permanently banned from official CS:GO servers." };
         ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f };
-        int prepareRevolverKey{ 0 };
+        KeyBind prepareRevolverKey = KeyBind::NONE;
         int hitSound{ 0 };
         int chokedPackets{ 0 };
-        int chokedPacketsKey{ 0 };
+        KeyBind chokedPacketsKey = KeyBind::NONE;
         int quickHealthshotKey{ 0 };
         float maxAngleDelta{ 255.0f };
         int killSound{ 0 };

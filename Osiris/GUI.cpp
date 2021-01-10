@@ -96,12 +96,13 @@ void GUI::updateColors() const noexcept
 
 #include "InputUtil.h"
 
-static void hotkey2(const char* label, KeyBind& key, const ImVec2& size = { 100.0f, 0.0f }) noexcept
+static void hotkey2(const char* label, KeyBind& key, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept
 {
-    ImGui::TextUnformatted(label);
-    ImGui::SameLine();
+    const auto id = ImGui::GetID(label);
+    ImGui::PushID(label);
 
-    auto id = ImGui::GetID(label);
+    ImGui::TextUnformatted(label);
+    ImGui::SameLine(samelineOffset);
 
     if (ImGui::GetActiveID() == id) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
@@ -114,6 +115,8 @@ static void hotkey2(const char* label, KeyBind& key, const ImVec2& size = { 100.
     } else if (ImGui::Button(key.toString(), size)) {
         ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
     }
+
+    ImGui::PopID();
 }
 
 void GUI::handleToggle() noexcept
@@ -128,7 +131,7 @@ void GUI::handleToggle() noexcept
     }
 }
 
-void GUI::hotkey(int& key) noexcept
+[[deprecated]] void GUI::hotkey(int& key) noexcept
 {
     key ? ImGui::Text("[ %s ]", interfaces->inputSystem->virtualKeyToString(key)) : ImGui::TextUnformatted("[ key ]");
 
@@ -436,9 +439,7 @@ void GUI::renderTriggerbotWindow(bool contentOnly) noexcept
     ImGui::SameLine();
     ImGui::Checkbox("Enabled", &config->triggerbot[currentWeapon].enabled);
     ImGui::Separator();
-    ImGui::Checkbox("On key", &config->triggerbot[currentWeapon].onKey);
-    ImGui::SameLine();
-    hotkey(config->triggerbot[currentWeapon].key);
+    hotkey2("Hold Key", config->triggerbotHoldKey);
     ImGui::Checkbox("Friendly fire", &config->triggerbot[currentWeapon].friendlyFire);
     ImGui::Checkbox("Scoped only", &config->triggerbot[currentWeapon].scopedOnly);
     ImGui::Checkbox("Ignore flash", &config->triggerbot[currentWeapon].ignoreFlash);
@@ -583,7 +584,8 @@ void GUI::renderStreamProofESPWindow(bool contentOnly) noexcept
         ImGui::Begin("ESP", &window.streamProofESP, windowFlags);
     }
 
-    hotkey2("Toggle Key", config->streamProofESP.toggleKey);
+    hotkey2("Toggle Key", config->streamProofESP.toggleKey, 80.0f);
+    hotkey2("Hold Key", config->streamProofESP.holdKey, 80.0f);
     ImGui::Separator();
 
     static std::size_t currentCategory;
@@ -989,7 +991,9 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::NextColumn();
     ImGui::Checkbox("Zoom", &config->visuals.zoom);
     ImGui::SameLine();
-    hotkey(config->visuals.zoomKey);
+    ImGui::PushID("Zoom Key");
+    hotkey2("", config->visuals.zoomKey);
+    ImGui::PopID();
     ImGui::Checkbox("Thirdperson", &config->visuals.thirdperson);
     ImGui::SameLine();
     ImGui::PushID("Thirdperson Key");
@@ -1085,6 +1089,18 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
         return rarityColors[static_cast<std::size_t>(rarity) < rarityColors.size() ? rarity : 0];
     };
 
+    constexpr auto passesFilter = [](const std::wstring& str, std::wstring filter) {
+        constexpr auto delimiter = L" ";
+        wchar_t* _;
+        wchar_t* token = std::wcstok(filter.data(), delimiter, &_);
+        while (token) {
+            if (!std::wcsstr(str.c_str(), token))
+                return false;
+            token = std::wcstok(nullptr, delimiter, &_);
+        }
+        return true;
+    };
+
     {
         ImGui::SameLine();
         ImGui::Checkbox("Enabled", &selected_entry.enabled);
@@ -1111,7 +1127,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             const std::wstring filterWide = Helpers::toUpper(Helpers::toWideString(filter));
             if (ImGui::BeginChild("##scrollarea", { 0, 6 * ImGui::GetTextLineHeightWithSpacing() })) {
                 for (std::size_t i = 0; i < kits.size(); ++i) {
-                    if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
+                    if (filter.empty() || passesFilter(kits[i].nameUpperCase, filterWide)) {
                         ImGui::PushID(i);
                         const auto selected = i == selected_entry.paint_kit_vector_index;
                         if (ImGui::SelectableWithBullet(kits[i].name.c_str(), rarityColor(kits[i].rarity), selected)) {
@@ -1196,7 +1212,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             const std::wstring filterWide = Helpers::toUpper(Helpers::toWideString(filter));
             if (ImGui::BeginChild("##scrollarea", { 0, 6 * ImGui::GetTextLineHeightWithSpacing() })) {
                 for (std::size_t i = 0; i < kits.size(); ++i) {
-                    if (filter.empty() || wcsstr(kits[i].nameUpperCase.c_str(), filterWide.c_str())) {
+                    if (filter.empty() || passesFilter(kits[i].nameUpperCase, filterWide)) {
                         ImGui::PushID(i);
                         const auto selected = i == selected_sticker.kit_vector_index;
                         if (ImGui::SelectableWithBullet(kits[i].name.c_str(), rarityColor(kits[i].rarity), selected)) {
@@ -1305,10 +1321,14 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Moonwalk", &config->misc.moonwalk);
     ImGui::Checkbox("Edge Jump", &config->misc.edgejump);
     ImGui::SameLine();
-    hotkey(config->misc.edgejumpkey);
+    ImGui::PushID("Edge Jump Key");
+    hotkey2("", config->misc.edgejumpkey);
+    ImGui::PopID();
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     ImGui::SameLine();
-    hotkey(config->misc.slowwalkKey);
+    ImGui::PushID("Slowwalk Key");
+    hotkey2("", config->misc.slowwalkKey);
+    ImGui::PopID();
     ImGuiCustom::colorPicker("Noscope crosshair", config->misc.noscopeCrosshair);
     ImGuiCustom::colorPicker("Recoil crosshair", config->misc.recoilCrosshair);
     ImGui::Checkbox("Auto pistol", &config->misc.autoPistol);
@@ -1362,7 +1382,9 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Quick reload", &config->misc.quickReload);
     ImGui::Checkbox("Prepare revolver", &config->misc.prepareRevolver);
     ImGui::SameLine();
-    hotkey(config->misc.prepareRevolverKey);
+    ImGui::PushID("Prepare revolver Key");
+    hotkey2("", config->misc.prepareRevolverKey);
+    ImGui::PopID();
     ImGui::Combo("Hit Sound", &config->misc.hitSound, "None\0Metal\0Gamesense\0Bell\0Glass\0Custom\0");
     if (config->misc.hitSound == 5) {
         ImGui::InputText("Hit Sound filename", &config->misc.customHitSound);
@@ -1381,10 +1403,14 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::InputInt("Choked packets", &config->misc.chokedPackets, 1, 5);
     config->misc.chokedPackets = std::clamp(config->misc.chokedPackets, 0, 64);
     ImGui::SameLine();
-    hotkey(config->misc.chokedPacketsKey);
+    ImGui::PushID("Choked packets Key");
+    hotkey2("", config->misc.chokedPacketsKey);
+    ImGui::PopID();
+    /*
     ImGui::Text("Quick healthshot");
     ImGui::SameLine();
     hotkey(config->misc.quickHealthshotKey);
+    */
     ImGui::Checkbox("Grenade Prediction", &config->misc.nadePredict);
     ImGui::Checkbox("Fix tablet signal", &config->misc.fixTabletSignal);
     ImGui::SetNextItemWidth(120.0f);

@@ -12,8 +12,8 @@ public:
     void handleToggle() noexcept;
     bool isOpen() noexcept { return open; }
 private:
-    bool open = false;
-    static void hotkey(int&) noexcept;
+    bool open = true;
+    [[deprecated]] static void hotkey(int&) noexcept;
     void updateColors() const noexcept;
     void renderMenuBar() noexcept;
     void renderAimbotWindow(bool contentOnly = false) noexcept;

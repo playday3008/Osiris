@@ -36,15 +36,12 @@
 
 #include "../imguiCustom.h"
 
+static bool edgejumpActive;
+
 void Misc::edgejump(UserCmd* cmd) noexcept
 {
-#ifdef _WIN32
-    if (!config->misc.edgejump || !GetAsyncKeyState(config->misc.edgejumpkey))
+    if (!config->misc.edgejump || !edgejumpActive)
         return;
-#else
-    if (!config->misc.edgejump)
-        return;
-#endif
 
     if (!localPlayer || !localPlayer->isAlive())
         return;
@@ -56,15 +53,12 @@ void Misc::edgejump(UserCmd* cmd) noexcept
         cmd->buttons |= UserCmd::IN_JUMP;
 }
 
+static bool slowwalkActive;
+
 void Misc::slowwalk(UserCmd* cmd) noexcept
 {
-#ifdef _WIN32
-    if (!config->misc.slowwalk || !GetAsyncKeyState(config->misc.slowwalkKey))
+    if (!config->misc.slowwalk || !slowwalkActive)
         return;
-#else
-    if (!config->misc.slowwalk)
-        return;
-#endif
 
     if (!localPlayer || !localPlayer->isAlive())
         return;
@@ -284,18 +278,15 @@ void Misc::watermark() noexcept
     }
 }
 
+static bool prepareRevolverActive;
+
 void Misc::prepareRevolver(UserCmd* cmd) noexcept
 {
     constexpr auto timeToTicks = [](float time) {  return static_cast<int>(0.5f + time / memory->globalVars->intervalPerTick); };
     constexpr float revolverPrepareTime{ 0.234375f };
 
     static float readyTime;
-    if (config->misc.prepareRevolver && localPlayer &&
-#ifdef _WIN32
-    (!config->misc.prepareRevolverKey || GetAsyncKeyState(config->misc.prepareRevolverKey))) {
-#else
-    true){
-#endif
+    if (config->misc.prepareRevolver && localPlayer && prepareRevolverActive) {
         const auto activeWeapon = localPlayer->getActiveWeapon();
         if (activeWeapon && activeWeapon->itemDefinitionIndex2() == WeaponId::Revolver) {
             if (!readyTime) readyTime = memory->globalVars->serverTime() + revolverPrepareTime;
@@ -562,37 +553,6 @@ void Misc::nadePredict() noexcept
     nadeVar->setValue(config->misc.nadePredict);
 }
 
-void Misc::quickHealthshot(UserCmd* cmd) noexcept
-{
-    if (!localPlayer)
-        return;
-
-    static bool inProgress{ false };
-
-#ifdef _WIN32
-    if (GetAsyncKeyState(config->misc.quickHealthshotKey) & 1)
-        inProgress = true;
-#endif
-
-    if (auto activeWeapon{ localPlayer->getActiveWeapon() }; activeWeapon && inProgress) {
-        if (activeWeapon->getClientClass()->classId == ClassId::Healthshot && localPlayer->nextAttack() <= memory->globalVars->serverTime() && activeWeapon->nextPrimaryAttack() <= memory->globalVars->serverTime())
-            cmd->buttons |= UserCmd::IN_ATTACK;
-        else {
-            for (auto weaponHandle : localPlayer->weapons()) {
-                if (weaponHandle == -1)
-                    break;
-
-                if (const auto weapon{ interfaces->entityList->getEntityFromHandle(weaponHandle) }; weapon && weapon->getClientClass()->classId == ClassId::Healthshot) {
-                    cmd->weaponselect = weapon->index();
-                    cmd->weaponsubtype = weapon->getWeaponSubType();
-                    return;
-                }
-            }
-        }
-        inProgress = false;
-    }
-}
-
 void Misc::fixTabletSignal() noexcept
 {
     if (config->misc.fixTabletSignal && localPlayer) {
@@ -684,11 +644,11 @@ void Misc::autoPistol(UserCmd* cmd) noexcept
     }
 }
 
+static bool chokePacketsActive;
+
 void Misc::chokePackets(bool& sendPacket) noexcept
 {
-#ifdef _WIN32
-    if (!config->misc.chokedPacketsKey || GetAsyncKeyState(config->misc.chokedPacketsKey))
-#endif
+    if (chokePacketsActive)
         sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= config->misc.chokedPackets;
 }
 
@@ -1034,4 +994,12 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         drawList->AddCircleFilled(pos, 11.0f, color & IM_COL32_A_MASK, 40);
         drawList->AddCircleFilled(pos, 10.0f, color, 40);
     }
+}
+
+void Misc::updateInput() noexcept
+{
+    edgejumpActive = config->misc.edgejumpkey.isDown();
+    slowwalkActive = config->misc.slowwalkKey.isDown();
+    prepareRevolverActive = config->misc.prepareRevolverKey == KeyBind::NONE || config->misc.prepareRevolverKey.isDown();
+    chokePacketsActive = config->misc.chokedPacketsKey == KeyBind::NONE || config->misc.chokedPacketsKey.isDown();
 }

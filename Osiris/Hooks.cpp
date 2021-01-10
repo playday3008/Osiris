@@ -13,6 +13,9 @@
 
 #include "MinHook/MinHook.h"
 #elif __linux__
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include <SDL2/SDL.h>
 
 #include "imgui/GL/gl3w.h"
@@ -107,6 +110,8 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     Aimbot::updateInput();
     Visuals::updateInput();
     StreamProofESP::updateInput();
+    Misc::updateInput();
+    Triggerbot::updateInput();
 
     gui->handleToggle();
 
@@ -168,7 +173,6 @@ static bool __STDCALL createMove(LINUX_ARGS(void* thisptr,) float inputSampleTim
     Misc::stealNames();
     Misc::revealRanks(cmd);
     Misc::quickReload(cmd);
-    Misc::quickHealthshot(cmd);
     Misc::fixTabletSignal();
     Misc::slowwalk(cmd);
 
@@ -541,9 +545,12 @@ static void swapWindow(SDL_Window* window) noexcept
         Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
         Misc::drawBombTimer();
         Visuals::hitMarker(nullptr, ImGui::GetBackgroundDrawList());
+
         Aimbot::updateInput();
         Visuals::updateInput();
         StreamProofESP::updateInput();
+        Misc::updateInput();
+        Triggerbot::updateInput();
 
         gui->handleToggle();
 
@@ -618,15 +625,22 @@ void Hooks::install() noexcept
     viewRender.hookAt(IS_WIN32() ? 41 : 42, renderSmokeOverlay);
 
 #ifdef _WIN32
+    if (DWORD oldProtection; VirtualProtect(memory->dispatchSound, 4, PAGE_EXECUTE_READWRITE, &oldProtection)) {
+#else
+    if (const auto addressPageAligned = std::uintptr_t(memory->dispatchSound) - std::uintptr_t(memory->dispatchSound) % sysconf(_SC_PAGESIZE);
+        mprotect((void*)addressPageAligned, 4, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
+#endif
+        originalDispatchSound = decltype(originalDispatchSound)(uintptr_t(memory->dispatchSound + 1) + *memory->dispatchSound);
+        *memory->dispatchSound = uintptr_t(dispatchSound) - uintptr_t(memory->dispatchSound + 1);
+#ifdef _WIN32
+        VirtualProtect(memory->dispatchSound, 4, oldProtection, nullptr);
+#endif
+    }
+
+#ifdef _WIN32
     bspQuery.hookAt(6, listLeavesInBox);
     panel.hookAt(41, paintTraverse);
     surface.hookAt(67, lockCursor);
-
-    if (DWORD oldProtection; VirtualProtect(memory->dispatchSound, 4, PAGE_EXECUTE_READWRITE, &oldProtection)) {
-        originalDispatchSound = decltype(originalDispatchSound)(uintptr_t(memory->dispatchSound + 1) + *memory->dispatchSound);
-        *memory->dispatchSound = uintptr_t(dispatchSound) - uintptr_t(memory->dispatchSound + 1);
-        VirtualProtect(memory->dispatchSound, 4, oldProtection, nullptr);
-    }
 
     if constexpr (std::is_same_v<HookType, MinHook>)
         MH_EnableHook(MH_ALL_HOOKS);
