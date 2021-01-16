@@ -88,7 +88,6 @@
     <ClInclude Include="MinHook\trampoline.h" />
     <ClInclude Include="Netvars.h" />
     <ClInclude Include="nlohmann\json.hpp" />
-    <ClInclude Include="nSkinz\item_definitions.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SDK\AnimState.h" />
     <ClInclude Include="SDK\Client.h" />
@@ -152,6 +151,7 @@
     <ClInclude Include="SDK\VarMapping.h" />
     <ClInclude Include="SDK\Vector.h" />
     <ClInclude Include="SDK\Utils.h" />
+    <ClInclude Include="SDK\ViewRenderBeams.h" />
     <ClInclude Include="SDK\VirtualMethod.h" />
     <ClInclude Include="SDK\WeaponId.h" />
     <ClInclude Include="SDK\WeaponData.h" />

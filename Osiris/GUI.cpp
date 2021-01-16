@@ -131,28 +131,6 @@ void GUI::handleToggle() noexcept
     }
 }
 
-[[deprecated]] void GUI::hotkey(int& key) noexcept
-{
-    key ? ImGui::Text("[ %s ]", interfaces->inputSystem->virtualKeyToString(key)) : ImGui::TextUnformatted("[ key ]");
-
-    if (!ImGui::IsItemHovered())
-        return;
-
-    ImGui::SetTooltip("Press any key to change keybind");
-    ImGuiIO& io = ImGui::GetIO();
-    for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++)
-        if (ImGui::IsKeyPressed(i))// && i != config->misc.menuKey)
-#ifdef _WIN32
-            key = i != VK_ESCAPE ? i : 0;
-#else
-            key = i;
-#endif
-
-    for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
-        if (ImGui::IsMouseDown(i))// && i + (i > 1 ? 2 : 1) != config->misc.menuKey)
-            key = i + (i > 1 ? 2 : 1);
-}
-
 static void menuBarItem(const char* name, bool& enabled) noexcept
 {
     if (ImGui::MenuItem(name)) {
@@ -1028,6 +1006,8 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderFloat("Hit effect time", &config->visuals.hitEffectTime, 0.1f, 1.5f, "%.2fs");
     ImGui::Combo("Hit marker", &config->visuals.hitMarker, "None\0Default (Cross)\0");
     ImGui::SliderFloat("Hit marker time", &config->visuals.hitMarkerTime, 0.1f, 1.5f, "%.2fs");
+    ImGuiCustom::colorPopup("Bullet Tracers", config->visuals.bulletTracers.color.color, nullptr, nullptr, &config->visuals.bulletTracers.enabled);
+
     ImGui::Checkbox("Color correction", &config->visuals.colorCorrection.enabled);
     ImGui::SameLine();
     bool ccPopup = ImGui::Button("Edit");
@@ -1067,9 +1047,9 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
 
     ImGui::PushItemWidth(110.0f);
     ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
-        *out_text = game_data::weapon_names[idx].name;
+        *out_text = SkinChanger::weapon_names[idx].name;
         return true;
-        }, nullptr, game_data::weapon_names.size(), 5);
+        }, nullptr, SkinChanger::weapon_names.size(), 5);
     ImGui::PopItemWidth();
 
     auto& selected_entry = config->skinChanger[itemIndex];
@@ -1117,7 +1097,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             ImGui::PushID("Paint Kit");
             ImGui::PushID("Search");
             ImGui::SetNextItemWidth(-1.0f);
-            static std::array<std::string, game_data::weapon_names.size()> filters;
+            static std::array<std::string, SkinChanger::weapon_names.size()> filters;
             auto& filter = filters[itemIndex];
             ImGui::InputTextWithHint("", "Search", &filter);
             if (ImGui::IsItemHovered() || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
@@ -1202,7 +1182,7 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
             ImGui::PushID("Sticker");
             ImGui::PushID("Search");
             ImGui::SetNextItemWidth(-1.0f);
-            static std::array<std::string, game_data::weapon_names.size()> filters;
+            static std::array<std::string, SkinChanger::weapon_names.size()> filters;
             auto& filter = filters[itemIndex];
             ImGui::InputTextWithHint("", "Search", &filter);
             if (ImGui::IsItemHovered() || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))

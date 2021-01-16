@@ -56,14 +56,10 @@ static constexpr auto is_knife(WeaponId id)
     return (id >= WeaponId::Bayonet && id < WeaponId::GloveStuddedBloodhound) || id == WeaponId::KnifeT || id == WeaponId::Knife;
 }
 
-item_setting* get_by_definition_index(const int definition_index)
+item_setting* get_by_definition_index(WeaponId weaponId)
 {
-    auto it = std::find_if(std::begin(config->skinChanger), std::end(config->skinChanger), [definition_index](const item_setting& e)
-        {
-            return e.enabled && e.itemId == definition_index;
-        });
-
-    return it == std::end(config->skinChanger) ? nullptr : &*it;
+    const auto it = std::find_if(config->skinChanger.begin(), config->skinChanger.end(), [weaponId](const item_setting& e) { return e.enabled && e.itemId == weaponId; });
+    return it == config->skinChanger.end() ? nullptr : &*it;
 }
 
 static std::vector<SkinChanger::PaintKit> skinKits{ { 0, "-" } };
@@ -142,7 +138,7 @@ static void initializeKits() noexcept
 
 void apply_sticker_changer(Entity* item) noexcept
 {
-    if (auto config = get_by_definition_index(item->itemDefinitionIndex())) {
+    if (auto config = get_by_definition_index(item->itemDefinitionIndex2())) {
         constexpr auto m_Item = fnv::hash("CBaseAttributableItem->m_Item");
         const auto attributeList = std::uintptr_t(item) + netvars->operator[](m_Item) + /* m_AttributeList = */ WIN32_LINUX(0x244, 0x2F8);
 
@@ -190,7 +186,7 @@ static void apply_config_on_attributable_item(Entity* item, const item_setting& 
     if (auto& definition_index = item->itemDefinitionIndex(); config.definition_override_index && config.definition_override_index != definition_index) {
         definition_index = config.definition_override_index;
         if (const auto def = memory->itemSystem()->getItemSchema()->getItemDefinitionInterface(WeaponId{ definition_index })) {
-            item->setModelIndex(interfaces->modelInfo->getModelIndex(config.itemId == GLOVE_T_SIDE ? def->getWorldDisplayModel() : def->getPlayerDisplayModel()));
+            item->setModelIndex(interfaces->modelInfo->getModelIndex(config.itemId == WeaponId::GloveT ? def->getWorldDisplayModel() : def->getPlayerDisplayModel()));
             item->preDataUpdate(0);
         }
     }
@@ -236,7 +232,7 @@ static void post_data_update_start(int localHandle) noexcept
     {
         const auto wearables = local->wearables();
 
-        const auto glove_config = get_by_definition_index(GLOVE_T_SIDE);
+        const auto glove_config = get_by_definition_index(WeaponId::GloveT);
 
         static int glove_handle;
 
@@ -306,10 +302,10 @@ static void post_data_update_start(int localHandle) noexcept
             if (!weapon)
                 continue;
 
-            auto& definition_index = weapon->itemDefinitionIndex();
+            auto& weaponId = weapon->itemDefinitionIndex2();
 
             // All knives are terrorist knives.
-            if (const auto active_conf = get_by_definition_index(is_knife(weapon->itemDefinitionIndex2()) ? WEAPON_KNIFE : definition_index))
+            if (const auto active_conf = get_by_definition_index(is_knife(weaponId) ? WeaponId::Knife : weaponId))
                 apply_config_on_attributable_item(weapon, *active_conf, player_info.xuidLow);
         }
     }
@@ -328,15 +324,14 @@ static void post_data_update_start(int localHandle) noexcept
     if (!def)
         return;
 
-    const auto override_model_index = interfaces->modelInfo->getModelIndex(def->getPlayerDisplayModel());
-    view_model->modelIndex() = override_model_index;
+    view_model->modelIndex() = interfaces->modelInfo->getModelIndex(def->getPlayerDisplayModel());
 
     const auto world_model = interfaces->entityList->getEntityFromHandle(view_model_weapon->weaponWorldModel());
 
     if (!world_model)
         return;
 
-    world_model->modelIndex() = override_model_index + 1;
+    world_model->modelIndex() = interfaces->modelInfo->getModelIndex(def->getWorldDisplayModel());
 }
 
 static bool hudUpdateRequired{ false };
@@ -381,7 +376,7 @@ void SkinChanger::overrideHudIcon(GameEvent& event) noexcept
     if (const auto weapon = std::string_view{ event.getString("weapon") }; weapon != "knife" && weapon != "knife_t")
         return;
 
-    if (const auto active_conf = get_by_definition_index(WEAPON_KNIFE)) {
+    if (const auto active_conf = get_by_definition_index(WeaponId::Knife)) {
         if (const auto def = memory->itemSystem()->getItemSchema()->getItemDefinitionInterface(WeaponId(active_conf->definition_override_index))) {
             if (const auto defName = def->getDefinitionName(); defName && std::string_view{ defName }.starts_with("weapon_"))
                 event.setString("weapon", defName + 7);
@@ -401,7 +396,7 @@ void SkinChanger::updateStatTrak(GameEvent& event) noexcept
     if (!weapon)
         return;
 
-    if (const auto conf = get_by_definition_index(is_knife(weapon->itemDefinitionIndex2()) ? WEAPON_KNIFE : weapon->itemDefinitionIndex()); conf && conf->stat_trak > -1) {
+    if (const auto conf = get_by_definition_index(is_knife(weapon->itemDefinitionIndex2()) ? WeaponId::Knife : weapon->itemDefinitionIndex2()); conf && conf->stat_trak > -1) {
         weapon->fallbackStatTrak() = ++conf->stat_trak;
         weapon->postDataUpdate(0);
     }
@@ -656,7 +651,7 @@ void SkinChanger::fixKnifeAnimation(Entity* viewModelWeapon, long& sequence) noe
     if (!is_knife(viewModelWeapon->itemDefinitionIndex2()))
         return;
 
-    const auto active_conf = get_by_definition_index(WEAPON_KNIFE);
+    const auto active_conf = get_by_definition_index(WeaponId::Knife);
     if (!active_conf || !active_conf->definition_override_index)
         return;
 

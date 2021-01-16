@@ -59,6 +59,8 @@ public:
     VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + sizeof(uintptr_t)))
     VIRTUAL_METHOD(const matrix3x4&, toWorldTransform, 32, (), (this + sizeof(uintptr_t)))
 
+    VIRTUAL_METHOD(bool, getAttachment, WIN32_LINUX(35, 122), (int index, Vector& origin, Vector& angles), (this + WIN32_LINUX(sizeof(uintptr_t), 0), index, std::ref(origin), std::ref(angles)))
+
     VIRTUAL_METHOD_V(int&, handle, 2, (), (this))
     VIRTUAL_METHOD_V(Collideable*, getCollideable, 3, (), (this))
 
@@ -76,6 +78,7 @@ public:
     VIRTUAL_METHOD(Vector, getAimPunch, WIN32_LINUX(345, 408), (), (this))
     VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_LINUX(454, 522), (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponData, WIN32_LINUX(460, 528), (), (this))
+    VIRTUAL_METHOD(int, getMuzzleAttachmentIndex1stPerson, WIN32_LINUX(467, 535), (Entity* viewModel), (this, viewModel))
     VIRTUAL_METHOD(float, getInaccuracy, WIN32_LINUX(482, 550), (), (this))
 
     auto isPistol() noexcept { return getWeaponType() == WeaponType::Pistol; }
@@ -251,14 +254,6 @@ public:
 
     NETVAR(c4StartedArming, "CC4", "m_bStartedArming", bool)
 
-    NETVAR(c4BlowTime, "CPlantedC4", "m_flC4Blow", float)
-    NETVAR(c4TimerLength, "CPlantedC4", "m_flTimerLength", float)
-    NETVAR(c4BombSite, "CPlantedC4", "m_nBombSite", int)
-    NETVAR(c4Ticking, "CPlantedC4", "m_bBombTicking", bool)
-    NETVAR(c4DefuseCountDown, "CPlantedC4", "m_flDefuseCountDown", float)
-    NETVAR(c4DefuseLength, "CPlantedC4", "m_flDefuseLength", float)
-    NETVAR(c4Defuser, "CPlantedC4", "m_hBombDefuser", int)
-
     NETVAR(tabletReceptionIsBlocked, "CTablet", "m_bTabletReceptionIsBlocked", bool)
     
     NETVAR(droneTarget, "CDrone", "m_hMoveToThisEntity", int)
@@ -276,4 +271,15 @@ public:
     {
         return *reinterpret_cast<bool*>(this + 0x29E8);
     }
+};
+
+class PlantedC4 : public Entity {
+public:
+    NETVAR(c4BlowTime, "CPlantedC4", "m_flC4Blow", float)
+    NETVAR(c4TimerLength, "CPlantedC4", "m_flTimerLength", float)
+    NETVAR(c4BombSite, "CPlantedC4", "m_nBombSite", int)
+    NETVAR(c4Ticking, "CPlantedC4", "m_bBombTicking", bool)
+    NETVAR(c4DefuseCountDown, "CPlantedC4", "m_flDefuseCountDown", float)
+    NETVAR(c4DefuseLength, "CPlantedC4", "m_flDefuseLength", float)
+    NETVAR(c4Defuser, "CPlantedC4", "m_hBombDefuser", int)
 };
