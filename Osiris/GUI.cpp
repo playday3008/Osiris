@@ -966,6 +966,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::Combo("Hit marker", &config->visuals.hitMarker, "None\0Default (Cross)\0");
     ImGui::SliderFloat("Hit marker time", &config->visuals.hitMarkerTime, 0.1f, 1.5f, "%.2fs");
     ImGuiCustom::colorPicker("Bullet Tracers", config->visuals.bulletTracers.color.color.data(), &config->visuals.bulletTracers.color.color[3], nullptr, nullptr, &config->visuals.bulletTracers.enabled);
+    ImGuiCustom::colorPicker("Molotov Hull", config->visuals.molotovHull);
 
     ImGui::Checkbox("Color correction", &config->visuals.colorCorrection.enabled);
     ImGui::SameLine();
@@ -1073,6 +1074,14 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                             selected_entry.paint_kit_vector_index = i;
                             ImGui::CloseCurrentPopup();
                         }
+
+                        if (ImGui::IsItemHovered()) {
+                            if (const auto icon = SkinChanger::getItemIconTexture(kits[i].iconPath)) {
+                                ImGui::BeginTooltip();
+                                ImGui::Image(icon, { 200.0f, 150.0f });
+                                ImGui::EndTooltip();
+                            }
+                        }
                         if (selected && ImGui::IsWindowAppearing())
                             ImGui::SetScrollHereY();
                         ImGui::PopID();
@@ -1157,6 +1166,13 @@ void GUI::renderSkinChangerWindow(bool contentOnly) noexcept
                         if (ImGui::SelectableWithBullet(kits[i].name.c_str(), rarityColor(kits[i].rarity), selected)) {
                             selected_sticker.kit_vector_index = i;
                             ImGui::CloseCurrentPopup();
+                        }
+                        if (ImGui::IsItemHovered()) {
+                            if (const auto icon = SkinChanger::getItemIconTexture(kits[i].iconPath)) {
+                                ImGui::BeginTooltip();
+                                ImGui::Image(icon, { 200.0f, 150.0f });
+                                ImGui::EndTooltip();
+                            }
                         }
                         if (selected && ImGui::IsWindowAppearing())
                             ImGui::SetScrollHereY();

@@ -457,6 +457,12 @@
     <ClInclude Include="SDK\ViewRenderBeams.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\FileSystem.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
