@@ -26,6 +26,8 @@
 #include "SDK/InputSystem.h"
 #include "Hacks/Visuals.h"
 #include "Hacks/Glow.h"
+#include "Hacks/AntiAim.h"
+#include "Hacks/Backtrack.h"
 
 constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
 | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
@@ -70,9 +72,9 @@ void GUI::render() noexcept
     if (!config->style.menuStyle) {
         renderMenuBar();
         renderAimbotWindow();
-        renderAntiAimWindow();
+        AntiAim::drawGUI(false);
         renderTriggerbotWindow();
-        renderBacktrackWindow();
+        Backtrack::drawGUI(false);
         Glow::drawGUI(false);
         renderChamsWindow();
         renderStreamProofESPWindow();
@@ -146,9 +148,9 @@ void GUI::renderMenuBar() noexcept
 {
     if (ImGui::BeginMainMenuBar()) {
         menuBarItem("Aimbot", window.aimbot);
-        menuBarItem("Anti aim", window.antiAim);
+        AntiAim::menuBarItem();
         menuBarItem("Triggerbot", window.triggerbot);
-        menuBarItem("Backtrack", window.backtrack);
+        Backtrack::menuBarItem();
         Glow::menuBarItem();
         menuBarItem("Chams", window.chams);
         menuBarItem("ESP", window.streamProofESP);
@@ -299,23 +301,6 @@ void GUI::renderAimbotWindow(bool contentOnly) noexcept
         ImGui::End();
 }
 
-void GUI::renderAntiAimWindow(bool contentOnly) noexcept
-{
-    if (!contentOnly) {
-        if (!window.antiAim)
-            return;
-        ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Anti aim", &window.antiAim, windowFlags);
-    }
-    ImGui::Checkbox("Enabled", &config->antiAim.enabled);
-    ImGui::Checkbox("##pitch", &config->antiAim.pitch);
-    ImGui::SameLine();
-    ImGui::SliderFloat("Pitch", &config->antiAim.pitchAngle, -89.0f, 89.0f, "%.2f");
-    ImGui::Checkbox("Yaw", &config->antiAim.yaw);
-    if (!contentOnly)
-        ImGui::End();
-}
-
 void GUI::renderTriggerbotWindow(bool contentOnly) noexcept
 {
     if (!contentOnly) {
@@ -437,24 +422,6 @@ void GUI::renderTriggerbotWindow(bool contentOnly) noexcept
         ImGui::End();
 }
 
-void GUI::renderBacktrackWindow(bool contentOnly) noexcept
-{
-    if (!contentOnly) {
-        if (!window.backtrack)
-            return;
-        ImGui::SetNextWindowSize({ 0.0f, 0.0f });
-        ImGui::Begin("Backtrack", &window.backtrack, windowFlags);
-    }
-    ImGui::Checkbox("Enabled", &config->backtrack.enabled);
-    ImGui::Checkbox("Ignore smoke", &config->backtrack.ignoreSmoke);
-    ImGui::Checkbox("Recoil based fov", &config->backtrack.recoilBasedFov);
-    ImGui::PushItemWidth(220.0f);
-    ImGui::SliderInt("Time limit", &config->backtrack.timeLimit, 1, 200, "%d ms");
-    ImGui::PopItemWidth();
-    if (!contentOnly)
-        ImGui::End();
-}
-
 void GUI::renderChamsWindow(bool contentOnly) noexcept
 {
     if (!contentOnly) {
@@ -463,6 +430,11 @@ void GUI::renderChamsWindow(bool contentOnly) noexcept
         ImGui::SetNextWindowSize({ 0.0f, 0.0f });
         ImGui::Begin("Chams", &window.chams, windowFlags);
     }
+
+    hotkey2("Toggle Key", config->chamsToggleKey, 80.0f);
+    hotkey2("Hold Key", config->chamsHoldKey, 80.0f);
+    ImGui::Separator();
+
     static int currentCategory{ 0 };
     ImGui::PushItemWidth(110.0f);
     ImGui::PushID(0);
@@ -1508,8 +1480,8 @@ void GUI::renderConfigWindow(bool contentOnly) noexcept
                     case 0: config->reset(); updateColors(); Misc::updateClanTag(true); SkinChanger::scheduleHudUpdate(); break;
                     case 1: config->aimbot = { }; break;
                     case 2: config->triggerbot = { }; break;
-                    case 3: config->backtrack = { }; break;
-                    case 4: config->antiAim = { }; break;
+                    case 3: Backtrack::resetConfig(); break;
+                    case 4: AntiAim::resetConfig(); break;
                     case 5: Glow::resetConfig(); break;
                     case 6: config->chams = { }; break;
                     case 7: config->streamProofESP = { }; break;
@@ -1555,18 +1527,12 @@ void GUI::renderGuiStyle2() noexcept
             renderAimbotWindow(true);
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Anti aim")) {
-            renderAntiAimWindow(true);
-            ImGui::EndTabItem();
-        }
+        AntiAim::tabItem();
         if (ImGui::BeginTabItem("Triggerbot")) {
             renderTriggerbotWindow(true);
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Backtrack")) {
-            renderBacktrackWindow(true);
-            ImGui::EndTabItem();
-        }
+        Backtrack::tabItem();
         Glow::tabItem();
         if (ImGui::BeginTabItem("Chams")) {
             renderChamsWindow(true);

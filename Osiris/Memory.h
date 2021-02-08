@@ -19,6 +19,8 @@ class PlayerResource;
 class ViewRender;
 class ViewRenderBeams;
 class WeaponSystem;
+template <typename Key, typename Value>
+struct UtlMap;
 template <typename T>
 class UtlVector;
 
@@ -26,6 +28,7 @@ struct ActiveChannels;
 struct Channel;
 struct GlobalVars;
 struct GlowObjectManager;
+struct PanoramaEventRegistration;
 struct Trace;
 struct Vector;
 
@@ -46,6 +49,7 @@ public:
     GlobalVars* globalVars;
     GlowObjectManager* glowObjectManager;
     UtlVector<PlantedC4*>* plantedC4s;
+    UtlMap<short, PanoramaEventRegistration>* registeredPanoramaEvents;
 
     bool* disablePostProcessing;
 
@@ -91,6 +95,13 @@ public:
     uintptr_t demoFileEndReached;
     Entity** gameRules;
 
+    short makePanoramaSymbol(const char* name) const noexcept
+    {
+        short symbol;
+        makePanoramaSymbolFn(&symbol, name);
+        return symbol;
+    }
+
     bool submitReport(const char* xuid, const char* report) const noexcept
     {
 #ifdef _WIN32
@@ -115,19 +126,11 @@ public:
         setOrAddAttributeValueByName(attributeList, attribute, *reinterpret_cast<float*>(&value) /* hack, but CSGO does that */);
     }
 
-    void acceptMatch() const noexcept
-    {
-#ifdef _WIN32
-        return reinterpret_cast<void(__stdcall*)(const char*)>(acceptMatchFunction)("");
-#else
-        return reinterpret_cast<void(*)(void*, const char*)>(acceptMatchFunction)(nullptr, "");
-#endif
-    }
 private:
     void(__THISCALL* setOrAddAttributeValueByNameFunction)(std::uintptr_t, const char* attribute);
+    void(__THISCALL* makePanoramaSymbolFn)(short* symbol, const char* name);
 
     std::uintptr_t submitReportFunction;
-    std::uintptr_t acceptMatchFunction;
 };
 
 inline std::unique_ptr<const Memory> memory;

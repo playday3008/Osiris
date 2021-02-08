@@ -1,11 +1,14 @@
 #pragma once
 
 #include <array>
+#include <iomanip>
 #include <sstream>
 #include <string>
 
 #include "nlohmann/json.hpp"
 #include "InputUtil.h"
+
+enum class WeaponId : short;
 
 #pragma pack(push, 1)
 struct Color4 {
@@ -186,6 +189,18 @@ static void to_json(json& j, const Color4& o, const Color4& dummy = {})
     }
     WRITE("Rainbow", rainbow);
     WRITE("Rainbow Speed", rainbowSpeed);
+}
+
+static void to_json(json& j, const KeyBind& o, const KeyBind& dummy)
+{
+    if (o != dummy)
+        j = o.toString();
+}
+
+static void to_json(json& j, const KeyBindToggle& o, const KeyBindToggle& dummy)
+{
+    if (o != dummy)
+        j = o.toString();
 }
 
 template <value_t Type, typename T>

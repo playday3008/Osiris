@@ -9,6 +9,8 @@
 #include "Config.h"
 #include "Helpers.h"
 #include "SDK/Platform.h"
+#include "Hacks/AntiAim.h"
+#include "Hacks/Backtrack.h"
 #include "Hacks/Glow.h"
 
 #ifdef _WIN32
@@ -248,22 +250,6 @@ static void from_json(const json& j, Config::Triggerbot& t)
     read(j, "Min damage", t.minDamage);
     read(j, "Killshot", t.killshot);
     read(j, "Burst Time", t.burstTime);
-}
-
-static void from_json(const json& j, Config::Backtrack& b)
-{
-    read(j, "Enabled", b.enabled);
-    read(j, "Ignore smoke", b.ignoreSmoke);
-    read(j, "Recoil based fov", b.recoilBasedFov);
-    read(j, "Time limit", b.timeLimit);
-}
-
-static void from_json(const json& j, Config::AntiAim& a)
-{
-    read(j, "Enabled", a.enabled);
-    read(j, "Pitch", a.pitch);
-    read(j, "Yaw", a.yaw);
-    read(j, "Pitch angle", a.pitchAngle);
 }
 
 static void from_json(const json& j, Config::Chams::Material& m)
@@ -533,10 +519,12 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read(j, "Triggerbot", triggerbot);
     read(j, "Triggerbot Key", triggerbotHoldKey);
 
-    read<value_t::object>(j, "Backtrack", backtrack);
-    read<value_t::object>(j, "Anti aim", antiAim);
-    ::Glow::fromJson(j["Glow"]);
+    AntiAim::fromJson(j["Anti aim"]);
+    Backtrack::fromJson(j["Backtrack"]);
+    Glow::fromJson(j["Glow"]);
     read(j, "Chams", chams);
+    read(j["Chams"], "Toggle Key", chamsToggleKey);
+    read(j["Chams"], "Hold Key", chamsHoldKey);
     read<value_t::object>(j, "ESP", streamProofESP);
     read<value_t::object>(j, "Visuals", visuals);
     read(j, "Skin changer", skinChanger);
@@ -705,22 +693,6 @@ static void to_json(json& j, const Config::Triggerbot& o, const Config::Triggerb
     WRITE("Burst Time", burstTime);
 }
 
-static void to_json(json& j, const Config::Backtrack& o, const Config::Backtrack& dummy = {})
-{
-    WRITE("Enabled", enabled);
-    WRITE("Ignore smoke", ignoreSmoke);
-    WRITE("Recoil based fov", recoilBasedFov);
-    WRITE("Time limit", timeLimit);
-}
-
-static void to_json(json& j, const Config::AntiAim& o, const Config::AntiAim& dummy = {})
-{
-    WRITE("Enabled", enabled);
-    WRITE("Pitch", pitch);
-    WRITE("Pitch angle", pitchAngle);
-    WRITE("Yaw", yaw);
-}
-
 static void to_json(json& j, const Config::Chams::Material& o)
 {
     const Config::Chams::Material dummy;
@@ -738,18 +710,6 @@ static void to_json(json& j, const Config::Chams::Material& o)
 static void to_json(json& j, const Config::Chams& o)
 {
     j["Materials"] = o.materials;
-}
-
-static void to_json(json& j, const KeyBind& o, const KeyBind& dummy)
-{
-    if (o != dummy)
-        j = o.toString();
-}
-
-static void to_json(json& j, const KeyBindToggle& o, const KeyBindToggle& dummy)
-{
-    if (o != dummy)
-        j = o.toString();
 }
 
 static void to_json(json& j, const Config::StreamProofESP& o, const Config::StreamProofESP& dummy = {})
@@ -1012,10 +972,12 @@ void Config::save(size_t id) const noexcept
         j["Triggerbot"] = triggerbot;
         to_json(j["Triggerbot Key"], triggerbotHoldKey, KeyBind::NONE);
 
-        j["Backtrack"] = backtrack;
-        j["Anti aim"] = antiAim;
-        j["Glow"] = ::Glow::toJson();
+        j["Backtrack"] = Backtrack::toJson();
+        j["Anti aim"] = AntiAim::toJson();
+        j["Glow"] = Glow::toJson();
         j["Chams"] = chams;
+        to_json(j["Chams"]["Toggle Key"], chamsToggleKey, KeyBind::NONE);
+        to_json(j["Chams"]["Hold Key"], chamsHoldKey, KeyBind::NONE);
         j["ESP"] = streamProofESP;
         j["Sound"] = sound;
         j["Visuals"] = visuals;
@@ -1053,8 +1015,9 @@ void Config::rename(size_t item, const char* newName) noexcept
 void Config::reset() noexcept
 {
     aimbot = { };
+    AntiAim::resetConfig();
     triggerbot = { };
-    backtrack = { };
+    Backtrack::resetConfig();
     Glow::resetConfig();
     chams = { };
     streamProofESP = { };
