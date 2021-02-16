@@ -36,11 +36,9 @@
 
 #include "../imguiCustom.h"
 
-static bool edgejumpActive;
-
 void Misc::edgejump(UserCmd* cmd) noexcept
 {
-    if (!config->misc.edgejump || !edgejumpActive)
+    if (!config->misc.edgejump || !config->misc.edgejumpkey.isDown())
         return;
 
     if (!localPlayer || !localPlayer->isAlive())
@@ -53,11 +51,9 @@ void Misc::edgejump(UserCmd* cmd) noexcept
         cmd->buttons |= UserCmd::IN_JUMP;
 }
 
-static bool slowwalkActive;
-
 void Misc::slowwalk(UserCmd* cmd) noexcept
 {
-    if (!config->misc.slowwalk || !slowwalkActive)
+    if (!config->misc.slowwalk || !config->misc.slowwalkKey.isDown())
         return;
 
     if (!localPlayer || !localPlayer->isAlive())
@@ -196,11 +192,11 @@ void Misc::noscopeCrosshair(ImDrawList* drawList) noexcept
     if (!config->misc.noscopeCrosshair.enabled)
         return;
 
-    GameData::Lock lock;
-    const auto& local = GameData::local();
-
-    if (!local.exists || !local.alive || !local.noScope)
-        return;
+    {
+        GameData::Lock lock;
+        if (const auto& local = GameData::local(); !local.exists || !local.alive || !local.noScope)
+            return;
+    }
 
     drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(config->misc.noscopeCrosshair), config->misc.noscopeCrosshair.thickness);
 }
@@ -274,15 +270,13 @@ void Misc::watermark() noexcept
     }
 }
 
-static bool prepareRevolverActive;
-
 void Misc::prepareRevolver(UserCmd* cmd) noexcept
 {
     constexpr auto timeToTicks = [](float time) {  return static_cast<int>(0.5f + time / memory->globalVars->intervalPerTick); };
     constexpr float revolverPrepareTime{ 0.234375f };
 
     static float readyTime;
-    if (config->misc.prepareRevolver && localPlayer && prepareRevolverActive) {
+    if (config->misc.prepareRevolver && localPlayer && (config->misc.prepareRevolverKey == KeyBind::NONE || config->misc.prepareRevolverKey.isDown())) {
         const auto activeWeapon = localPlayer->getActiveWeapon();
         if (activeWeapon && activeWeapon->itemDefinitionIndex2() == WeaponId::Revolver) {
             if (!readyTime) readyTime = memory->globalVars->serverTime() + revolverPrepareTime;
@@ -640,11 +634,9 @@ void Misc::autoPistol(UserCmd* cmd) noexcept
     }
 }
 
-static bool chokePacketsActive;
-
 void Misc::chokePackets(bool& sendPacket) noexcept
 {
-    if (chokePacketsActive)
+    if (config->misc.chokedPacketsKey == KeyBind::NONE || config->misc.chokedPacketsKey.isDown())
         sendPacket = interfaces->engine->getNetworkChannel()->chokedPackets >= config->misc.chokedPackets;
 }
 
@@ -1015,8 +1007,5 @@ void Misc::autoAccept(const char* soundEntry) noexcept
 
 void Misc::updateInput() noexcept
 {
-    edgejumpActive = config->misc.edgejumpkey.isDown();
-    slowwalkActive = config->misc.slowwalkKey.isDown();
-    prepareRevolverActive = config->misc.prepareRevolverKey == KeyBind::NONE || config->misc.prepareRevolverKey.isDown();
-    chokePacketsActive = config->misc.chokedPacketsKey == KeyBind::NONE || config->misc.chokedPacketsKey.isDown();
+
 }
