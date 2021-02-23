@@ -26,7 +26,7 @@ jobs:
     - name: Compilation AVX
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload AVX
-      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
+      run: cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
     - name: SHA1 AVX
       working-directory: ready
       run: sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
@@ -36,7 +36,7 @@ jobs:
     - name: Compilation AVX2
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload AVX2
-      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
+      run: cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
     - name: SHA1 AVX2
       working-directory: ready
       run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
