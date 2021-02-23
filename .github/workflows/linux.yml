@@ -16,10 +16,10 @@ jobs:
     - name: Compilation
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload
-      run: mkdir ready && cp Release/libOsiris.so ready/ && rm -rf Release
+      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_SSE2.so && rm -rf Release
     - name: SHA1
       working-directory: ready
-      run: sha1sum libOsiris.so > libOsiris.so.sha1
+      run: sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
 
     - name: Configure to compile AVX
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
