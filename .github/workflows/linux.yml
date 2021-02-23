@@ -21,25 +21,25 @@ jobs:
       working-directory: ready
       run: sha1sum libOsiris.so > libOsiris.so.sha1
 
-    #- name: Configure to compile AVX
-    #  run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
-    #- name: Compilation AVX
-    #  run: cd Release && make -j $(nproc --all)
-    #- name: Prepare to upload AVX
-    #  run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
-    #- name: SHA1 AVX
-    #  working-directory: ready
-    #  run: sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
+    - name: Configure to compile AVX
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
+    - name: Compilation AVX
+      run: cd Release && make -j $(nproc --all)
+    - name: Prepare to upload AVX
+      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
+    - name: SHA1 AVX
+      working-directory: ready
+      run: sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
 
-    #- name: Configure to compile AVX2
-    #  run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx2 CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
-    #- name: Compilation AVX2
-    #  run: cd Release && make -j $(nproc --all)
-    #- name: Prepare to upload AVX2
-    #  run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
-    #- name: SHA1 AVX2
-    #  working-directory: ready
-    #  run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+    - name: Configure to compile AVX2
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx2 -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
+    - name: Compilation AVX2
+      run: cd Release && make -j $(nproc --all)
+    - name: Prepare to upload AVX2
+      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
+    - name: SHA1 AVX2
+      working-directory: ready
+      run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
 
     - name: Push to Discord
       run: |
@@ -48,7 +48,7 @@ jobs:
             cd ..
             curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
-       
+
     - uses: actions/upload-artifact@v2
       with:
         name: Osiris Release Linux
