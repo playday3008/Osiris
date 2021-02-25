@@ -1,4 +1,4 @@
-name: Osiris
+name: Windows
 
 on: [pull_request, push]
 
