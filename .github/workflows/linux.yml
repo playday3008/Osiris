@@ -40,6 +40,15 @@ jobs:
     - name: SHA1 AVX2
       working-directory: ready
       run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+      
+    - name: Get Injector
+      run: |
+            git clone https://github.com/playday3008/OG-Injector-Linux.git
+            cd OG-Injector-Linux
+            sed -i 's+//#define OSIRIS+#define OSIRIS+g' OG-Injector-Linux.cpp
+            cmake -E make_directory build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release
+            cmake --build . --config Release
+            cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
 
     - name: Push to Discord
       run: |
