@@ -214,6 +214,7 @@ public:
         bool nadePredict{ false };
         bool fixTabletSignal{ false };
         bool fakePrime{ false };
+        bool playerBlocker{ false };
         bool fastPlant{ false };
         bool fastStop{ false };
         bool quickReload{ false };
@@ -224,6 +225,7 @@ public:
         KeyBind edgejumpkey = KeyBind::NONE;
         KeyBind jumpbugkey = KeyBind::NONE;
         KeyBind slowwalkKey = KeyBind::NONE;
+        KeyBind playerBlockerKey = KeyBind::NONE;
         ColorToggleThickness noscopeCrosshair;
         ColorToggleThickness recoilCrosshair;
 
