@@ -51,13 +51,13 @@ jobs:
             cmake --build . --config Release
             cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
 
-    - name: Push to Discord
-      run: |
-            cd ready
-            tar -czvf "../Osiris BETA Linux (${{github.run_id}}).tar.gz" *
-            cd ..
-            curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris BETA Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
-      shell: pwsh
+    #- name: Push to Discord
+    #  run: |
+    #        cd ready
+    #        tar -czvf "../Osiris BETA Linux (${{github.run_id}}).tar.gz" *
+    #        cd ..
+    #        curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris BETA Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
+    #  shell: pwsh
 
     - uses: actions/upload-artifact@v2
       with:
