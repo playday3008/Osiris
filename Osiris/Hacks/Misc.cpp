@@ -47,7 +47,7 @@ void Misc::edgejump(UserCmd* cmd) noexcept
     if (const auto mt = localPlayer->moveType(); mt == MoveType::LADDER || mt == MoveType::NOCLIP)
         return;
 
-    if ((EnginePrediction::getFlags() & 1) && !(localPlayer->flags() & 1))
+    if ((EnginePrediction::getFlags() & PlayerFlags::ONGROUND) && !(localPlayer->flags() & PlayerFlags::ONGROUND))
         cmd->buttons |= UserCmd::IN_JUMP;
 }
 
@@ -293,7 +293,7 @@ void Misc::fastPlant(UserCmd* cmd) noexcept
     if (plantAnywhere->getInt())
         return;
 
-    if (!localPlayer || !localPlayer->isAlive() || (localPlayer->inBombZone() && localPlayer->flags() & 1))
+    if (!localPlayer || !localPlayer->isAlive() || (localPlayer->inBombZone() && localPlayer->flags() & PlayerFlags::ONGROUND))
         return;
 
     const auto activeWeapon = localPlayer->getActiveWeapon();
@@ -321,7 +321,7 @@ void Misc::fastStop(UserCmd* cmd) noexcept
     if (!localPlayer || !localPlayer->isAlive())
         return;
 
-    if (localPlayer->moveType() == MoveType::NOCLIP || localPlayer->moveType() == MoveType::LADDER || !(localPlayer->flags() & 1) || cmd->buttons & UserCmd::IN_JUMP)
+    if (localPlayer->moveType() == MoveType::NOCLIP || localPlayer->moveType() == MoveType::LADDER || !(localPlayer->flags() & PlayerFlags::ONGROUND) || cmd->buttons & UserCmd::IN_JUMP)
         return;
 
     if (cmd->buttons & (UserCmd::IN_MOVELEFT | UserCmd::IN_MOVERIGHT | UserCmd::IN_FORWARD | UserCmd::IN_BACK))
@@ -510,12 +510,12 @@ void Misc::bunnyHop(UserCmd* cmd) noexcept
     if (!localPlayer)
         return;
 
-    static auto wasLastTimeOnGround{ localPlayer->flags() & 1 };
+    static auto wasLastTimeOnGround{ localPlayer->flags() & PlayerFlags::ONGROUND };
 
-    if (config->misc.bunnyHop && !(localPlayer->flags() & 1) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
+    if (config->misc.bunnyHop && !(localPlayer->flags() & PlayerFlags::ONGROUND) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
         cmd->buttons &= ~UserCmd::IN_JUMP;
 
-    wasLastTimeOnGround = localPlayer->flags() & 1;
+    wasLastTimeOnGround = localPlayer->flags() & PlayerFlags::ONGROUND;
 }
 
 void Misc::fakeBan(bool set) noexcept
@@ -653,7 +653,7 @@ void Misc::autoStrafe(UserCmd* cmd) noexcept
 {
     if (localPlayer
         && config->misc.autoStrafe
-        && !(localPlayer->flags() & 1)
+        && !(localPlayer->flags() & PlayerFlags::ONGROUND)
         && localPlayer->moveType() != MoveType::NOCLIP) {
         if (cmd->mousedx < 0)
             cmd->sidemove = -450.0f;
@@ -1040,7 +1040,7 @@ void Misc::jumpbug(UserCmd* cmd) noexcept {
     float step = max_radius / 128;
     float xThick = 23;
 
-    if (config->misc.jumpbugkey.isDown() && (localPlayer->flags() & 1) && !(EnginePrediction::getFlags() & 1)) {
+    if (config->misc.jumpbugkey.isDown() && (localPlayer->flags() & PlayerFlags::ONGROUND) && !(EnginePrediction::getFlags() & PlayerFlags::ONGROUND)) {
 
         if (config->misc.bunnyHop) {
             config->misc.bunnyHop = false;
