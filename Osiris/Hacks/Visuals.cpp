@@ -425,9 +425,13 @@ void Visuals::skybox(FrameStage stage) noexcept
     if (stage != FrameStage::RENDER_START && stage != FrameStage::RENDER_END)
         return;
 
-    if (stage == FrameStage::RENDER_START && config->visuals.skybox > 0 && static_cast<std::size_t>(config->visuals.skybox) < skyboxList.size()) {
+    if (stage == FrameStage::RENDER_START && config->visuals.skybox > 1 && static_cast<std::size_t>(config->visuals.skybox) < skyboxList.size()) {
         memory->loadSky(skyboxList[config->visuals.skybox]);
-    } else {
+    }
+    else if (config->visuals.skybox == 1)
+        if (stage == FrameStage::RENDER_START)
+            memory->loadSky(config->visuals.customSkybox.c_str());
+    else {
         static const auto sv_skyname = interfaces->cvar->findVar("sv_skyname");
         memory->loadSky(sv_skyname->string);
     }
