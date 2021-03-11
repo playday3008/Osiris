@@ -236,6 +236,8 @@ public:
         };
         Watermark watermark;
         float aspectratio{ 0 };
+        ColorToggleThickness drawAimbotFov;
+        float actualFov{ 0.0f };
         bool teamDamageCounter = false;
         std::string killMessageString{ "Gotcha!" };
         int banColor{ 6 };

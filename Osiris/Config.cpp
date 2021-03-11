@@ -467,6 +467,7 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Fix movement", m.fixMovement);
     read(j, "Disable model occlusion", m.disableModelOcclusion);
     read(j, "Aspect Ratio", m.aspectratio);
+    read<value_t::object>(j, "Draw aimbot FOV", m.drawAimbotFov);
     read(j, "Team Damage Counter", m.teamDamageCounter);
     read(j, "Kill message", m.killMessage);
     read<value_t::string>(j, "Kill message string", m.killMessageString);
@@ -847,6 +848,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Fix movement", fixMovement);
     WRITE("Disable model occlusion", disableModelOcclusion);
     WRITE("Aspect Ratio", aspectratio);
+    WRITE("Draw aimbot FOV", drawAimbotFov);
     WRITE("Team Damage Counter", teamDamageCounter);
     WRITE("Kill message", killMessage);
     WRITE("Kill message string", killMessageString);

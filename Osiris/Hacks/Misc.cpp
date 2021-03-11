@@ -1154,6 +1154,24 @@ void Misc::teamDamageCounter(GameEvent* event) noexcept {
     }
 }
 
+void Misc::drawAimbotFov(ImDrawList* drawList) noexcept {
+    if (config->misc.drawAimbotFov.enabled && interfaces->engine->isInGame()) {
+        if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon()) 
+            return;
+        int weaponId = getWeaponIndex(localPlayer->getActiveWeapon()->itemDefinitionIndex2());
+        if (!config->aimbot[weaponId].enabled)
+            weaponId = 0;
+        if (!config->aimbot[weaponId].enabled)
+            return;
+        auto displaySize = ImGui::GetIO().DisplaySize;
+        float radius = std::tan(degreesToRadians(config->aimbot[weaponId].fov / 2.f)) / std::tan(degreesToRadians(config->misc.actualFov / 2.f)) * displaySize.x;
+        std::tuple<float, float, float> rainbow{};
+        if (config->misc.drawAimbotFov.rainbow)
+            rainbow = rainbowColor(config->visuals.world.rainbowSpeed);
+        drawList->AddCircle(displaySize / 2, radius * 0.776f, ImGui::ColorConvertFloat4ToU32(config->misc.drawAimbotFov.rainbow ? std::array<float, 4>{ std::get<0>(rainbow), std::get<1>(rainbow), std::get<2>(rainbow), config->misc.drawAimbotFov.color.at(3) } : config->misc.drawAimbotFov.color), 0, config->misc.drawAimbotFov.thickness);
+    }
+}
+
 void Misc::updateInput() noexcept
 {
 

@@ -1294,6 +1294,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::Checkbox("Fix movement", &config->misc.fixMovement);
     ImGui::Checkbox("Disable model occlusion", &config->misc.disableModelOcclusion);
     ImGui::SliderFloat("Aspect Ratio", &config->misc.aspectratio, 0.0f, 5.0f, "%.2f");
+    ImGuiCustom::colorPicker("Draw aimbot FOV", config->misc.drawAimbotFov);
     ImGui::Checkbox("Team Damage Counter", &config->misc.teamDamageCounter);
     if (config->misc.teamDamageCounter)
         if (ImGui::Button("Reset Counter")) {

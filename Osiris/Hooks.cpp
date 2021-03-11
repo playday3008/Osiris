@@ -110,6 +110,8 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     Visuals::drawMolotovHull(ImGui::GetBackgroundDrawList());
     Misc::watermark();
 
+    Misc::drawAimbotFov(ImGui::GetBackgroundDrawList());
+
     Aimbot::updateInput();
     Visuals::updateInput();
     StreamProofESP::updateInput();
@@ -381,6 +383,7 @@ static void __STDCALL overrideView(LINUX_ARGS(void* thisptr,) ViewSetup* setup) 
     if (localPlayer && !localPlayer->isScoped())
         setup->fov += config->visuals.fov;
     setup->farZ += config->visuals.farZ * 10;
+    config->misc.actualFov = setup->fov;
     hooks->clientMode.callOriginal<void, IS_WIN32() ? 18 : 19>(setup);
 }
 
@@ -543,6 +546,8 @@ static void swapWindow(SDL_Window* window) noexcept
         Visuals::hitMarker(nullptr, ImGui::GetBackgroundDrawList());
         Visuals::drawMolotovHull(ImGui::GetBackgroundDrawList());
         Misc::watermark();
+
+        Misc::drawAimbotFov(ImGui::GetBackgroundDrawList());
 
         Aimbot::updateInput();
         Visuals::updateInput();
