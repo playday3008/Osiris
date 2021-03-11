@@ -194,6 +194,7 @@ public:
         KeyBind menuKey = KeyBind::INSERT;
         bool antiAfkKick{ false };
         bool autoStrafe{ false };
+        KeyBind autoStrafeKey = KeyBind::NONE;
         bool bunnyHop{ false };
         bool customClanTag{ false };
         bool clocktag{ false };

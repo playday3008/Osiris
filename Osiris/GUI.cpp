@@ -1273,6 +1273,10 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     hotkey2("Menu Key", config->misc.menuKey);
     ImGui::Checkbox("Anti AFK kick", &config->misc.antiAfkKick);
     ImGui::Checkbox("Auto strafe", &config->misc.autoStrafe);
+    ImGui::SameLine();
+    ImGui::PushID("Auto strafe Key");
+    hotkey2("", config->misc.autoStrafeKey);
+    ImGui::PopID();
     ImGui::Checkbox("Bunny hop", &config->misc.bunnyHop);
     ImGui::Checkbox("Fast duck", &config->misc.fastDuck);
     ImGui::Checkbox("Moonwalk", &config->misc.moonwalk);
