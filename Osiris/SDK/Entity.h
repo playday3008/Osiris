@@ -26,8 +26,19 @@
 struct AnimState;
 
 enum class MoveType {
-    NOCLIP = 8,
-    LADDER = 9
+    NONE,
+    ISOMETRIC,
+    WALK,
+    STEP,
+    FLY,
+    FLYGRAVITY,
+    VPHYSICS,
+    PUSH,
+    NOCLIP,
+    LADDER,
+    OBSERVER,
+    CUSTOM,
+    LAST = CUSTOM
 };
 
 enum class ObsMode {
