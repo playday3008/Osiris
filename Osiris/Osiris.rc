@@ -68,10 +68,10 @@ BEGIN
         BLOCK "000904b0"
         BEGIN
             VALUE "CompanyName", "danielkrupinski"
-            VALUE "FileDescription", "Osiris int. cheat for CS:GO"
+            VALUE "FileDescription", "OsirisBETA int. cheat for CS:GO"
             VALUE "FileVersion", "2.0.2.0"
             VALUE "InternalName", "Osiris.dll"
-            VALUE "LegalCopyright", "Compiled by: PlayDay; Code by: danielkrupinski"
+            VALUE "LegalCopyright", "Compiled by: PlayDay; Code by: PlayDay and danielkrupinski"
             VALUE "OriginalFilename", "Osiris.dll"
             VALUE "ProductName", "Osiris"
             VALUE "ProductVersion", "2.0.2.0"
