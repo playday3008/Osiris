@@ -1280,13 +1280,12 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     hotkey2("", config->misc.edgejumpkey);
     ImGui::PopID();
     ImGui::Checkbox("Jump Bug", &config->misc.jumpbug);
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("That's fixed by Valve but works sometimes");
     ImGui::SameLine();
     ImGui::PushID("Jump Bug Key");
     hotkey2("", config->misc.jumpbugkey);
     ImGui::PopID();
-    if (config->misc.jumpbug) {
-        ImGui::Checkbox("Jump Bug Hold", &config->misc.jumpbughold);
-    }
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     ImGui::SameLine();
     ImGui::PushID("Slowwalk Key");

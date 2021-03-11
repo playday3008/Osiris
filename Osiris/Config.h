@@ -200,7 +200,6 @@ public:
         bool moonwalk{ false };
         bool edgejump{ false };
         bool jumpbug{ false };
-        bool jumpbughold{ false };
         bool slowwalk{ false };
         bool autoPistol{ false };
         bool autoReload{ false };
