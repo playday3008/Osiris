@@ -576,6 +576,13 @@ void Visuals::physicsTimescale() noexcept {
     cl_phys_timescale->setValue(config->visuals.ragdollTimescale ? config->visuals.ragdollTimescaleValue : 1);
 };
 
+void Visuals::fullBright() noexcept {
+
+    static ConVar* full_bright = interfaces->cvar->findVar("mat_fullbright");
+
+    full_bright->setValue(config->visuals.fullBright ? 1 : 0);
+}
+
 void Visuals::updateInput() noexcept
 {
     config->visuals.thirdpersonKey.handleToggle();

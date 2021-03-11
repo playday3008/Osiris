@@ -948,9 +948,10 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::SliderInt("", &config->visuals.flashReduction, 0, 100, "Flash reduction: %d%%");
     ImGui::PopID();
     ImGui::PushID(5);
-    ImGui::SliderFloat("", &config->visuals.brightness, 0.0f, 1.0f, "Brightness: %.2f");
+    ImGui::SliderFloat("", &config->visuals.brightness, 0.0f, config->visuals.fullBright ? 0.f : 1.0f, config->visuals.fullBright ? "Disabled for Full Bright" : "Brightness: %.2f");
     ImGui::PopID();
     ImGui::PopItemWidth();
+    ImGui::Checkbox("Full Bright", &config->visuals.fullBright);
     ImGui::Combo("Skybox", &config->visuals.skybox, Visuals::skyboxList.data(), Visuals::skyboxList.size());
     if (config->visuals.skybox == 1) {
         ImGui::InputText("Skybox filename", &config->visuals.customSkybox);
