@@ -195,6 +195,7 @@ public:
         bool antiAfkKick{ false };
         bool autoStrafe{ false };
         KeyBind autoStrafeKey = KeyBind::NONE;
+        int autoStrafeStyle{ 0 };
         bool bunnyHop{ false };
         bool customClanTag{ false };
         bool clocktag{ false };
