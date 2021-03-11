@@ -262,6 +262,8 @@ public:
         int hitSound{ 0 };
         int chokedPackets{ 0 };
         KeyBind chokedPacketsKey = KeyBind::NONE;
+        bool pingBasedChoked{ false };
+        int pingBasedChokedVal{ 0 };
         int quickHealthshotKey{ 0 };
         float maxAngleDelta{ 255.0f };
         int killSound{ 0 };
