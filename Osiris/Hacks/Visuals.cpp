@@ -568,6 +568,7 @@ void Visuals::drawMolotovHull(ImDrawList* drawList) noexcept
     }
 }
 
+
 void Visuals::physicsTimescale() noexcept {
 
     static ConVar* cl_phys_timescale = interfaces->cvar->findVar("cl_phys_timescale");
