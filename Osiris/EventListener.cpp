@@ -50,14 +50,20 @@ void EventListener::fireGameEvent(GameEvent* event)
         SkinChanger::overrideHudIcon(*event);
         Misc::killMessage(*event);
         Misc::killSound(*event);
+        Misc::teamDamageCounter(event);
         break;
     case fnv::hash("player_hurt"):
         Misc::playHitSound(*event);
         Visuals::hitEffect(event);
         Visuals::hitMarker(event);
+        Misc::teamDamageCounter(event);
         break;
     case fnv::hash("bullet_impact"):
         Visuals::bulletTracer(*event);
+        break;
+    case fnv::hash("round_announce_match_start"):
+        Misc::teamKills = 0;
+        Misc::teamDamage = 0;
         break;
     }
 }

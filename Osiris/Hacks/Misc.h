@@ -49,7 +49,11 @@ namespace Misc
     void drawOffscreenEnemies(ImDrawList* drawList) noexcept;
     void autoAccept(const char* soundEntry) noexcept;
 
+    inline int teamDamage = 0;
+    inline int teamKills = 0;
+
     void jumpbug(UserCmd* cmd) noexcept;
+    void teamDamageCounter(GameEvent* event) noexcept;
 
     void updateInput() noexcept;
 }

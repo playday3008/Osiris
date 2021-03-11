@@ -236,6 +236,7 @@ public:
         };
         Watermark watermark;
         float aspectratio{ 0 };
+        bool teamDamageCounter = false;
         std::string killMessageString{ "Gotcha!" };
         int banColor{ 6 };
         std::string banText{ "Cheater has been permanently banned from official CS:GO servers." };
