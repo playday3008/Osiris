@@ -1285,8 +1285,7 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     hotkey2("", config->misc.jumpbugkey);
     ImGui::PopID();
     if (config->misc.jumpbug) {
-        ImGui::SameLine();
-        ImGui::Checkbox("Hold", &config->misc.jumpbughold);
+        ImGui::Checkbox("Jump Bug Hold", &config->misc.jumpbughold);
     }
     ImGui::Checkbox("Slowwalk", &config->misc.slowwalk);
     ImGui::SameLine();
