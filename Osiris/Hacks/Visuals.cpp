@@ -180,7 +180,10 @@ void Visuals::thirdperson() noexcept
     if (!config->visuals.thirdperson)
         return;
 
-    memory->input->isCameraInThirdPerson = (!config->visuals.thirdpersonKey.isSet() || config->visuals.thirdpersonKey.isToggled()) && localPlayer && localPlayer->isAlive();
+    if (localPlayer && localPlayer->isAlive())
+        memory->input->isCameraInThirdPerson = (!config->visuals.thirdpersonKey.isSet() || config->visuals.thirdpersonKey.isToggled());
+    else if (config->visuals.deadThirdperson && interfaces->cvar->findVar("mp_forcecamera")->getInt())
+        localPlayer->setObserverMode() = (!config->visuals.thirdpersonKey.isSet() || config->visuals.thirdpersonKey.isToggled()) ? ObsMode::Chase : ObsMode::InEye;
     memory->input->cameraOffset.z = static_cast<float>(config->visuals.thirdpersonDistance); 
 }
 

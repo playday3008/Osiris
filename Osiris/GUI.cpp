@@ -910,6 +910,10 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::PushID("Thirdperson Key");
     hotkey2("", config->visuals.thirdpersonKey);
     ImGui::PopID();
+    if (config->visuals.thirdperson) {
+        ImGui::SameLine();
+        ImGui::Checkbox("Dead thirdperson", &config->visuals.deadThirdperson);
+    }
     ImGui::PushItemWidth(290.0f);
     ImGui::PushID(0);
     ImGui::SliderInt("", &config->visuals.thirdpersonDistance, 0, 1000, "Thirdperson distance: %d");
