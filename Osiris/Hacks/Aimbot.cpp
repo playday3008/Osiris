@@ -149,7 +149,7 @@ void Aimbot::run(UserCmd* cmd) noexcept
     if (!config->aimbot[weaponIndex].enabled)
         weaponIndex = 0;
 
-    if ((EnginePrediction::getFlags() & PlayerFlags::ONGROUND) && !(localPlayer->flags() & PlayerFlags::ONGROUND) && config->aimbot[weaponIndex].jumpCheck)
+    if (!(localPlayer->flags() & PlayerFlags::ONGROUND) && config->aimbot[weaponIndex].jumpCheck)
         return;
 
     if (!config->aimbot[weaponIndex].betweenShots && activeWeapon->nextPrimaryAttack() > memory->globalVars->serverTime())
