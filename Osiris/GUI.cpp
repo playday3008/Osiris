@@ -29,8 +29,7 @@
 #include "Hacks/AntiAim.h"
 #include "Hacks/Backtrack.h"
 
-constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
-| ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
 GUI::GUI() noexcept
 {
