@@ -922,6 +922,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
     ImGui::PushID("Zoom Key");
     hotkey2("", config->visuals.zoomKey);
     ImGui::PopID();
+    ImGui::Checkbox("No zoom", &config->visuals.noZoom);
     ImGui::Checkbox("Thirdperson", &config->visuals.thirdperson);
     ImGui::SameLine();
     ImGui::PushID("Thirdperson Key");

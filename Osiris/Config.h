@@ -130,6 +130,7 @@ public:
         bool wireframeSmoke{ false };
         bool zoom{ false };
         KeyBindToggle zoomKey = KeyBind::NONE;
+        bool noZoom{ false };
         bool thirdperson{ false };
         bool deadThirdperson{ false };
         KeyBindToggle thirdpersonKey = KeyBind::NONE;

@@ -303,6 +303,8 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
         Misc::fixAnimationLOD(stage);
         Backtrack::update(stage);
         SkinChanger::run(stage);
+
+        Visuals::noZoom();
     }
     hooks->client.callOriginal<void, 37>(stage);
 }
