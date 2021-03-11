@@ -15,6 +15,8 @@ struct BacktrackConfig {
     bool enabled = false;
     bool ignoreSmoke = false;
     bool recoilBasedFov = false;
+    bool pingBased = false;
+    int pingBasedVal = 0;
     int timeLimit = 200;
 } backtrackConfig;
 
@@ -64,7 +66,12 @@ void Backtrack::update(FrameStage stage) noexcept
 
             records[i].push_front(record);
 
-            while (records[i].size() > 3 && records[i].size() > static_cast<size_t>(timeToTicks(static_cast<float>(backtrackConfig.timeLimit) / 1000.f)))
+            backtrackConfig.pingBasedVal = backtrackConfig.timeLimit;
+            if (backtrackConfig.pingBased)
+                if (auto networkChannel = interfaces->engine->getNetworkChannel(); networkChannel && networkChannel->getLatency(0) > 0.0f)
+                    backtrackConfig.pingBasedVal = static_cast<int>(networkChannel->getLatency(0) * 1000);
+
+            while (records[i].size() > 3 && records[i].size() > static_cast<size_t>(timeToTicks(static_cast<float>(backtrackConfig.pingBasedVal) / 1000.f)))
                 records[i].pop_back();
 
             if (auto invalid = std::find_if(std::cbegin(records[i]), std::cend(records[i]), [](const Record & rec) { return !valid(rec.simulationTime); }); invalid != std::cend(records[i]))
@@ -203,9 +210,16 @@ void Backtrack::drawGUI(bool contentOnly) noexcept
     ImGui::Checkbox("Enabled", &backtrackConfig.enabled);
     ImGui::Checkbox("Ignore smoke", &backtrackConfig.ignoreSmoke);
     ImGui::Checkbox("Recoil based fov", &backtrackConfig.recoilBasedFov);
-    ImGui::PushItemWidth(220.0f);
-    ImGui::SliderInt("Time limit", &backtrackConfig.timeLimit, 1, 200, "%d ms");
-    ImGui::PopItemWidth();
+    ImGui::Checkbox("Ping based", &backtrackConfig.pingBased);
+    if (backtrackConfig.pingBased) {
+        ImGui::SameLine();
+        ImGui::Text("(%d ms)", backtrackConfig.pingBasedVal);
+    }
+    else {
+        ImGui::PushItemWidth(220.0f);
+        ImGui::SliderInt("Time limit", &backtrackConfig.timeLimit, 1, 200, "%d ms");
+        ImGui::PopItemWidth();
+    };
     if (!contentOnly)
         ImGui::End();
 }
@@ -215,6 +229,7 @@ static void to_json(json& j, const BacktrackConfig& o, const BacktrackConfig& du
     WRITE("Enabled", enabled);
     WRITE("Ignore smoke", ignoreSmoke);
     WRITE("Recoil based fov", recoilBasedFov);
+    WRITE("Ping based", pingBased);
     WRITE("Time limit", timeLimit);
 }
 
@@ -230,6 +245,7 @@ static void from_json(const json& j, BacktrackConfig& b)
     read(j, "Enabled", b.enabled);
     read(j, "Ignore smoke", b.ignoreSmoke);
     read(j, "Recoil based fov", b.recoilBasedFov);
+    read(j, "Ping based", b.pingBased);
     read(j, "Time limit", b.timeLimit);
 }
 
