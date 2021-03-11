@@ -2,6 +2,9 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#include "AntiDetection.h"
+
+AntiDetection antiDetection;
 #endif
 
 #include "Hooks.h"
