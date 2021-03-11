@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ubuntu-build:
-    name: Build (Linux)
+    name: Build (Linux) (BETA)
     runs-on: ubuntu-latest
 
     steps:
@@ -16,36 +16,37 @@ jobs:
     - name: Compilation
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload
-      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_SSE2.so && rm -rf Release
+      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_BETA_SSE2.so && rm -rf Release
     - name: SHA1
       working-directory: ready
-      run: sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
+      run: sha1sum libOsiris_BETA_SSE2.so > libOsiris_BETA_SSE2.so.sha1
 
     - name: Configure to compile AVX
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
     - name: Compilation AVX
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload AVX
-      run: cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
+      run: cp Release/libOsiris.so ready/libOsiris_BETA_AVX.so && rm -rf Release
     - name: SHA1 AVX
       working-directory: ready
-      run: sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
+      run: sha1sum libOsiris_BETA_AVX.so > libOsiris_BETA_AVX.so.sha1
 
     - name: Configure to compile AVX2
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx2 -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
     - name: Compilation AVX2
       run: cd Release && make -j $(nproc --all)
     - name: Prepare to upload AVX2
-      run: cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
+      run: cp Release/libOsiris.so ready/libOsiris_BETA_AVX2.so && rm -rf Release
     - name: SHA1 AVX2
       working-directory: ready
-      run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+      run: sha1sum libOsiris_BETA_AVX2.so > libOsiris_BETA_AVX2.so.sha1
       
     - name: Get Injector
       run: |
             git clone https://github.com/playday3008/OG-Injector-Linux.git
             cd OG-Injector-Linux
             sed -i 's+//#define OSIRIS+#define OSIRIS+g' OG-Injector-Linux.cpp
+            sed -i 's+//#define BETA+#define BETA+g' OG-Injector-Linux.cpp
             cmake -E make_directory build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release
             cmake --build . --config Release
             cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
@@ -53,12 +54,12 @@ jobs:
     - name: Push to Discord
       run: |
             cd ready
-            tar -czvf "../Osiris Release Linux (${{github.run_id}}).tar.gz" *
+            tar -czvf "../Osiris BETA Linux (${{github.run_id}}).tar.gz" *
             cd ..
-            curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
+            curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris BETA Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
 
     - uses: actions/upload-artifact@v2
       with:
-        name: Osiris Release Linux
+        name: Osiris BETA Linux
         path: ready
