@@ -190,6 +190,8 @@ public:
         bool fastDuck{ false };
         bool moonwalk{ false };
         bool edgejump{ false };
+        bool jumpbug{ false };
+        bool jumpbughold{ false };
         bool slowwalk{ false };
         bool autoPistol{ false };
         bool autoReload{ false };
@@ -216,6 +218,7 @@ public:
         PreserveKillfeed preserveKillfeed;
         char clanTag[16];
         KeyBind edgejumpkey = KeyBind::NONE;
+        KeyBind jumpbugkey = KeyBind::NONE;
         KeyBind slowwalkKey = KeyBind::NONE;
         ColorToggleThickness noscopeCrosshair;
         ColorToggleThickness recoilCrosshair;

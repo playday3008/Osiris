@@ -49,5 +49,7 @@ namespace Misc
     void drawOffscreenEnemies(ImDrawList* drawList) noexcept;
     void autoAccept(const char* soundEntry) noexcept;
 
+    void jumpbug(UserCmd* cmd) noexcept;
+
     void updateInput() noexcept;
 }
