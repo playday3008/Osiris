@@ -1279,6 +1279,23 @@ void GUI::renderMiscWindow(bool contentOnly) noexcept
     ImGui::PopID();
     ImGui::Combo("Auto strafe style", &config->misc.autoStrafeStyle, "Legit\0Normal\0");
     ImGui::Checkbox("Bunny hop", &config->misc.bunnyHop);
+    if (config->misc.bunnyHop) {
+        ImGui::SameLine();
+        ImGui::PushID("Bunny hop");
+        if (ImGui::Button("..."))
+            ImGui::OpenPopup("BH");
+
+        if (ImGui::BeginPopup("BH")) {
+            ImGui::Checkbox("Hitchance", &config->misc.bunnyHopHitchanceEnable);
+            if (config->misc.bunnyHopHitchanceEnable) {
+                ImGui::SliderInt("Bhop hitchance", &config->misc.bunnyHopHitchance, 0, 100, "%d%");
+                ImGui::SliderInt("Min hits", &config->misc.bunnyHopMinHits, 0, 20, "%d%");
+                ImGui::SliderInt("Max hits", &config->misc.bunnyHopMaxHits, 0, 20, "%d%");
+            }
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+    }
     ImGui::Checkbox("Fast duck", &config->misc.fastDuck);
     ImGui::Checkbox("Moonwalk", &config->misc.moonwalk);
     ImGui::Checkbox("Edge Jump", &config->misc.edgejump);

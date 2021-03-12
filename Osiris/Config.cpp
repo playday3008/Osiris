@@ -451,6 +451,10 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Auto strafe Key", m.autoStrafeKey);
     read(j, "Auto strafe Style", m.autoStrafeStyle);
     read(j, "Bunny hop", m.bunnyHop);
+    read(j, "Bunny hop hitchance Enabled", m.bunnyHopHitchanceEnable);
+    read(j, "Bunny hop hitchance", m.bunnyHopHitchance);
+    read(j, "Bunny hop Min hits", m.bunnyHopMinHits);
+    read(j, "Bunny hop Max hits", m.bunnyHopMaxHits);
     read(j, "Custom clan tag", m.customClanTag);
     read(j, "Clock tag", m.clocktag);
     read(j, "Clan tag", m.clanTag, sizeof(m.clanTag));
@@ -836,6 +840,10 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Auto strafe Key", autoStrafeKey);
     WRITE("Auto strafe Style", autoStrafeStyle);
     WRITE("Bunny hop", bunnyHop);
+    WRITE("Bunny hop hitchance Enabled", bunnyHopHitchanceEnable);
+    WRITE("Bunny hop hitchance", bunnyHopHitchance);
+    WRITE("Bunny hop Min hits", bunnyHopMinHits);
+    WRITE("Bunny hop Max hits", bunnyHopMaxHits);
     WRITE("Custom clan tag", customClanTag);
     WRITE("Clock tag", clocktag);
 

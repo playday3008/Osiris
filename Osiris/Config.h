@@ -198,6 +198,10 @@ public:
         KeyBind autoStrafeKey = KeyBind::NONE;
         int autoStrafeStyle{ 0 };
         bool bunnyHop{ false };
+        bool bunnyHopHitchanceEnable{ false };
+        int bunnyHopHitchance{ 100 };
+        int bunnyHopMinHits{ 20 };
+        int bunnyHopMaxHits{ 20 };
         bool customClanTag{ false };
         bool clocktag{ false };
         bool animatedClanTag{ false };

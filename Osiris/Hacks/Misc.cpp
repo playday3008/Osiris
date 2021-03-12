@@ -514,9 +514,24 @@ void Misc::bunnyHop(UserCmd* cmd) noexcept
         return;
 
     static auto wasLastTimeOnGround{ localPlayer->flags() & PlayerFlags::ONGROUND };
+    static int hopsHit = 0;
 
-    if (config->misc.bunnyHop && !(localPlayer->flags() & PlayerFlags::ONGROUND) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
-        cmd->buttons &= ~UserCmd::IN_JUMP;
+    if (config->misc.bunnyHop)
+        if (config->misc.bunnyHopHitchanceEnable) {
+            if (localPlayer->moveType() != MoveType::LADDER) {
+                if (cmd->buttons & UserCmd::IN_JUMP && !(localPlayer->flags() & PlayerFlags::ONGROUND))
+                    cmd->buttons &= ~UserCmd::IN_JUMP;
+                else if ((hopsHit >= config->misc.bunnyHopMinHits && rand() % 100 + 1 > config->misc.bunnyHopHitchance) || hopsHit >= config->misc.bunnyHopMaxHits) {
+                    cmd->buttons &= ~UserCmd::IN_JUMP;
+                    hopsHit = 0;
+                }
+                else
+                    hopsHit++;
+            }
+        }
+        else
+            if (!(localPlayer->flags() & PlayerFlags::ONGROUND) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
+                cmd->buttons &= ~UserCmd::IN_JUMP;
 
     wasLastTimeOnGround = localPlayer->flags() & PlayerFlags::ONGROUND;
 }
