@@ -210,6 +210,7 @@ public:
         bool edgejump{ false };
         bool jumpbug{ false };
         bool slowwalk{ false };
+        bool doorSpam{ false };
         bool autoPistol{ false };
         bool autoReload{ false };
         bool autoAccept{ false };

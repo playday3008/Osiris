@@ -1188,6 +1188,23 @@ void Misc::playerBlocker(UserCmd* cmd) noexcept
     }
 }
 
+void Misc::doorSpam(UserCmd* cmd) noexcept {
+
+    if (!localPlayer || !config->misc.doorSpam || localPlayer->isDefusing())
+        return;
+
+    constexpr auto doorRange = 200.0f;
+
+    Trace trace;
+    const auto startPos = localPlayer->getEyePosition();
+    const auto endPos = startPos + Vector::fromAngle(cmd->viewangles) * doorRange;
+    interfaces->engineTrace->traceRay({ startPos, endPos }, 0x46004009, localPlayer.get(), trace);
+
+    if (trace.entity && trace.entity->getClientClass()->classId == ClassId::PropDoorRotating)
+        if (cmd->buttons & UserCmd::IN_USE && cmd->tickCount & 1)
+            cmd->buttons &= ~UserCmd::IN_USE;
+}
+
 void Misc::updateInput() noexcept
 {
 
