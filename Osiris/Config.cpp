@@ -459,6 +459,10 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Clock tag", m.clocktag);
     read(j, "Clan tag", m.clanTag, sizeof(m.clanTag));
     read(j, "Animated clan tag", m.animatedClanTag);
+    read(j, "Chat spam", m.chatSpam);
+    read(j, "Chat spam random", m.chatSpamRandom);
+    read(j, "Chat spam delay", m.chatSpamDelay);
+    read<value_t::object>(j, "Chat spam phrases", m.chatSpamPhrases);
     read(j, "Fast duck", m.fastDuck);
     read(j, "Moonwalk", m.moonwalk);
     read(j, "Edge Jump", m.edgejump);
@@ -852,6 +856,10 @@ static void to_json(json& j, const Config::Misc& o)
         j["Clan tag"] = o.clanTag;
 
     WRITE("Animated clan tag", animatedClanTag);
+    WRITE("Chat spam", chatSpam);
+    WRITE("Chat spam random", chatSpamRandom);
+    WRITE("Chat spam delay", chatSpamDelay);
+    WRITE("Chat spam phrases", chatSpamPhrases);
     WRITE("Fast duck", fastDuck);
     WRITE("Moonwalk", moonwalk);
     WRITE("Edge Jump", edgejump);
