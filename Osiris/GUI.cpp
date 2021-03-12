@@ -903,6 +903,7 @@ void GUI::renderVisualsWindow(bool contentOnly) noexcept
         ImGui::SliderFloat("", &config->visuals.ragdollTimescaleValue, 0, 10, "Physics timescale: %.2f");
         ImGui::PopID();
     };
+    ImGui::Checkbox("Night Mode", &config->visuals.nightMode);
     ImGui::Checkbox("No fog", &config->visuals.noFog);
     ImGui::Checkbox("No 3d sky", &config->visuals.no3dSky);
     ImGui::Checkbox("No aim punch", &config->visuals.noAimPunch);

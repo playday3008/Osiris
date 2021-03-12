@@ -292,6 +292,7 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
         Misc::disablePanoramablur();
         Visuals::colorWorld();
         Misc::fakePrime();
+        Visuals::NightMode();
     }
     if (interfaces->engine->isInGame()) {
         Visuals::skybox(stage);
