@@ -201,6 +201,7 @@ static bool __STDCALL createMove(LINUX_ARGS(void* thisptr,) float inputSampleTim
     Visuals::physicsTimescale();
     Visuals::fullBright();
     Misc::doorSpam(cmd);
+    Misc::chatSpam();
 
     if (!(cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))) {
         Misc::chokePackets(sendPacket);

@@ -57,6 +57,7 @@ namespace Misc
     void drawAimbotFov(ImDrawList* drawList) noexcept;
     void playerBlocker(UserCmd* cmd) noexcept;
     void doorSpam(UserCmd* cmd) noexcept;
+    void chatSpam() noexcept;
 
     void updateInput() noexcept;
 }
