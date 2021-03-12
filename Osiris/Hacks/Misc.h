@@ -58,6 +58,8 @@ namespace Misc
     void playerBlocker(UserCmd* cmd) noexcept;
     void doorSpam(UserCmd* cmd) noexcept;
     void chatSpam() noexcept;
+    void setName(bool set) noexcept;
+    void fakeItem(bool = false) noexcept;
 
     void updateInput() noexcept;
 }

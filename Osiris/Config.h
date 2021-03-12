@@ -266,6 +266,17 @@ public:
         std::string killMessageString{ "Gotcha!" };
         int banColor{ 6 };
         std::string banText{ "Cheater has been permanently banned from official CS:GO servers." };
+        std::string customName;
+        bool fakeItem{ false };
+        bool fakeItemFlagsST{ false };
+        bool fakeItemFlagsStar{ false };
+        int fakeItemTeam{ 0 };
+        int fakeItemMessageType{ 0 };
+        int fakeItemType{ 0 };
+        int fakeItemRarity{ 0 };
+        int fakeItemPlayerColor{ 0 };
+        std::string fakeItemPlayerName{ "" };
+        std::string fakeItemName{ "" };
         ColorToggle3 bombTimer{ 1.0f, 0.55f, 0.0f };
         KeyBind prepareRevolverKey = KeyBind::NONE;
         int hitSound{ 0 };
