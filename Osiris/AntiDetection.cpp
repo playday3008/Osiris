@@ -49,8 +49,8 @@ AntiDetection::AntiDetection() {
 	memset((void*)hModule, 0, 0x1000);
 	VirtualProtect((void*)hModule, 0x1000, dwMemPro, &dwMemPro);
 	if (IsDebuggerPresent())
-		OutputDebugStringA("CleanUp PEheader Success.");
+		OutputDebugStringA("CleanUp PEheader Success.\n");
 	HideModule(hModule);
 	if (IsDebuggerPresent())
-		OutputDebugStringA("Cutup PEB link success.");
+		OutputDebugStringA("Cutup PEB link success.\n");
 }
