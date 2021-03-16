@@ -1217,7 +1217,7 @@ void Misc::chatSpam() noexcept
 
     lastSpam = curTime;
 
-    if (!localPlayer || localPlayer->team() == static_cast<int>(Team::None))
+    if (!localPlayer || localPlayer->team() == Team::None)
         return;
 
     std::istringstream Stream(config->misc.chatSpamPhrases);
@@ -1451,8 +1451,11 @@ void Misc::buyBot(GameEvent* event) noexcept
             buy += config->misc.buyBotVest ? (config->misc.buyBotVestHelm ? "buy vesthelm; " : "buy vest; ") : ""; // Kevlar Vest + Helmet
             buy += config->misc.buyBotTaser ? "buy taser 34; " : ""; // Zeus x27
             buy += config->misc.buyBotDefuser ? "buy defuser; " : ""; // Defuse Kit
-
-            buy += config->misc.buyBotMolotov ? "buy incgrenade; buy molotov; " : "";  // Incendiary/Molotov
+            if (config->misc.buyBotMolotov)
+                if (localPlayer->team() == Team::CT)
+                    buy += "buy incgrenade; ";  // Incendiary
+                else if (localPlayer->team() == Team::TT)
+                    buy += "buy molotov; ";  // Molotov
             buy += config->misc.buyBotDecoy ? "buy decoy; " : ""; // Decoy
             buy += config->misc.buyBotFlashbang ? (config->misc.buyBotFlashbangX2 ? "buy flashbang; buy flashbang; " : "buy flashbang; ") : ""; // Flashbang
             buy += config->misc.buyBotHE ? "buy hegrenade; " : ""; // High Explosive
