@@ -162,7 +162,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AntiDetection.cpp">
-      <Filter>Hacks</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
