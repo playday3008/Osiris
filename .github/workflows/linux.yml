@@ -19,7 +19,9 @@ jobs:
       run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_SSE2.so && rm -rf Release
     - name: SHA1
       working-directory: ready
-      run: sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
+      run: |
+            sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
+            cat libOsiris_SSE2.so.sha1
 
     - name: Configure to compile AVX
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
@@ -29,7 +31,9 @@ jobs:
       run: cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
     - name: SHA1 AVX
       working-directory: ready
-      run: sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
+      run: |
+            sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
+            cat libOsiris_AVX.so.sha1
 
     - name: Configure to compile AVX2
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx2 -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
@@ -39,7 +43,9 @@ jobs:
       run: cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
     - name: SHA1 AVX2
       working-directory: ready
-      run: sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+      run: |
+            sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+            cat libOsiris_AVX2.so.sha1
       
     - name: Get Injector
       run: |
@@ -50,6 +56,30 @@ jobs:
             cmake --build . --config Release
             cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
 
+    - name: Upload Archive
+      uses: actions/upload-artifact@v2
+      with:
+        name: Osiris Release Linux
+        path: ready
+      
+    - name: Upload Only SSE2
+      uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release Linux SSE2
+        path: ready/Osiris_SSE2.dll
+      
+    - name: Upload Only AVX
+      uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release Linux AVX
+        path: ready/Osiris_AVX.dll
+      
+    - name: Upload Only AVX2
+      uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release Linux AVX2
+        path: ready/Osiris_AVX2.dll
+
     - name: Push to Discord
       run: |
             cd ready
@@ -57,8 +87,3 @@ jobs:
             cd ..
             curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Osiris Release Linux
-        path: ready

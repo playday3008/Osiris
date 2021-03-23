@@ -54,7 +54,7 @@ jobs:
       working-directory: Osiris/ready
       run: |
             sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
-            cat Osiris_SSE2.dll.sha1
+            cat Osiris_AVX.dll.sha1
       
     - name: Rename AVX2
       working-directory: Osiris
@@ -80,7 +80,7 @@ jobs:
       working-directory: Osiris/ready
       run: |
             sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
-            cat Osiris_SSE2.dll.sha1
+            cat Osiris_AVX2.dll.sha1
       
     - name: Get Injector
       run: |
@@ -97,13 +97,6 @@ jobs:
     - name: Open CFG folder (BAT)
       run: |
             Add-Content -path "${{ github.workspace }}\Osiris\ready\Open CFG folder (Открыть папку с КФГ).bat" -value "@echo off`r`necho `"Wait a second`"`r`nIF EXIST %USERPROFILE%\Documents\Osiris (`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n) ELSE (`r`nmkdir %USERPROFILE%\Documents\Osiris`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n)`r`nstart `"`" https://youtu.be/xY3oX_cpAVs"
-      shell: pwsh
-      
-    - name: Push to Discord
-      run: |
-            Start-Sleep -s 180
-            Compress-Archive -Path ${{ github.workspace }}\Osiris\ready\* -DestinationPath "${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip"
-            cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
       
     - name: Upload Archive
@@ -129,3 +122,10 @@ jobs:
       with:
         name: Osiris Release AVX2
         path: Osiris/ready/Osiris_AVX2.dll
+      
+    - name: Push to Discord
+      run: |
+            Start-Sleep -s 180
+            Compress-Archive -Path ${{ github.workspace }}\Osiris\ready\* -DestinationPath "${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip"
+            cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
+      shell: pwsh
