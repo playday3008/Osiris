@@ -26,7 +26,9 @@ jobs:
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 SSE2
       working-directory: Osiris/ready
-      run: sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
+      run: |
+            sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
+            cat Osiris_SSE2.dll.sha1
       
     - name: Rename AVX
       working-directory: Osiris
@@ -50,7 +52,9 @@ jobs:
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 AVX
       working-directory: Osiris/ready
-      run: sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
+      run: |
+            sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
+            cat Osiris_SSE2.dll.sha1
       
     - name: Rename AVX2
       working-directory: Osiris
@@ -74,7 +78,9 @@ jobs:
             Remove-Item -LiteralPath "Release" -Force -Recurse
     - name: SHA1 AVX2
       working-directory: Osiris/ready
-      run: sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
+      run: |
+            sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
+            cat Osiris_SSE2.dll.sha1
       
     - name: Get Injector
       run: |
@@ -100,7 +106,23 @@ jobs:
             cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
       shell: pwsh
       
+    - name: Upload Archive
     - uses: actions/upload-artifact@v1
       with:
         name: Osiris Release All
         path: Osiris/ready
+      
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release SSE2
+        path: Osiris/ready/Osiris_SSE2.dll
+      
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release AVX
+        path: Osiris/ready/Osiris_AVX.dll
+      
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Osiris Release AVX2
+        path: Osiris/ready/Osiris_AVX2.dll
