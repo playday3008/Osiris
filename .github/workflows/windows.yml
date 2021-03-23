@@ -107,22 +107,25 @@ jobs:
       shell: pwsh
       
     - name: Upload Archive
-    - uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v1
       with:
         name: Osiris Release All
         path: Osiris/ready
       
-    - uses: actions/upload-artifact@v1
+    - name: Upload Only SSE2
+      uses: actions/upload-artifact@v1
       with:
         name: Osiris Release SSE2
         path: Osiris/ready/Osiris_SSE2.dll
       
-    - uses: actions/upload-artifact@v1
+    - name: Upload Only AVX
+      uses: actions/upload-artifact@v1
       with:
         name: Osiris Release AVX
         path: Osiris/ready/Osiris_AVX.dll
       
-    - uses: actions/upload-artifact@v1
+    - name: Upload Only AVX2
+      uses: actions/upload-artifact@v1
       with:
         name: Osiris Release AVX2
         path: Osiris/ready/Osiris_AVX2.dll
