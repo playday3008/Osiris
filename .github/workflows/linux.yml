@@ -66,19 +66,19 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: Osiris Release Linux SSE2
-        path: ready/Osiris_SSE2.so
+        path: ready/libOsiris_SSE2.so
       
     - name: Upload Only AVX
       uses: actions/upload-artifact@v1
       with:
         name: Osiris Release Linux AVX
-        path: ready/Osiris_AVX.so
+        path: ready/libOsiris_AVX.so
       
     - name: Upload Only AVX2
       uses: actions/upload-artifact@v1
       with:
         name: Osiris Release Linux AVX2
-        path: ready/Osiris_AVX2.so
+        path: ready/libOsiris_AVX2.so
 
     - name: Push to Discord
       run: |
