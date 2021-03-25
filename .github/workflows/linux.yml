@@ -46,7 +46,7 @@ jobs:
       run: |
             sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
             cat libOsiris_AVX2.so.sha1
-      
+
     - name: Get Injector
       run: |
             git clone https://github.com/playday3008/OG-Injector-Linux.git
@@ -59,21 +59,21 @@ jobs:
     - name: Upload Archive
       uses: actions/upload-artifact@v2
       with:
-        name: Osiris Release Linux
+        name: Osiris Release Linux All
         path: ready
-      
+
     - name: Upload Only SSE2
       uses: actions/upload-artifact@v1
       with:
         name: Osiris Release Linux SSE2
         path: ready/libOsiris_SSE2.so
-      
+
     - name: Upload Only AVX
       uses: actions/upload-artifact@v1
       with:
         name: Osiris Release Linux AVX
         path: ready/libOsiris_AVX.so
-      
+
     - name: Upload Only AVX2
       uses: actions/upload-artifact@v1
       with:

@@ -6,7 +6,7 @@ jobs:
   windows-build:
     name: Build (Windows)
     runs-on: windows-latest
-    
+
     steps:
     - uses: actions/checkout@v2
     - name: Add msbuild to PATH
@@ -29,10 +29,10 @@ jobs:
       run: |
             sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
             cat Osiris_SSE2.dll.sha1
-      
+
     - name: Rename AVX
       working-directory: Osiris
-      run: 
+      run:
           |
           ren Osiris.vcxproj Osiris_AVX.vcxproj
           ren Osiris.vcxproj.filters Osiris_AVX.vcxproj.filters
@@ -55,10 +55,10 @@ jobs:
       run: |
             sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
             cat Osiris_AVX.dll.sha1
-      
+
     - name: Rename AVX2
       working-directory: Osiris
-      run: 
+      run:
           |
           ren Osiris_AVX.vcxproj Osiris_AVX2.vcxproj
           ren Osiris_AVX.vcxproj.filters Osiris_AVX2.vcxproj.filters
@@ -81,7 +81,7 @@ jobs:
       run: |
             sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
             cat Osiris_AVX2.dll.sha1
-      
+
     - name: Get Injector
       run: |
             git clone --branch junk https://github.com/playday3008/OG-Injector.git
@@ -93,36 +93,36 @@ jobs:
             msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
             Copy-Item -Path ${{ github.workspace }}\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "${{ github.workspace }}\Osiris\ready\OG-Injector(Osiris).exe"
       shell: pwsh
-      
+
     - name: Open CFG folder (BAT)
       run: |
             Add-Content -path "${{ github.workspace }}\Osiris\ready\Open CFG folder (Открыть папку с КФГ).bat" -value "@echo off`r`necho `"Wait a second`"`r`nIF EXIST %USERPROFILE%\Documents\Osiris (`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n) ELSE (`r`nmkdir %USERPROFILE%\Documents\Osiris`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n)`r`nstart `"`" https://youtu.be/xY3oX_cpAVs"
       shell: pwsh
-      
+
     - name: Upload Archive
       uses: actions/upload-artifact@v1
       with:
-        name: Osiris Release All
+        name: Osiris Release Windows All
         path: Osiris/ready
-      
+
     - name: Upload Only SSE2
       uses: actions/upload-artifact@v1
       with:
-        name: Osiris Release SSE2
+        name: Osiris Release Windows SSE2
         path: Osiris/ready/Osiris_SSE2.dll
-      
+
     - name: Upload Only AVX
       uses: actions/upload-artifact@v1
       with:
-        name: Osiris Release AVX
+        name: Osiris Release Windows AVX
         path: Osiris/ready/Osiris_AVX.dll
-      
+
     - name: Upload Only AVX2
       uses: actions/upload-artifact@v1
       with:
-        name: Osiris Release AVX2
+        name: Osiris Release Windows AVX2
         path: Osiris/ready/Osiris_AVX2.dll
-      
+
     - name: Push to Discord
       run: |
             Start-Sleep -s 180
