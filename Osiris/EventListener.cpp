@@ -20,6 +20,7 @@ EventListener::EventListener() noexcept
     interfaces->gameEventManager->addListener(this, "bullet_impact");
 
     interfaces->gameEventManager->addListener(this, "player_death");
+    interfaces->gameEventManager->addListener(this, "vote_cast");
 
     if (const auto desc = memory->getEventDescriptor(interfaces->gameEventManager, "player_death", nullptr))
         std::swap(desc->listeners[0], desc->listeners[desc->listeners.size - 1]);
@@ -62,6 +63,8 @@ void EventListener::fireGameEvent(GameEvent* event)
     case fnv::hash("bullet_impact"):
         Visuals::bulletTracer(*event);
         break;
+    case fnv::hash("vote_cast"):
+        Misc::voteRevealer(*event);
     case fnv::hash("round_announce_match_start"):
         Misc::teamKills = 0;
         Misc::teamDamage = 0;

@@ -236,6 +236,7 @@ public:
         bool revealRanks{ false };
         bool revealMoney{ false };
         bool revealSuspect{ false };
+        bool revealVotes{ false };
         bool fixAnimationLOD{ false };
         bool fixBoneMatrix{ false };
         bool fixMovement{ false };

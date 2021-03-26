@@ -207,14 +207,14 @@ public:
         interfaces->engineTrace->traceRay({ localPlayer->getEyePosition(), position.notNull() ? position : getBonePosition(8) }, 0x46004009, { localPlayer.get() }, trace);
         return trace.entity == this || trace.fraction > 0.97f;
     }
-    
+
     bool isOtherEnemy(Entity* other) noexcept;
 
     VarMap* getVarMap() noexcept
     {
         return reinterpret_cast<VarMap*>(this + 0x24);
     }
-   
+
     AnimState* getAnimstate() noexcept
     {
         return *reinterpret_cast<AnimState**>(this + 0x3914);
@@ -274,7 +274,6 @@ public:
     NETVAR_OFFSET(moveType, "CBaseEntity", "m_nRenderMode", 1, MoveType)
     NETVAR(simulationTime, "CBaseEntity", "m_flSimulationTime", float)
     NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int)
-    NETVAR(team, "CBaseEntity", "m_iTeamNum", Team)
     NETVAR(spotted, "CBaseEntity", "m_bSpotted", bool)
 
     NETVAR(weapons, "CBaseCombatCharacter", "m_hMyWeapons", int[64])
@@ -336,11 +335,11 @@ public:
     NETVAR(c4StartedArming, "CC4", "m_bStartedArming", bool)
 
     NETVAR(tabletReceptionIsBlocked, "CTablet", "m_bTabletReceptionIsBlocked", bool)
-    
+
     NETVAR(droneTarget, "CDrone", "m_hMoveToThisEntity", int)
 
     NETVAR(thrower, "CBaseGrenade", "m_hThrower", int)
-        
+
     NETVAR(mapHasBombTarget, "CCSGameRulesProxy", "m_bMapHasBombTarget", bool)
 
     NETVAR(fireXDelta, "CInferno", "m_fireXDelta", int[100])
@@ -348,7 +347,7 @@ public:
     NETVAR(fireZDelta, "CInferno", "m_fireZDelta", int[100])
     NETVAR(fireIsBurning, "CInferno", "m_bFireIsBurning", bool[100])
     NETVAR(fireCount, "CInferno", "m_fireCount", int)
-        
+
     bool isFlashed() noexcept
     {
         return flashDuration() > 75.0f;

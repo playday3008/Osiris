@@ -16,6 +16,7 @@
 #include "Misc.h"
 
 #include "../SDK/Client.h"
+#include "../SDK/ClientMode.h"
 #include "../SDK/ConVar.h"
 #include "../SDK/Entity.h"
 #include "../SDK/FrameStage.h"
@@ -171,7 +172,7 @@ void Misc::spectatorList() noexcept
             continue;
 
         if (const auto it = std::ranges::find(GameData::players(), observer.playerHandle, &PlayerData::handle); it != GameData::players().cend()) {
-            ImGui::TextWrapped("%s", it->name);
+            ImGui::TextWrapped("%s", it->name.c_str());
         }
     }
 
@@ -842,9 +843,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
                 if (const auto player = GameData::playerByHandle(handle)) {
                     if (config->misc.purchaseList.showPrices)
-                        ImGui::TextWrapped("%s $%d: %s", player->name, purchases.totalCost, s.c_str());
+                        ImGui::TextWrapped("%s $%d: %s", player->name.c_str(), purchases.totalCost, s.c_str());
                     else
-                        ImGui::TextWrapped("%s: %s", player->name, s.c_str());
+                        ImGui::TextWrapped("%s: %s", player->name.c_str(), s.c_str());
                 }
             }
         } else if (config->misc.purchaseList.mode == PurchaseList::Summary) {
@@ -985,6 +986,22 @@ void Misc::preserveKillfeed(bool roundStart) noexcept
         if (child->hasClass("DeathNotice_Killer") && (!config->misc.preserveKillfeed.onlyHeadshots || child->hasClass("DeathNoticeHeadShot")))
             child->setAttributeFloat("SpawnTime", memory->globalVars->currenttime);
     }
+}
+
+void Misc::voteRevealer(GameEvent& event) noexcept
+{
+    if (!config->misc.revealVotes)
+        return;
+
+    const auto entity = interfaces->entityList->getEntity(event.getInt("entityid"));
+    if (!entity || !entity->isPlayer())
+        return;
+    
+    const auto votedYes = event.getInt("vote_option") == 0;
+    const auto isLocal = localPlayer && entity == localPlayer.get();
+    const char color = votedYes ? '\x06' : '\x07';
+
+    memory->clientMode->getHudChat()->printf(0, " \x0C\u2022Osiris\u2022 %c%s\x01 voted %c%s\x01", isLocal ? '\x01' : color, isLocal ? "You" : entity->getPlayerName().c_str(), color, votedYes ? "Yes" : "No");
 }
 
 void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept

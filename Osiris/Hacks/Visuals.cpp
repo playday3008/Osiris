@@ -109,7 +109,7 @@ void Visuals::playerModel(FrameStage stage) noexcept
         }
     };
 
-    if (const auto model = getModel(localPlayer->team())) {
+    if (const auto model = getModel(localPlayer->getTeamNumber())) {
         if (stage == FrameStage::RENDER_START) {
             originalIdx = localPlayer->modelIndex();
             if (const auto modelprecache = interfaces->networkStringTableContainer->findTable("modelprecache")) {
