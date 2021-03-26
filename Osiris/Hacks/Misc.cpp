@@ -996,7 +996,7 @@ void Misc::voteRevealer(GameEvent& event) noexcept
     const auto entity = interfaces->entityList->getEntity(event.getInt("entityid"));
     if (!entity || !entity->isPlayer())
         return;
-    
+
     const auto votedYes = event.getInt("vote_option") == 0;
     const auto isLocal = localPlayer && entity == localPlayer.get();
     const char color = votedYes ? '\x06' : '\x07';
@@ -1136,7 +1136,7 @@ void Misc::teamDamageCounter(GameEvent* event) noexcept {
 
 void Misc::drawAimbotFov(ImDrawList* drawList) noexcept {
     if (config->misc.drawAimbotFov.enabled && interfaces->engine->isInGame()) {
-        if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon()) 
+        if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon())
             return;
         int weaponId = getWeaponIndex(localPlayer->getActiveWeapon()->itemDefinitionIndex2());
         if (!config->aimbot[weaponId].enabled)
@@ -1234,7 +1234,7 @@ void Misc::chatSpam() noexcept
 
     lastSpam = curTime;
 
-    if (!localPlayer || localPlayer->team() == Team::None)
+    if (!localPlayer || localPlayer->getTeamNumber() == Team::None)
         return;
 
     std::istringstream Stream(config->misc.chatSpamPhrases);
@@ -1469,9 +1469,9 @@ void Misc::buyBot(GameEvent* event) noexcept
             buy += config->misc.buyBotTaser ? "buy taser 34; " : ""; // Zeus x27
             buy += config->misc.buyBotDefuser ? "buy defuser; " : ""; // Defuse Kit
             if (config->misc.buyBotMolotov)
-                if (localPlayer->team() == Team::CT)
+                if (localPlayer->getTeamNumber() == Team::CT)
                     buy += "buy incgrenade; ";  // Incendiary
-                else if (localPlayer->team() == Team::TT)
+                else if (localPlayer->getTeamNumber() == Team::TT)
                     buy += "buy molotov; ";  // Molotov
             buy += config->misc.buyBotDecoy ? "buy decoy; " : ""; // Decoy
             buy += config->misc.buyBotFlashbang ? (config->misc.buyBotFlashbangX2 ? "buy flashbang; buy flashbang; " : "buy flashbang; ") : ""; // Flashbang
