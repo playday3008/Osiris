@@ -1419,7 +1419,7 @@ void Misc::fakeItem(bool set) noexcept
 
 void Misc::buyBot(GameEvent* event) noexcept
 {
-    const char* primaryList[] = {
+    std::vector<std::string> primaryList = {
         "",
         "buy famas; buy galilar; ",
         "buy m4a1; buy ak47; ",
@@ -1441,7 +1441,7 @@ void Misc::buyBot(GameEvent* event) noexcept
         "buy negev; "
     };
 
-    const char* secondaryList[] = {
+    std::vector<std::string> secondaryList = {
         "",
         "buy hkp2000; buy glock; ",
         "buy p250; ",
@@ -1449,8 +1449,6 @@ void Misc::buyBot(GameEvent* event) noexcept
         "buy fiveseven; buy tec9; ",
         "buy deagle; buy revolver; "
     };
-
-    static bool start = false;
 
     std::string buy = "";
 
