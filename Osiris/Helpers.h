@@ -1,6 +1,8 @@
 #pragma once
 
 #include <array>
+#include <string>
+#include <vector>
 
 #include "imgui/imgui.h"
 #include "Config.h"
@@ -40,4 +42,7 @@ namespace Helpers
 
     std::wstring toWideString(const std::string& str) noexcept;
     std::wstring toUpper(std::wstring str) noexcept;
+
+    bool decodeVFONT(std::vector<char>& buffer) noexcept;
+    std::vector<char> loadBinaryFile(const std::string& path) noexcept;
 }
