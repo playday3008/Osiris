@@ -49,6 +49,7 @@ namespace Misc
     void voteRevealer(GameEvent& event) noexcept;
     void drawOffscreenEnemies(ImDrawList* drawList) noexcept;
     void autoAccept(const char* soundEntry) noexcept;
+    void deathmatchGod() noexcept;
 
     inline int teamDamage = 0;
     inline int teamKills = 0;
@@ -63,5 +64,6 @@ namespace Misc
     void fakeItem(bool = false) noexcept;
     void buyBot(GameEvent* event) noexcept;
 
+    void updateEventListeners(bool forceRemove = false) noexcept;
     void updateInput() noexcept;
 }

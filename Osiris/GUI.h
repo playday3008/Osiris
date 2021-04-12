@@ -22,7 +22,6 @@ private:
     void renderStreamProofESPWindow(bool contentOnly = false) noexcept;
     void renderVisualsWindow(bool contentOnly = false) noexcept;
     void renderSkinChangerWindow(bool contentOnly = false) noexcept;
-    void renderSoundWindow(bool contentOnly = false) noexcept;
     void renderStyleWindow(bool contentOnly = false) noexcept;
     void renderMiscWindow(bool contentOnly = false) noexcept;
     void renderConfigWindow(bool contentOnly = false) noexcept;
@@ -42,8 +41,7 @@ private:
     } window;
 
     struct {
-        ImFont* tahoma = nullptr;
-        ImFont* segoeui = nullptr;
+        ImFont* normal15px = nullptr;
     } fonts;
 
     float timeToNextConfigRefresh = 0.1f;

@@ -40,6 +40,7 @@
 #include "Hacks/Glow.h"
 #include "Hacks/Misc.h"
 #include "Hacks/SkinChanger.h"
+#include "Hacks/Sound.h"
 #include "Hacks/Triggerbot.h"
 #include "Hacks/Visuals.h"
 
@@ -72,7 +73,7 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 
         ImGui::CreateContext();
         ImGui_ImplWin32_Init(window);
-        config = std::make_unique<Config>("Osiris");
+        config = std::make_unique<Config>();
         gui = std::make_unique<GUI>();
 
         hooks->install();
@@ -182,6 +183,7 @@ static bool __STDCALL createMove(LINUX_ARGS(void* thisptr,) float inputSampleTim
     Misc::updateClanTag();
     Misc::fakeBan();
     Misc::stealNames();
+    Misc::deathmatchGod();
     Misc::revealRanks(cmd);
     Misc::quickReload(cmd);
     Misc::fixTabletSignal();
@@ -293,6 +295,8 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
         Visuals::colorWorld();
         Misc::fakePrime();
         Visuals::NightMode();
+        Misc::updateEventListeners();
+        Visuals::updateEventListeners();
     }
     if (interfaces->engine->isInGame()) {
         Visuals::skybox(stage);
@@ -315,23 +319,7 @@ static void __STDCALL frameStageNotify(LINUX_ARGS(void* thisptr,) FrameStage sta
 
 static void __STDCALL emitSound(LINUX_ARGS(void* thisptr,) void* filter, int entityIndex, int channel, const char* soundEntry, unsigned int soundEntryHash, const char* sample, float volume, int seed, int soundLevel, int flags, int pitch, const Vector& origin, const Vector& direction, void* utlVecOrigins, bool updatePositions, float soundtime, int speakerentity, void* soundParams) noexcept
 {
-    auto modulateVolume = [&](int(*get)(int)) {
-        if (const auto entity = interfaces->entityList->getEntity(entityIndex); localPlayer && entity && entity->isPlayer()) {
-            if (entityIndex == localPlayer->index())
-                volume *= get(0) / 100.0f;
-            else if (!entity->isOtherEnemy(localPlayer.get()))
-                volume *= get(1) / 100.0f;
-            else
-                volume *= get(2) / 100.0f;
-        }
-    };
-
-    modulateVolume([](int index) { return config->sound.players[index].masterVolume; });
-
-    if (strstr(soundEntry, "Weapon") && strstr(soundEntry, "Single")) {
-        modulateVolume([](int index) { return config->sound.players[index].weaponVolume; });
-    }
-    
+    Sound::modulateSound(soundEntry, entityIndex, volume);
     Misc::autoAccept(soundEntry);
 
     volume = std::clamp(volume, 0.0f, 1.0f);
@@ -354,7 +342,7 @@ static bool __STDCALL shouldDrawFog(LINUX_ARGS(void* thisptr)) noexcept
         return hooks->clientMode.callOriginal<bool, 17>();
     }
 #endif
-    
+
     return !config->visuals.noFog;
 }
 
@@ -430,27 +418,9 @@ static int __STDCALL listLeavesInBox(const Vector& mins, const Vector& maxs, uns
 static int __FASTCALL dispatchSound(SoundInfo& soundInfo) noexcept
 {
     if (const char* soundName = interfaces->soundEmitter->getSoundName(soundInfo.soundIndex)) {
-        auto modulateVolume = [&soundInfo](int(*get)(int)) {
-            if (auto entity{ interfaces->entityList->getEntity(soundInfo.entityIndex) }; entity && entity->isPlayer()) {
-                if (localPlayer && soundInfo.entityIndex == localPlayer->index())
-                    soundInfo.volume *= get(0) / 100.0f;
-                else if (!entity->isOtherEnemy(localPlayer.get()))
-                    soundInfo.volume *= get(1) / 100.0f;
-                else
-                    soundInfo.volume *= get(2) / 100.0f;
-            }
-        };
-
-        modulateVolume([](int index) { return config->sound.players[index].masterVolume; });
-
-        if (!strcmp(soundName, "Player.DamageHelmetFeedback"))
-            modulateVolume([](int index) { return config->sound.players[index].headshotVolume; });
-        else if (strstr(soundName, "Step"))
-            modulateVolume([](int index) { return config->sound.players[index].footstepVolume; });
-        else if (strstr(soundName, "Chicken"))
-            soundInfo.volume *= config->sound.chickenVolume / 100.0f;
+        Sound::modulateSound(soundName, soundInfo.entityIndex, soundInfo.volume);
+        soundInfo.volume = std::clamp(soundInfo.volume, 0.0f, 1.0f);
     }
-    soundInfo.volume = std::clamp(soundInfo.volume, 0.0f, 1.0f);
     return hooks->originalDispatchSound(soundInfo);
 }
 
@@ -538,7 +508,7 @@ Hooks::Hooks(HMODULE moduleHandle) noexcept
 static void swapWindow(SDL_Window* window) noexcept
 {
     static const auto _ = ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
-    
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
 
@@ -602,7 +572,7 @@ void Hooks::install() noexcept
     *reinterpret_cast<decltype(::swapWindow)**>(memory->swapWindow) = ::swapWindow;
 
 #endif
-    
+
 #ifdef _WIN32
     bspQuery.init(interfaces->engine->getBSPTreeQuery());
 #endif
@@ -632,7 +602,7 @@ void Hooks::install() noexcept
 
     surface.init(interfaces->surface);
     surface.hookAt(IS_WIN32() ? 15 : 14, setDrawColor);
-    
+
     svCheats.init(interfaces->cvar->findVar("sv_cheats"));
     svCheats.hookAt(IS_WIN32() ? 13 : 16, svCheatsGetBool);
 
@@ -686,6 +656,9 @@ static DWORD WINAPI unload(HMODULE moduleHandle) noexcept
 
 void Hooks::uninstall() noexcept
 {
+    Misc::updateEventListeners(true);
+    Visuals::updateEventListeners(true);
+
 #ifdef _WIN32
     if constexpr (std::is_same_v<HookType, MinHook>) {
         MH_DisableHook(MH_ALL_HOOKS);
@@ -736,7 +709,7 @@ static int pollEvent(SDL_Event* event) noexcept
         eventListener = std::make_unique<EventListener>();
 
         ImGui::CreateContext();
-        config = std::make_unique<Config>("Osiris");
+        config = std::make_unique<Config>();
 
         gui = std::make_unique<GUI>();
 

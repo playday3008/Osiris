@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cwctype>
+#include <fstream>
 #include <tuple>
 
 #include "imgui/imgui.h"
@@ -52,6 +53,11 @@ float Helpers::getAlphaFactor() noexcept
     return alphaFactor;
 }
 
+void Helpers::convertHSVtoRGB(float h, float s, float v, float& outR, float& outG, float& outB) noexcept
+{
+    ImGui::ColorConvertHSVtoRGB(h, s, v, outR, outG, outB);
+}
+
 ImWchar* Helpers::getFontGlyphRanges() noexcept
 {
     static ImVector<ImWchar> ranges;
@@ -93,4 +99,46 @@ std::wstring Helpers::toUpper(std::wstring str) noexcept
         return std::towupper(w);
     });
     return str;
+}
+
+bool Helpers::decodeVFONT(std::vector<char>& buffer) noexcept
+{
+    constexpr std::string_view tag = "VFONT1";
+    unsigned char magic = 0xA7;
+
+    if (buffer.size() <= tag.length())
+        return false;
+
+    const auto tagIndex = buffer.size() - tag.length();
+    if (std::memcmp(tag.data(), &buffer[tagIndex], tag.length()))
+        return false;
+
+    unsigned char saltBytes = buffer[tagIndex - 1];
+    const auto saltIndex = tagIndex - saltBytes;
+    --saltBytes;
+
+    for (std::size_t i = 0; i < saltBytes; ++i)
+        magic ^= (buffer[saltIndex + i] + 0xA7) % 0x100;
+
+    for (std::size_t i = 0; i < saltIndex; ++i) {
+        unsigned char xored = buffer[i] ^ magic;
+        magic = (buffer[i] + 0xA7) % 0x100;
+        buffer[i] = xored;
+    }
+
+    buffer.resize(saltIndex);
+    return true;
+}
+
+std::vector<char> Helpers::loadBinaryFile(const std::string& path) noexcept
+{
+    std::vector<char> result;
+    std::ifstream in{ path, std::ios::binary };
+    if (!in)
+        return result;
+    in.seekg(0, std::ios_base::end);
+    result.resize(static_cast<std::size_t>(in.tellg()));
+    in.seekg(0, std::ios_base::beg);
+    in.read(result.data(), result.size());
+    return result;
 }

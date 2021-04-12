@@ -83,8 +83,13 @@ struct Shared {
     float textCullDistance = 0.0f;
 };
 
-struct Bar : ColorToggleRounding {
+struct HealthBar : ColorToggle {
+    enum Type {
+        Gradient = 0,
+        Solid
+    };
 
+    int type = Type::Gradient;
 };
 
 struct Player : Shared {
@@ -97,7 +102,7 @@ struct Player : Shared {
     ColorToggle flashDuration;
     bool audibleOnly = false;
     bool spottedOnly = false;
-    bool healthBar = false;
+    HealthBar healthBar;
     ColorToggleThickness skeleton;
     Box headBox;
 
@@ -153,14 +158,13 @@ struct PreserveKillfeed {
     bool onlyHeadshots = false;
 };
 
-struct OffscreenEnemies {
-    bool enabled = false;
-    Color4 color{ 1.0f, 0.26f, 0.21f, 1.0f };
+struct OffscreenEnemies : ColorToggle {
+    OffscreenEnemies() : ColorToggle{ { 1.0f, 0.26f, 0.21f, 1.0f } } {}
+    HealthBar healthBar;
 };
 
-struct BulletTracers {
-    bool enabled = false;
-    Color4 color{ 0.0f, 0.75f, 1.0f, 1.0f };
+struct BulletTracers : ColorToggle {
+    BulletTracers() : ColorToggle{ { 0.0f, 0.75f, 1.0f, 1.0f } } {}
 };
 
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;

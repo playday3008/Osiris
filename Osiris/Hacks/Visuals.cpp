@@ -60,7 +60,7 @@ void Visuals::playerModel(FrameStage stage) noexcept
         "models/player/custom_player/legacy/tm_phoenix_variantf.mdl",
         "models/player/custom_player/legacy/tm_phoenix_variantg.mdl",
         "models/player/custom_player/legacy/tm_phoenix_varianth.mdl",
-        
+
         "models/player/custom_player/legacy/tm_pirate.mdl",
         "models/player/custom_player/legacy/tm_pirate_varianta.mdl",
         "models/player/custom_player/legacy/tm_pirate_variantb.mdl",
@@ -184,7 +184,7 @@ void Visuals::thirdperson() noexcept
         memory->input->isCameraInThirdPerson = (!config->visuals.thirdpersonKey.isSet() || config->visuals.thirdpersonKey.isToggled());
     else if (config->visuals.deadThirdperson && interfaces->cvar->findVar("mp_forcecamera")->getInt())
         localPlayer->setObserverMode() = (!config->visuals.thirdpersonKey.isSet() || config->visuals.thirdpersonKey.isToggled()) ? ObsMode::Chase : ObsMode::InEye;
-    memory->input->cameraOffset.z = static_cast<float>(config->visuals.thirdpersonDistance); 
+    memory->input->cameraOffset.z = static_cast<float>(config->visuals.thirdpersonDistance);
 }
 
 void Visuals::removeVisualRecoil(FrameStage stage) noexcept
@@ -350,7 +350,7 @@ void Visuals::hitEffect(GameEvent* event) noexcept
                 return effects[config->visuals.hitEffect - 2];
             };
 
-           
+
             auto material = interfaces->materialSystem->findMaterial(getEffectMaterial());
             if (config->visuals.hitEffect == 1)
                 material->findVar("$c0_x")->setValue(0.0f);
@@ -482,10 +482,10 @@ void Visuals::bulletTracer(GameEvent& event) noexcept
     beamInfo.haloName = nullptr;
     beamInfo.haloIndex = -1;
 
-    beamInfo.red = 255.0f * config->visuals.bulletTracers.color.color[0];
-    beamInfo.green = 255.0f * config->visuals.bulletTracers.color.color[1];
-    beamInfo.blue = 255.0f * config->visuals.bulletTracers.color.color[2];
-    beamInfo.brightness = 255.0f * config->visuals.bulletTracers.color.color[3];
+    beamInfo.red = 255.0f * config->visuals.bulletTracers.color[0];
+    beamInfo.green = 255.0f * config->visuals.bulletTracers.color[1];
+    beamInfo.blue = 255.0f * config->visuals.bulletTracers.color[2];
+    beamInfo.brightness = 255.0f * config->visuals.bulletTracers.color[3];
 
     beamInfo.type = 0;
     beamInfo.life = 0.0f;
@@ -641,6 +641,25 @@ void Visuals::NightMode()noexcept
         OldNightmode = config->visuals.nightMode;
     }
 
+}
+
+void Visuals::updateEventListeners(bool forceRemove) noexcept
+{
+    class ImpactEventListener : public GameEventListener {
+    public:
+        void fireGameEvent(GameEvent* event) { bulletTracer(*event); }
+    };
+
+    static ImpactEventListener listener;
+    static bool listenerRegistered = false;
+
+    if (config->visuals.bulletTracers.enabled && !listenerRegistered) {
+        interfaces->gameEventManager->addListener(&listener, "bullet_impact");
+        listenerRegistered = true;
+    } else if ((!config->visuals.bulletTracers.enabled || forceRemove) && listenerRegistered) {
+        interfaces->gameEventManager->removeListener(&listener);
+        listenerRegistered = false;
+    }
 }
 
 void Visuals::updateInput() noexcept

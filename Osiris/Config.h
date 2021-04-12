@@ -13,7 +13,7 @@
 
 class Config {
 public:
-    explicit Config(const char*) noexcept;
+    Config() noexcept;
     void load(size_t, bool incremental) noexcept;
     void load(const char8_t* name, bool incremental) noexcept;
     void save(size_t) const noexcept;
@@ -172,19 +172,6 @@ public:
 
     std::array<item_setting, 36> skinChanger;
 
-    struct Sound {
-        int chickenVolume{ 100 };
-
-        struct Player {
-            int masterVolume{ 100 };
-            int headshotVolume{ 100 };
-            int weaponVolume{ 100 };
-            int footstepVolume{ 100 };
-        };
-
-        std::array<Player, 3> players;
-    } sound;
-
     struct Style {
         int menuStyle{ 0 };
         int menuColors{ 0 };
@@ -253,6 +240,7 @@ public:
         bool quickReload{ false };
         bool prepareRevolver{ false };
         bool oppositeHandKnife = false;
+        bool deathmatchGod = false;
         PreserveKillfeed preserveKillfeed;
         char clanTag[16];
         KeyBind edgejumpkey = KeyBind::NONE;

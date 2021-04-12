@@ -131,14 +131,14 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
     switch (config.type) {
     case Box::_2d:
         if (config.fill.enabled)
-            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawCornerFlags_All);
+            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawFlags_RoundCornersAll);
         else
-            drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.rounding, ImDrawCornerFlags_All);
-        drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawCornerFlags_All);
+            drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.rounding, ImDrawFlags_RoundCornersAll);
+        drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawFlags_RoundCornersAll);
         break;
     case Box::_2dCorners: {
         if (config.fill.enabled) {
-            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawCornerFlags_All);
+            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawFlags_RoundCornersAll);
         }
 
         const bool wantsShadow = !config.fill.enabled;
@@ -281,25 +281,33 @@ struct FontPush {
     }
 };
 
-static void drawHealthBar(const ImVec2& pos, float height, int health) noexcept
+static void drawHealthBar(const HealthBar& config, const ImVec2& pos, float height, int health) noexcept
 {
+    if (!config.enabled)
+        return;
+
     constexpr float width = 3.0f;
 
     drawList->PushClipRect(pos + ImVec2{ 0.0f, (100 - health) / 100.0f * height }, pos + ImVec2{ width + 1.0f, height + 1.0f });
 
-    const auto green = Helpers::calculateColor(0, 255, 0, 255);
-    const auto yellow = Helpers::calculateColor(255, 255, 0, 255);
-    const auto red = Helpers::calculateColor(255, 0, 0, 255);
+    if (config.type == HealthBar::Gradient) {
+        const auto green = Helpers::calculateColor(0, 255, 0, 255);
+        const auto yellow = Helpers::calculateColor(255, 255, 0, 255);
+        const auto red = Helpers::calculateColor(255, 0, 0, 255);
 
-    ImVec2 min = pos;
-    ImVec2 max = min + ImVec2{ width, height / 2.0f };
+        ImVec2 min = pos;
+        ImVec2 max = min + ImVec2{ width, height / 2.0f };
 
-    drawList->AddRectFilled(min + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, Helpers::calculateColor(0, 0, 0, 255));
+        drawList->AddRectFilled(min + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, Helpers::calculateColor(0, 0, 0, 255));
 
-    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), green, green, yellow, yellow);
-    min.y += height / 2.0f;
-    max.y += height / 2.0f;
-    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), yellow, yellow, red, red);
+        drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), green, green, yellow, yellow);
+        min.y += height / 2.0f;
+        max.y += height / 2.0f;
+        drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), yellow, yellow, red, red);
+    } else {
+        drawList->AddRectFilled(pos + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, Helpers::calculateColor(0, 0, 0, 255));
+        drawList->AddRectFilled(pos, pos + ImVec2{ width, height }, Helpers::calculateColor(config));
+    }
 
     drawList->PopClipRect();
 }
@@ -315,8 +323,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
 
     ImVec2 offsetMins{}, offsetMaxs{};
 
-    if (config.healthBar)
-        drawHealthBar(bbox.min - ImVec2{ 5.0f, 0.0f }, (bbox.max.y - bbox.min.y), playerData.health);
+    drawHealthBar(config.healthBar, bbox.min - ImVec2{ 5.0f, 0.0f }, (bbox.max.y - bbox.min.y), playerData.health);
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
@@ -453,11 +460,16 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
         || playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible)) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
         return true;
 
+    if (playerData.immune)
+        Helpers::setAlphaFactor(0.5f);
+
     renderPlayerBox(playerData, playerConfig);
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
 
     if (const BoundingBox headBbox{ playerData.headMins, playerData.headMaxs, playerConfig.headBox.scale })
         renderBox(headBbox, playerConfig.headBox);
+
+    Helpers::setAlphaFactor(1.0f);
 
     return true;
 }
