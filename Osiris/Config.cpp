@@ -212,8 +212,9 @@ static void from_json(const json& j, Player& p)
 
 static void from_json(const json& j, OffscreenEnemies& o)
 {
-    read(j, "Enabled", o.enabled);
-    read<value_t::object>(j, "Color", o.color);
+    from_json(j, static_cast<ColorToggle&>(o));
+
+    read<value_t::object>(j, "Health Bar", o.healthBar);
 }
 
 static void from_json(const json& j, BulletTracers& o)
@@ -653,14 +654,14 @@ static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 
 static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& dummy = {})
 {
-    WRITE("Enabled", enabled);
-    WRITE("Color", color);
+    to_json(j, static_cast<const ColorToggle&>(o), dummy);
+
+    WRITE("Health Bar", healthBar);
 }
 
 static void to_json(json& j, const BulletTracers& o, const BulletTracers& dummy = {})
 {
-    WRITE("Enabled", enabled);
-    WRITE("Color", color);
+    to_json(j, static_cast<const ColorToggle&>(o), dummy);
 }
 
 static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
