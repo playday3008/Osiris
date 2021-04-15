@@ -515,15 +515,14 @@ void Misc::bunnyHop(UserCmd* cmd) noexcept
     if (!localPlayer)
         return;
 
-    static auto wasLastTimeOnGround{ localPlayer->flags() & PlayerFlags::ONGROUND };
-    static int hopsHit = 0;
+    static auto wasLastTimeOnGround{ localPlayer->flags() & ONGROUND };
 
     if (config->misc.bunnyHop)
         if (config->misc.bunnyHopHitchanceEnable) {
             if (localPlayer->moveType() != MoveType::LADDER) {
-                if (cmd->buttons & UserCmd::IN_JUMP && !(localPlayer->flags() & PlayerFlags::ONGROUND))
+                if (cmd->buttons & UserCmd::IN_JUMP && !(localPlayer->flags() & ONGROUND))
                     cmd->buttons &= ~UserCmd::IN_JUMP;
-                else if ((hopsHit >= config->misc.bunnyHopMinHits && rand() % 100 + 1 > config->misc.bunnyHopHitchance) || hopsHit >= config->misc.bunnyHopMaxHits) {
+                else if (static int hopsHit = 0; (hopsHit >= config->misc.bunnyHopMinHits && rand() % 100 + 1 > config->misc.bunnyHopHitchance) || hopsHit >= config->misc.bunnyHopMaxHits) {
                     cmd->buttons &= ~UserCmd::IN_JUMP;
                     hopsHit = 0;
                 }
@@ -532,10 +531,10 @@ void Misc::bunnyHop(UserCmd* cmd) noexcept
             }
         }
         else
-            if (!(localPlayer->flags() & PlayerFlags::ONGROUND) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
-                cmd->buttons &= ~UserCmd::IN_JUMP;
+            if (!(localPlayer->flags() & ONGROUND) && localPlayer->moveType() != MoveType::LADDER && !wasLastTimeOnGround)
+	            cmd->buttons &= ~UserCmd::IN_JUMP;
 
-    wasLastTimeOnGround = localPlayer->flags() & PlayerFlags::ONGROUND;
+    wasLastTimeOnGround = localPlayer->flags() & ONGROUND;
 }
 
 void Misc::fakeBan(bool set) noexcept
