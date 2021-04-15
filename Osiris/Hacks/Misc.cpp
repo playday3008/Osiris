@@ -590,8 +590,8 @@ void Misc::fixMovement(UserCmd* cmd, float yaw) noexcept
 
         const float forwardmove = cmd->forwardmove;
         const float sidemove = cmd->sidemove;
-        cmd->forwardmove = std::cos(degreesToRadians(yawDelta)) * forwardmove + std::cos(degreesToRadians(yawDelta + 90.0f)) * sidemove;
-        cmd->sidemove = std::sin(degreesToRadians(yawDelta)) * forwardmove + std::sin(degreesToRadians(yawDelta + 90.0f)) * sidemove;
+        cmd->forwardmove = std::cos(Helpers::deg2rad(yawDelta)) * forwardmove + std::cos(Helpers::deg2rad(yawDelta + 90.0f)) * sidemove;
+        cmd->sidemove = std::sin(Helpers::deg2rad(yawDelta)) * forwardmove + std::sin(Helpers::deg2rad(yawDelta + 90.0f)) * sidemove;
     }
 }
 
@@ -1001,7 +1001,7 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
     if (!config->misc.offscreenEnemies.enabled)
         return;
 
-    const auto yaw = degreesToRadians(interfaces->engine->getViewAngles().y);
+    const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
 
     GameData::Lock lock;
     for (auto& player : GameData::players()) {
@@ -1026,7 +1026,7 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         const auto white = Helpers::calculateColor(255, 255, 255, 255);
         const auto background = Helpers::calculateColor(0, 0, 0, 80);
         const auto color = Helpers::calculateColor(config->misc.offscreenEnemies);
-        const auto healthBarColor = Helpers::calculateColor(config->misc.offscreenEnemies.healthBar);
+        const auto healthBarColor = config->misc.offscreenEnemies.healthBar.type == HealthBar::HealthBased ? Helpers::healthColor(std::clamp(player.health / 100.0f, 0.0f, 1.0f)) : Helpers::calculateColor(config->misc.offscreenEnemies.healthBar);
 
         const ImVec2 trianglePoints[]{
             trianglePos + ImVec2{  0.4f * y, -0.4f * x } * triangleSize,

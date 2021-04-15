@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <numbers>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,8 @@ namespace Helpers
     void setAlphaFactor(float newAlphaFactor) noexcept;
     float getAlphaFactor() noexcept;
     void convertHSVtoRGB(float h, float s, float v, float& outR, float& outG, float& outB) noexcept;
+    void healthColor(float fraction, float& outR, float& outG, float& outB) noexcept;
+    unsigned int healthColor(float fraction) noexcept;
 
     constexpr auto units2meters(float units) noexcept
     {
@@ -46,4 +49,7 @@ namespace Helpers
 
     bool decodeVFONT(std::vector<char>& buffer) noexcept;
     std::vector<char> loadBinaryFile(const std::string& path) noexcept;
+
+    constexpr auto deg2rad(float degrees) noexcept { return degrees * (std::numbers::pi_v<float> / 180.0f); }
+    constexpr auto rad2deg(float radians) noexcept { return radians * (180.0f / std::numbers::pi_v<float>); }
 }
