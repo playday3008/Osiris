@@ -1254,15 +1254,13 @@ void Misc::playerBlocker(UserCmd* cmd) noexcept
             if (!entity->isAlive() || entity->isDormant() || entity == localPlayer.get())
                 continue;
 
-            float dist;
+            const double distance = sqrt(
+	            (static_cast<int>(localPlayer->origin().x) - static_cast<int>(entity->origin().x)) * (static_cast<int>(localPlayer->origin().x) - static_cast<int>(entity->origin().x)) +
+	            (static_cast<int>(localPlayer->origin().y) - static_cast<int>(entity->origin().y)) * (static_cast<int>(localPlayer->origin().y) - static_cast<int>(entity->origin().y)) +
+	            (static_cast<int>(localPlayer->origin().z) - static_cast<int>(entity->origin().z)) * (static_cast<int>(localPlayer->origin().z) - static_cast<int>(entity->origin().z))
+            );
 
-            double distance;
-            distance = sqrt(((int)localPlayer->origin().x - (int)entity->origin().x) * ((int)localPlayer->origin().x - (int)entity->origin().x) +
-                ((int)localPlayer->origin().y - (int)entity->origin().y) * ((int)localPlayer->origin().y - (int)entity->origin().y) +
-                ((int)localPlayer->origin().z - (int)entity->origin().z) * ((int)localPlayer->origin().z - (int)entity->origin().z));
-            dist = (float)abs(round(distance));
-
-            if (dist < bestdist)
+            if (const auto dist = static_cast<float>(abs(round(distance))); dist < bestdist)
             {
                 bestdist = dist;
                 index = i;
@@ -1278,7 +1276,7 @@ void Misc::playerBlocker(UserCmd* cmd) noexcept
             return;
 
 
-        Vector delta = target->origin() - localPlayer->origin();
+        const Vector delta = target->origin() - localPlayer->origin();
         Vector angles{ radiansToDegrees(atan2f(-delta.z, std::hypotf(delta.x, delta.y))), radiansToDegrees(atan2f(delta.y, delta.x)), 0.f };
         angles.normalize();
 
