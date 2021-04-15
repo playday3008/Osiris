@@ -1363,7 +1363,7 @@ void Misc::setName(bool set) noexcept
     if (set)
         shouldSet = set;
 
-    if (shouldSet && Misc::changeName(false, std::string{ "" }.append(config->misc.customName).c_str(), 5.0f) && !(config->misc.customName.c_str() == NULL))
+    if (shouldSet && changeName(false, std::string{ "" }.append(config->misc.customName).c_str(), 5.0f) && !(config->misc.customName.c_str() == nullptr))
         shouldSet = false;
 }
 
@@ -1373,21 +1373,20 @@ void Misc::fakeItem(bool set) noexcept
 
     static int shouldSet = 0;
 
-    std::string playercolor;
-    std::string color;
-    std::string team;
-    std::string star;
-    std::string stattrak;
-    std::string skinName;
-    std::string item;
-
     if (set)
         if (shouldSet == 0)
             shouldSet = 1;
 
     if (shouldSet == 1)
     {
-        switch (config->misc.fakeItemRarity)
+	    std::string item;
+	    std::string skinName;
+	    std::string stattrak;
+	    std::string star;
+	    std::string team;
+	    std::string color;
+	    std::string playercolor;
+	    switch (config->misc.fakeItemRarity)
         {
         case 0: color = "\x08"; break; // Consumer Grade(White)
         case 1: color = "\x0D"; break; // Industrial Grade(Light blue)
@@ -1396,6 +1395,7 @@ void Misc::fakeItem(bool set) noexcept
         case 4: color = "\x0E"; break; // Classified(Pink)
         case 5: color = "\x02"; break; // Covert(Red)
         case 6: color = "\x10"; break; // Contrabanned(Orange / Gold)
+        default: break;
         }
 
         team = (config->misc.fakeItemTeam == 1) ? "\x09" : "\x0B";
@@ -1470,6 +1470,7 @@ void Misc::fakeItem(bool set) noexcept
         case 58: item = "Bloodhound Gloves"; break;
         case 59: item = "Hydra Gloves"; break;
         case 60: item = "Driver Gloves"; break;
+        default: break;
         }
 
         switch (config->misc.fakeItemPlayerColor)
@@ -1479,6 +1480,7 @@ void Misc::fakeItem(bool set) noexcept
         case 2: playercolor = "\x0D"; break; // Blue
         case 3: playercolor = "\x03"; break; // Purple
         case 4: playercolor = "\x10"; break; // Orange
+        default: break;
         }
 
         if (interfaces->engine->isInGame() && changeName(false, std::string{ "\n \x1\xB" }
