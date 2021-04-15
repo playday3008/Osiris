@@ -1158,9 +1158,9 @@ void Misc::jumpbug(UserCmd* cmd) noexcept {
             config->misc.bunnyHop = false;
             bhopWasEnabled = false;
         }
-        if (!(EnginePrediction::getFlags() & PlayerFlags::ONGROUND)) {
+        if (!(EnginePrediction::getFlags() & ONGROUND)) {
             cmd->buttons |= UserCmd::IN_DUCK;
-            if (localPlayer->flags() & PlayerFlags::ONGROUND) {
+            if (localPlayer->flags() & ONGROUND) {
                 cmd->buttons &= ~UserCmd::IN_DUCK;
                 cmd->buttons |= UserCmd::IN_JUMP;
             }
