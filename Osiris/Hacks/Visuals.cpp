@@ -599,23 +599,18 @@ void Visuals::noBloom() noexcept
     bloomCvar->setValue(config->visuals.noBloom ? 1 : 0);
 }
 
-void Visuals::NightMode()noexcept
+void Visuals::NightMode() noexcept
 {
-    static std::string old_Skyname = "";
     static bool OldNightmode;
-    static int OldSky;
     if (!interfaces->engine->isInGame() || !interfaces->engine->isConnected() || !localPlayer || !localPlayer->isAlive()) {
-        old_Skyname = "";
         OldNightmode = false;
-        OldSky = 0;
         return;
     }
 
-    static ConVar* r_DrawSpecificStaticProp;
-
     if (OldNightmode != config->visuals.nightMode)
     {
-        r_DrawSpecificStaticProp = interfaces->cvar->findVar("r_DrawSpecificStaticProp");
+	    static ConVar * r_DrawSpecificStaticProp;
+	    r_DrawSpecificStaticProp = interfaces->cvar->findVar("r_DrawSpecificStaticProp");
         r_DrawSpecificStaticProp->setValue(0);
 
         for (auto i = interfaces->materialSystem->firstMaterial(); i != interfaces->materialSystem->invalidMaterial(); i = interfaces->materialSystem->nextMaterial(i))
