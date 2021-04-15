@@ -1536,7 +1536,7 @@ void Misc::buyBot(GameEvent* event) noexcept
         "buy deagle; buy revolver; "
     };
 
-    std::string buy = "";
+    std::string buy;
 
     if (event) {
 
@@ -1562,9 +1562,10 @@ void Misc::buyBot(GameEvent* event) noexcept
             buy += config->misc.buyBotHE ? "buy hegrenade; " : ""; // High Explosive
             buy += config->misc.buyBotSmoke ? "buy smokegrenade; " : ""; // Smoke
 
-            if (buy != "")
+            if (!buy.empty())
                 interfaces->engine->clientCmdUnrestricted(buy.c_str());
             break;
+        default: break;
         }
     }
 }
