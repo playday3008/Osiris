@@ -1180,7 +1180,7 @@ void Misc::teamDamageCounter(GameEvent* event) noexcept {
         return;
 
     if (interfaces->engine->getPlayerForUserID(event->getInt("attacker")) == localPlayer) { // we attacked.
-        int victim = interfaces->engine->getPlayerForUserID(event->getInt("userid"));
+	    const int victim = interfaces->engine->getPlayerForUserID(event->getInt("userid"));
 
         if (victim == localPlayer) return; // did damage to ourself, does not count.
 
@@ -1193,6 +1193,8 @@ void Misc::teamDamageCounter(GameEvent* event) noexcept {
                 break;
             case fnv::hash("player_death"):
                 teamKills += 1;
+                break;
+            default: 
                 break;
             }
 
