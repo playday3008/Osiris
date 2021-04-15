@@ -217,6 +217,7 @@
     </ClCompile>
     <ClCompile Include="Hacks\Sound.cpp">
       <Filter>Hacks</Filter>
+    </ClCompile>
     <ClCompile Include="AntiDetection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
