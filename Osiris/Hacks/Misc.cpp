@@ -1336,7 +1336,7 @@ void Misc::chatSpam() noexcept
 	    if (static int phraseId = 0; config->misc.chatSpamRandom)
         {
             std::mt19937 gen(std::random_device().operator()());
-            const std::uniform_int_distribution<int> uid(0, Phrases.size() - 1);
+            std::uniform_int_distribution<int> uid(0, Phrases.size() - 1);
             const int randNum = uid(gen);
             const std::string Cmd = "say \"" + Phrases[randNum] + "\"";
 
