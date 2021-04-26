@@ -44,6 +44,8 @@
 #include "Hacks/Triggerbot.h"
 #include "Hacks/Visuals.h"
 
+#include "SDK/ClientClass.h"
+#include "SDK/Cvar.h"
 #include "SDK/Engine.h"
 #include "SDK/Entity.h"
 #include "SDK/EntityList.h"
@@ -54,7 +56,6 @@
 #include "SDK/InputSystem.h"
 #include "SDK/MaterialSystem.h"
 #include "SDK/ModelRender.h"
-#include "SDK/Panel.h"
 #include "SDK/Platform.h"
 #include "SDK/RenderContext.h"
 #include "SDK/SoundInfo.h"

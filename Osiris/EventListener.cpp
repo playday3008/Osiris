@@ -1,4 +1,5 @@
 #include <cassert>
+#include <utility>
 
 #include "EventListener.h"
 #include "fnv.h"
@@ -8,6 +9,7 @@
 #include "Hacks/Visuals.h"
 #include "Interfaces.h"
 #include "Memory.h"
+#include "SDK/UtlVector.h"
 
 EventListener::EventListener() noexcept
 {

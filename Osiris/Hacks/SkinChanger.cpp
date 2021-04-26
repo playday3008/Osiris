@@ -1,8 +1,10 @@
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
-#include <cwctype>
 #include <fstream>
-#include <unordered_set>
+#include <string_view>
+#include <type_traits>
+#include <utility>
 
 #define STBI_ONLY_PNG
 #define STBI_NO_FAILURE_STRINGS
@@ -10,14 +12,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../stb_image.h"
 
-#include "../imgui/imgui.h"
-
 #include "../Interfaces.h"
-
+#include "../Netvars.h"
 #include "SkinChanger.h"
 #include "../Config.h"
 #include "../Texture.h"
+#include "../fnv.h"
 
+#include "../SDK/ClassId.h"
 #include "../SDK/Client.h"
 #include "../SDK/ClientClass.h"
 #include "../SDK/ConVar.h"
@@ -30,6 +32,7 @@
 #include "../SDK/GameEvent.h"
 #include "../SDK/ItemSchema.h"
 #include "../SDK/Localize.h"
+#include "../SDK/LocalPlayer.h"
 #include "../SDK/ModelInfo.h"
 #include "../SDK/Platform.h"
 #include "../SDK/WeaponId.h"
@@ -68,8 +71,8 @@ static constexpr auto is_knife(WeaponId id)
 
 item_setting* get_by_definition_index(WeaponId weaponId)
 {
-    const auto it = std::find_if(config->skinChanger.begin(), config->skinChanger.end(), [weaponId](const item_setting& e) { return e.enabled && e.itemId == weaponId; });
-    return it == config->skinChanger.end() ? nullptr : &*it;
+    const auto it = std::ranges::find(config->skinChanger, weaponId, &item_setting::itemId);
+    return (it == config->skinChanger.end() || !it->enabled) ? nullptr : &*it;
 }
 
 static std::vector<SkinChanger::PaintKit> skinKits{ { 0, "-" } };
@@ -100,8 +103,8 @@ static void initializeKits() noexcept
             kitsWeapons.emplace_back(int((encoded & 0xFFFF) >> 2), WeaponId(encoded >> 16), node.value.simpleName.data());
     }
 
-    std::sort(kitsWeapons.begin(), kitsWeapons.end(), [](const auto& a, const auto& b) { return a.paintKit < b.paintKit; });
- 
+    std::ranges::sort(kitsWeapons, {}, &KitWeapon::paintKit);
+
     skinKits.reserve(itemSchema->paintKits.lastAlloc);
     gloveKits.reserve(itemSchema->paintKits.lastAlloc);
     for (const auto& node : itemSchema->paintKits) {
@@ -114,7 +117,7 @@ static void initializeKits() noexcept
             std::wstring name;
             std::string iconPath;
 
-            if (const auto it = std::lower_bound(kitsWeapons.begin(), kitsWeapons.end(), paintKit->id, [](const auto& p, auto id) { return p.paintKit < id; }); it != kitsWeapons.end() && it->paintKit == paintKit->id) {
+            if (const auto it = std::ranges::lower_bound(std::as_const(kitsWeapons), paintKit->id, {}, &KitWeapon::paintKit); it != kitsWeapons.end() && it->paintKit == paintKit->id) {
                 if (const auto itemDef = itemSchema->getItemDefinitionInterface(it->weaponId)) {
                     name = interfaces->localize->findSafe(itemDef->getItemBaseName());
                     name += L" | ";
@@ -125,8 +128,7 @@ static void initializeKits() noexcept
             name += interfaces->localize->findSafe(paintKit->itemName.data() + 1);
             gloveKits.emplace_back(paintKit->id, std::move(name), std::move(iconPath), paintKit->rarity);
         } else {
-            for (auto it = std::lower_bound(kitsWeapons.begin(), kitsWeapons.end(), paintKit->id, [](const auto& p, auto id) { return p.paintKit < id; }); it != kitsWeapons.end() && it->paintKit == paintKit->id; ++it) {
-
+            for (auto it = std::ranges::lower_bound(std::as_const(kitsWeapons), paintKit->id, {}, &KitWeapon::paintKit); it != kitsWeapons.end() && it->paintKit == paintKit->id; ++it) {
                 const auto itemDef = itemSchema->getItemDefinitionInterface(it->weaponId);
                 if (!itemDef)
                     continue;
@@ -495,28 +497,32 @@ const std::vector<SkinChanger::Item>& SkinChanger::getKnifeTypes() noexcept
     return knifeTypes;
 }
 
-static std::unordered_map<std::string, Texture> iconTextures;
+struct Icon {
+    Texture texture;
+    int lastReferencedFrame = 0;
+};
+
+static std::unordered_map<std::string, Icon> iconTextures;
 
 ImTextureID SkinChanger::getItemIconTexture(const std::string& iconpath) noexcept
 {
     if (iconpath.empty())
         return 0;
 
-    if (iconTextures[iconpath].get())
-        return iconTextures[iconpath].get();
-
-    if (iconTextures.size() >= 50)
-        iconTextures.erase(iconTextures.begin());
+    if (iconTextures[iconpath].texture.get()) {
+        iconTextures[iconpath].lastReferencedFrame = ImGui::GetFrameCount();
+        return iconTextures[iconpath].texture.get();
+    }
 
     if (const auto handle = interfaces->baseFileSystem->open(("resource/flash/" + iconpath + "_large.png").c_str(), "r", "GAME")) {
-        if (const auto size = interfaces->baseFileSystem->size(handle); size >= 0) {
+        if (const auto size = interfaces->baseFileSystem->size(handle); size > 0) {
             const auto buffer = std::make_unique<std::uint8_t[]>(size);
             if (interfaces->baseFileSystem->read(buffer.get(), size, handle) > 0) {
                 int width, height;
                 stbi_set_flip_vertically_on_load_thread(false);
 
                 if (const auto data = stbi_load_from_memory((const stbi_uc*)buffer.get(), size, &width, &height, nullptr, STBI_rgb_alpha)) {
-                    iconTextures[iconpath].init(width, height, data);
+                    iconTextures[iconpath].texture.init(width, height, data);
                     stbi_image_free(data);
                 } else {
                     assert(false);
@@ -528,12 +534,26 @@ ImTextureID SkinChanger::getItemIconTexture(const std::string& iconpath) noexcep
         assert(false);
     }
 
-    return iconTextures[iconpath].get();
+    iconTextures[iconpath].lastReferencedFrame = ImGui::GetFrameCount();
+    return iconTextures[iconpath].texture.get();
 }
 
 void SkinChanger::clearItemIconTextures() noexcept
 {
     iconTextures.clear();
+}
+
+void SkinChanger::clearUnusedItemIconTextures() noexcept
+{
+    constexpr auto maxIcons = 30;
+    const auto frameCount = ImGui::GetFrameCount();
+    while (iconTextures.size() > maxIcons) {
+        const auto oldestIcon = std::ranges::min_element(iconTextures, [](const auto& a, const auto& b) { return a.second.lastReferencedFrame < b.second.lastReferencedFrame; });
+        if (oldestIcon->second.lastReferencedFrame == frameCount)
+            break;
+
+        iconTextures.erase(oldestIcon);
+    }
 }
 
 SkinChanger::PaintKit::PaintKit(int id, const std::string& name, int rarity) noexcept : id{ id }, name{ name }, rarity{ rarity }

@@ -1,6 +1,10 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
+#include <iterator>
+#include <limits>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -59,6 +63,7 @@ namespace SkinChanger
 
     ImTextureID getItemIconTexture(const std::string& iconpath) noexcept;
     void clearItemIconTextures() noexcept;
+    void clearUnusedItemIconTextures() noexcept;
 
     void fixKnifeAnimation(Entity* viewModelWeapon, long& sequence) noexcept;
 

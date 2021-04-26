@@ -1,8 +1,12 @@
-﻿#include <array>
-#include <cwctype>
+﻿#include <algorithm>
+#include <array>
+#include <cwchar>
 #include <fstream>
-#include <functional>
+#include <iterator>
 #include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
 
 #ifdef _WIN32
 #include <ShlObj.h>
@@ -11,13 +15,13 @@
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
-#include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_stdlib.h"
 
 #include "imguiCustom.h"
 
 #include "GUI.h"
 #include "Config.h"
+#include "ConfigStructs.h"
 #include "Hacks/Misc.h"
 #include "Hacks/SkinChanger.h"
 #include "Helpers.h"
@@ -88,7 +92,7 @@ GUI::GUI() noexcept
     if (!fonts.normal15px)
         io.Fonts->AddFontDefault(&cfg);
     addFontFromVFONT("csgo/panorama/fonts/notosanskr-regular.vfont", 15.0f, io.Fonts->GetGlyphRangesKorean(), true);
-    addFontFromVFONT("csgo/panorama/fonts/notosanssc-regular.vfont", 15.0f, io.Fonts->GetGlyphRangesChineseFull(), true);
+    addFontFromVFONT("csgo/panorama/fonts/notosanssc-regular.vfont", 17.0f, io.Fonts->GetGlyphRangesChineseFull(), true);
 }
 
 void GUI::render() noexcept
@@ -855,7 +859,7 @@ void GUI::renderStreamProofESPWindow(bool contentOnly) noexcept
 
             if (ImGui::BeginPopup("")) {
                 ImGui::SetNextItemWidth(95.0f);
-                ImGui::Combo("Type", &playerConfig.healthBar.type, "Gradient\0Solid\0");
+                ImGui::Combo("Type", &playerConfig.healthBar.type, "Gradient\0Solid\0Health-based\0");
                 if (playerConfig.healthBar.type == HealthBar::Solid) {
                     ImGui::SameLine();
                     ImGuiCustom::colorPicker("", static_cast<Color4&>(playerConfig.healthBar));
