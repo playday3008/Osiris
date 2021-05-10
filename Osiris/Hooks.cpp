@@ -132,8 +132,9 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
         ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
         device->EndScene();
     }
-
+    
     GameData::clearUnusedAvatars();
+    SkinChanger::clearUnusedItemIconTextures();
 
     return hooks->originalPresent(device, src, dest, windowOverride, dirtyRegion);
 }
@@ -156,9 +157,7 @@ static bool __STDCALL createMove(LINUX_ARGS(void* thisptr,) float inputSampleTim
         return result;
 
 #ifdef _WIN32
-    uintptr_t* framePointer;
-    __asm mov framePointer, ebp;
-    bool& sendPacket = *reinterpret_cast<bool*>(*framePointer - 0x1C);
+    bool& sendPacket = *reinterpret_cast<bool*>(*reinterpret_cast<std::uintptr_t*>(FRAME_ADDRESS()) - 0x1C);
 #else
     bool dummy;
     bool& sendPacket = dummy;
@@ -533,6 +532,7 @@ static void swapWindow(SDL_Window* window) noexcept
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     GameData::clearUnusedAvatars();
+    SkinChanger::clearUnusedItemIconTextures();
 
     hooks->swapWindow(window);
 }

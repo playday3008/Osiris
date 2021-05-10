@@ -190,6 +190,13 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Resources\Shaders\default_vs.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>2.0</ShaderModel>
+      <VariableName>default_vs</VariableName>
+      <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\default_vs.h</HeaderFileOutput>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
     <ResourceCompile Include="Osiris.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
