@@ -1,0 +1,187 @@
+name: Discord
+
+# Controls when the action will run.
+on: push
+
+jobs:
+  # Prepare dll files to upload to Discord
+  windows-discord-upload:
+    name: Prepare to upload to Discord (Windows)
+    runs-on: windows-latest
+    # Save some variables to future use
+    outputs:
+      status: ${{ steps.check.outputs.status }} # Workflow status
+
+    steps:
+      # Wait for workflow build
+    - name: Wait for build to succeed
+      uses: fountainhead/action-wait-for-check@v1.0.0
+      id: wait-for-build
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        checkName: Upload All (Windows)
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      
+      # If build unsuccessful then save status for future checks
+    - name: Skip download if build failed
+      if: steps.wait-for-build.outputs.conclusion != 'success'
+      id: check
+      run: echo "::set-output name=status::false"
+      
+      # Download all compiled dll files
+    - name: Download artifact
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      uses: dawidd6/action-download-artifact@v2.13.0
+      with:
+        workflow: windows.yml
+        name: Osiris Release Windows All
+        run_id: ${{ steps.wait-for-build.outputs.id }}
+        path: ready
+      
+      # Add msbuild command to enviroment
+    - name: Add MSBuild to PATH
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      uses: microsoft/setup-msbuild@v1.0.2
+      
+    # Download and compile my injector with new junk code
+    - name: Get Injector
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      run: |
+        git clone --branch junk https://github.com/playday3008/OG-Injector.git
+        cd .\OG-Injector\OG-Injector
+        & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
+        Remove-Item -Path JunkDef.hpp
+        Move-Item -Path junk.h -Destination JunkDef.hpp
+        ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
+        msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
+        Copy-Item -Path ${{ github.workspace }}\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "..\..\ready\OG-Injector(Osiris).exe"
+      
+      # Upload dll files, sha1 and injector to one archive
+    - name: Upload All
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Osiris Release Windows All - Injector included
+        path: ready/*
+      
+  # Prepare so files to upload to Discord
+  linux-discord-upload:
+    name: Prepare to upload to Discord (Linux)
+    runs-on: ubuntu-latest
+    # Save some variables to future use
+    outputs:
+      status: ${{ steps.check.outputs.status }} # Workflow status
+
+    steps:
+      # Wait for workflow build
+    - name: Wait for build to succeed
+      uses: fountainhead/action-wait-for-check@v1.0.0
+      id: wait-for-build
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        checkName: Upload All (Linux)
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      
+      # If build unsuccessful then save status for future checks
+    - name: Skip download if build failed
+      if: steps.wait-for-build.outputs.conclusion != 'success'
+      id: check
+      run: echo "::set-output name=status::false"
+      
+      # Download all compiled so files
+    - name: Download artifact
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      uses: dawidd6/action-download-artifact@v2.13.0
+      with:
+        workflow: linux.yml
+        name: Osiris Release Linux All
+        run_id: ${{ steps.wait-for-build.outputs.id }}
+        path: ready
+      
+    # Download and compile my injector
+    - name: Get Injector
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      run: |
+            git clone https://github.com/playday3008/OG-Injector-Linux.git
+            cd OG-Injector-Linux
+            sed -i 's+//#define Osiris+#define Osiris+g' OG-Injector-Linux.cpp
+            cmake -E make_directory build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release
+            cmake --build . --config Release
+            cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
+      
+      # Upload so files, sha1 and injector to one archive
+    - name: Upload All
+      if: steps.wait-for-build.outputs.conclusion == 'success'
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Osiris Release Linux All - Injector included
+        path: ready/*
+  
+  # Upload all archives to Discord
+  all-discord-upload:
+    needs: [windows-discord-upload, linux-discord-upload]
+    name: Upload All to Discord
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Download prepared Linux archive
+    - name: Download (Linux)
+      if: needs.linux-discord-upload.outputs.status != 'false'
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Linux All - Injector included
+        path: linux
+      
+      # Download prepared Windows archive
+    - name: Download (Windows)
+      if: needs.windows-discord-upload.outputs.status != 'false'
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Windows All - Injector included
+        path: windows
+      
+      # Compress prepared Linux files
+    - name: Compress (Linux)
+      if: needs.linux-discord-upload.outputs.status != 'false'
+      working-directory: linux
+      run: tar -czvf "../Osiris Release Linux - Injector included.tar.gz" *
+      
+      # Compress prepared Windows files
+    - name: Compress (Windows)
+      if: needs.windows-discord-upload.outputs.status != 'false'
+      working-directory: windows
+      run: zip "../Osiris Release Windows - Injector included.zip" *
+      
+      # Upload prepared Linux tar.gz archive
+    - name: Upload (Linux)
+      if: needs.linux-discord-upload.outputs.status != 'false'
+      run: |
+        curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Linux - Injector included.tar.gz' ${{ secrets.DISCORD_HOOK }}
+      
+      # Upload prepared Windows zip archive
+    - name: Upload (Windows)
+      if: needs.windows-discord-upload.outputs.status != 'false'
+      run: |
+        curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Windows - Injector included.zip' ${{ secrets.DISCORD_HOOK }}
+      
+      # Upload prepared archive description (if all build's failed, then dont upload decsription)
+    - name: Upload decsription
+      if: ${{ needs.windows-discord-upload.outputs.status != 'false' || needs.linux-discord-upload.outputs.status != 'false' }}
+      run: >
+        curl -X POST -H 'Content-Type: application/json' -d '{
+          "content": null,
+          "embeds": [
+            {
+              "title": "Osiris Release",
+              "description": "**My repo:** [GitHub (PlayDay)](https://github.com/${{ github.repository }})\n**Original repo:** [GitHub (danielkrupinski)](https://github.com/danielkrupinski/Osiris)",
+              "url": "https://github.com/${{ github.repository }}/tree/master",
+              "color": 5814783,
+              "fields": [
+                {
+                  "name": "**Technical information:**",
+                  "value": "**Action link:** [${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n**Action brunch:** ${{ github.ref }}\n**Commit:** [${{ github.sha }}](https://github.com/${{ github.repository }}/tree/${{ github.sha }})"
+                }
+              ]
+            }
+          ]
+        }' ${{ secrets.DISCORD_HOOK }}

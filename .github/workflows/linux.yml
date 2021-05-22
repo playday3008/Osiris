@@ -1,89 +1,107 @@
 name: Linux
 
+# Controls when the action will run. 
 on: [push, pull_request]
 
 jobs:
-  ubuntu-build:
+  # Build & upload so files
+  linux-build:
     name: Build (Linux)
     runs-on: ubuntu-latest
+    
+    # Build 3 so files with with different intrinsics
+    strategy:
+      matrix:
+        intrinsic:
+          - "sse2"
+          - "avx"
+          - "avx2"
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Prepare to compile
-      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev gcc-10 g++-10
-    - name: Configure to compile
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
-    - name: Compilation
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2.3.4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libsdl2-dev gcc-10 g++-10
+      
+    - name: Configure CMake
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-m${{ matrix.intrinsic }} -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
+      
+    - name: Build
       run: cd Release && make -j $(nproc --all)
+      
+      # Move so to separate folder
     - name: Prepare to upload
-      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_SSE2.so && rm -rf Release
+      run: mkdir ready && cp Release/libOsiris.so ready/libOsiris_${{ matrix.intrinsic }}.so && rm -rf Release
+      
+      # Calculate SHA1 for so
     - name: SHA1
       working-directory: ready
       run: |
-            sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
-            cat libOsiris_SSE2.so.sha1
+        sha1sum libOsiris_${{ matrix.intrinsic }}.so > libOsiris_${{ matrix.intrinsic }}.so.sha1
+        head -c 40 libOsiris_${{ matrix.intrinsic }}.so.sha1
+      
+      # Upload so and sha1 sum to artifacts
+    - name: Upload (${{ matrix.intrinsic }})
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Osiris Release Linux (${{ matrix.intrinsic }})
+        path: ready/*
 
-    - name: Configure to compile AVX
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
-    - name: Compilation AVX
-      run: cd Release && make -j $(nproc --all)
-    - name: Prepare to upload AVX
-      run: cp Release/libOsiris.so ready/libOsiris_AVX.so && rm -rf Release
-    - name: SHA1 AVX
-      working-directory: ready
+  # Upload so files in one archive
+  linux-upload-all:
+    needs: linux-build
+    name: Upload All (Linux)
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Redownload earlier uploaded so and sha1 files (SSE2)
+    - name: Download (sse2)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Linux (sse2)
+      
+    # Redownload earlier uploaded so and sha1 files (SSE2)
+    - name: Download (avx)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Linux (avx)
+      
+    # Redownload earlier uploaded so and sha1 files (SSE2)
+    - name: Download (avx2)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Linux (avx2)
+      
+    # Prepare so files to upload (just rename it and recalculate SHA1 to compare)
+    - name: Prepare to upload
       run: |
-            sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
-            cat libOsiris_AVX.so.sha1
-
-    - name: Configure to compile AVX2
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-mavx2 -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
-    - name: Compilation AVX2
-      run: cd Release && make -j $(nproc --all)
-    - name: Prepare to upload AVX2
-      run: cp Release/libOsiris.so ready/libOsiris_AVX2.so && rm -rf Release
-    - name: SHA1 AVX2
-      working-directory: ready
+        mkdir ready
+        cp libOsiris_sse2.so ready/libOsiris_SSE2.so
+        cp libOsiris_avx.so ready/libOsiris_AVX.so
+        cp libOsiris_avx2.so ready/libOsiris_AVX2.so
+        cd ready
+        sha1sum libOsiris_SSE2.so > libOsiris_SSE2.so.sha1
+        sha1sum libOsiris_AVX.so > libOsiris_AVX.so.sha1
+        sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
+      
+    # Recheck SHA1 sum and compare it (why not?)
+    - name: Check SHA1 match
       run: |
-            sha1sum libOsiris_AVX2.so > libOsiris_AVX2.so.sha1
-            cat libOsiris_AVX2.so.sha1
-
-    - name: Get Injector
-      run: |
-            git clone https://github.com/playday3008/OG-Injector-Linux.git
-            cd OG-Injector-Linux
-            sed -i 's+//#define OSIRIS+#define OSIRIS+g' OG-Injector-Linux.cpp
-            cmake -E make_directory build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release
-            cmake --build . --config Release
-            cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
-
-    - name: Upload Archive
-      uses: actions/upload-artifact@v2
+        exitCode=0
+        echo "libOsiris_SSE2.so SHA1 hash is:"
+        if [[ $(head -c 40 libOsiris_sse2.so.sha1) != $(head -c 40 ready/libOsiris_SSE2.so.sha1) ]]; then echo "NOT Equal"; let "exitCode++"; else echo Equal; fi
+        echo "libOsiris_AVX.so SHA1 hash is:"
+        if [[ $(head -c 40 libOsiris_avx.so.sha1) != $(head -c 40 ready/libOsiris_AVX.so.sha1) ]]; then echo "NOT Equal"; let "exitCode++"; else echo Equal; fi
+        echo "libOsiris_AVX2.so SHA1 hash is:"
+        if [[ $(head -c 40 libOsiris_avx2.so.sha1) != $(head -c 40 ready/libOsiris_AVX2.so.sha1) ]]; then echo "NOT Equal"; let "exitCode++"; else echo Equal; fi
+        exit $exitCode
+      
+    # Reupload it as one archive
+    - name: Upload All
+      uses: actions/upload-artifact@v2.2.3
       with:
         name: Osiris Release Linux All
-        path: ready
-
-    - name: Upload Only SSE2
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Linux SSE2
-        path: ready/libOsiris_SSE2.so
-
-    - name: Upload Only AVX
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Linux AVX
-        path: ready/libOsiris_AVX.so
-
-    - name: Upload Only AVX2
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Linux AVX2
-        path: ready/libOsiris_AVX2.so
-
-    - name: Push to Discord
-      run: |
-            cd ready
-            tar -czvf "../Osiris Release Linux (${{github.run_id}}).tar.gz" *
-            cd ..
-            curl -X POST -H 'Content-Type: multipart/form-data' -F 'file=@Osiris Release Linux (${{github.run_id}}).tar.gz' ${{ secrets.DISCORD_HOOK }}
-      shell: pwsh
+        path: ready/*

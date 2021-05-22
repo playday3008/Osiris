@@ -1,131 +1,108 @@
 name: Windows
 
-on: [pull_request, push]
+# Controls when the action will run. 
+on: [push, pull_request]
 
 jobs:
+  # Build & upload dll files
   windows-build:
     name: Build (Windows)
     runs-on: windows-latest
-
+    
+    # Build 3 dll files with with different intrinsics
+    strategy:
+      matrix:
+        intrinsic:
+          - "StreamingSIMDExtensions2"
+          - "AdvancedVectorExtensions"
+          - "AdvancedVectorExtensions2"
+    
     steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2.3.4
+      
+      # Add msbuild command to enviroment
+    - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-    - name: MSBuild SSE2
-      working-directory: Osiris
-      run: msbuild Osiris.vcxproj /p:Configuration=Release /v:m /p:OutDir="${{ github.workspace }}\Osiris\Release\SSE2\"
-    - name: Rename SSE2
-      working-directory: Osiris/Release/SSE2
-      run: ren Osiris.dll Osiris_SSE2.dll
-      shell: cmd
-    - name: Move to one folder SSE2
+      
+      # Build Osiris
+    - name: Build
+      run: msbuild Osiris/Osiris.vcxproj /p:Platform=Win32 /p:Configuration=Release /p:Instruction_Set=${{ matrix.intrinsic }} /v:m
+      
+      # Move dll to separate folder
+    - name: Prepare to upload
       working-directory: Osiris
       run: |
-            mkdir ${{ github.workspace }}\Osiris\ready
-            Copy-Item -Path ${{ github.workspace }}\Osiris\Release\SSE2\Osiris_SSE2.dll -Destination ${{ github.workspace }}\Osiris\ready\
-            Remove-Item -LiteralPath "Release" -Force -Recurse
-    - name: SHA1 SSE2
+        New-Item -Path "${{ github.workspace }}\Osiris\" -Name "ready" -ItemType "directory"
+        Copy-Item -Path ${{ github.workspace }}\Osiris\Release\Osiris.dll -Destination ${{ github.workspace }}\Osiris\ready\Osiris_${{ matrix.intrinsic }}.dll
+      
+      # Calculate SHA1 for dll
+    - name: SHA1
       working-directory: Osiris/ready
       run: |
-            sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
-            cat Osiris_SSE2.dll.sha1
+        sha1sum Osiris_${{ matrix.intrinsic }}.dll > Osiris_${{ matrix.intrinsic }}.dll.sha1
+        (Get-Content -Path Osiris_${{ matrix.intrinsic }}.dll.sha1).Substring(0, 40)
+      
+      # Upload dll and sha1 sum to artifacts
+    - name: Upload (${{ matrix.intrinsic }})
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Osiris Release Windows (${{ matrix.intrinsic }})
+        path: Osiris/ready/*
 
-    - name: Rename AVX
-      working-directory: Osiris
-      run:
-          |
-          ren Osiris.vcxproj Osiris_AVX.vcxproj
-          ren Osiris.vcxproj.filters Osiris_AVX.vcxproj.filters
-      shell: cmd
-    - name: Prepare AVX
-      working-directory: Osiris
-      run: |
-            ((Get-Content Osiris_AVX.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX.vcxproj
-      shell: pwsh
-    - name: MSBuild AVX
-      working-directory: Osiris
-      run: msbuild Osiris_AVX.vcxproj /p:Configuration=Release /v:m /p:OutDir="${{ github.workspace }}\Osiris\Release\AVX\"
-    - name: Move to one folder AVX
-      working-directory: Osiris
-      run: |
-            Copy-Item -Path ${{ github.workspace }}\Osiris\Release\AVX\Osiris_AVX.dll -Destination ${{ github.workspace }}\Osiris\ready\
-            Remove-Item -LiteralPath "Release" -Force -Recurse
-    - name: SHA1 AVX
-      working-directory: Osiris/ready
-      run: |
-            sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
-            cat Osiris_AVX.dll.sha1
 
-    - name: Rename AVX2
-      working-directory: Osiris
-      run:
-          |
-          ren Osiris_AVX.vcxproj Osiris_AVX2.vcxproj
-          ren Osiris_AVX.vcxproj.filters Osiris_AVX2.vcxproj.filters
-      shell: cmd
-    - name: Prepare AVX2
-      working-directory: Osiris
+  # Upload dll files and injector in one archive
+  windows-upload-all:
+    needs: windows-build
+    name: Upload All (Windows)
+    runs-on: windows-latest
+    
+    steps:
+    # Redownload earlier uploaded dll and sha1 files (SSE2)
+    - name: Download (StreamingSIMDExtensions2)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Windows (StreamingSIMDExtensions2)
+      
+    # Redownload earlier uploaded dll and sha1 files (AVX)
+    - name: Download (AdvancedVectorExtensions)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Windows (AdvancedVectorExtensions)
+      
+    # Redownload earlier uploaded dll and sha1 files (AVX2)
+    - name: Download (AdvancedVectorExtensions2)
+      uses: actions/download-artifact@v2.0.9
+      with:
+        name: Osiris Release Windows (AdvancedVectorExtensions2)
+      
+    # Prepare dll files to upload (just rename it and recalculate SHA1 to compare)
+    - name: Prepare to upload
       run: |
-            ((Get-Content Osiris_AVX2.vcxproj -Raw) -replace '<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>','<EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>') | Set-Content Osiris_AVX2.vcxproj
-      shell: pwsh
-    - name: MSBuild AVX2
-      working-directory: Osiris
-      run: msbuild Osiris_AVX2.vcxproj /p:Configuration=Release /v:m /p:OutDir="${{ github.workspace }}\Osiris\Release\AVX2\"
-    - name: Move to one folder AVX2
-      working-directory: Osiris
+        mkdir ready
+        cp Osiris_StreamingSIMDExtensions2.dll ready/Osiris_SSE2.dll
+        cp Osiris_AdvancedVectorExtensions.dll ready/Osiris_AVX.dll
+        cp Osiris_AdvancedVectorExtensions2.dll ready/Osiris_AVX2.dll
+        cd ready
+        sha1sum Osiris_SSE2.dll > Osiris_SSE2.dll.sha1
+        sha1sum Osiris_AVX.dll > Osiris_AVX.dll.sha1
+        sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
+      
+    # Recheck SHA1 sum and compare it (why not?)
+    - name: Check SHA1 match
       run: |
-            Copy-Item -Path ${{ github.workspace }}\Osiris\Release\AVX2\Osiris_AVX2.dll -Destination ${{ github.workspace }}\Osiris\ready\
-            Remove-Item -LiteralPath "Release" -Force -Recurse
-    - name: SHA1 AVX2
-      working-directory: Osiris/ready
-      run: |
-            sha1sum Osiris_AVX2.dll > Osiris_AVX2.dll.sha1
-            cat Osiris_AVX2.dll.sha1
-
-    - name: Get Injector
-      run: |
-            git clone --branch junk https://github.com/playday3008/OG-Injector.git
-            cd .\OG-Injector\OG-Injector
-            & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
-            Remove-Item -Path JunkDef.hpp
-            Move-Item -Path junk.h -Destination JunkDef.hpp
-            ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
-            msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
-            Copy-Item -Path ${{ github.workspace }}\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "${{ github.workspace }}\Osiris\ready\OG-Injector(Osiris).exe"
-      shell: pwsh
-
-    - name: Open CFG folder (BAT)
-      run: |
-            Add-Content -path "${{ github.workspace }}\Osiris\ready\Open CFG folder (Открыть папку с КФГ).bat" -value "@echo off`r`necho `"Wait a second`"`r`nIF EXIST %USERPROFILE%\Documents\Osiris (`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n) ELSE (`r`nmkdir %USERPROFILE%\Documents\Osiris`r`n%SystemRoot%\explorer.exe `"%USERPROFILE%\Documents\Osiris`"`r`n)`r`nstart `"`" https://youtu.be/xY3oX_cpAVs"
-      shell: pwsh
-
-    - name: Upload Archive
-      uses: actions/upload-artifact@v1
+        $exitCode=0
+        echo "Osiris_SSE2.dll SHA1 hash:"
+        If ((Get-Content -Path Osiris_StreamingSIMDExtensions2.dll.sha1).Substring(0, 40) -ne (Get-Content -Path ready\Osiris_SSE2.dll.sha1).Substring(0, 40)) { echo "NOT Equal"; $exitCode++ } Else { echo Equal; }
+        echo "Osiris_AVX.dll SHA1 hash:"
+        If ((Get-Content -Path Osiris_AdvancedVectorExtensions.dll.sha1).Substring(0, 40) -ne (Get-Content -Path ready\Osiris_AVX.dll.sha1).Substring(0, 40)) { echo "NOT Equal"; $exitCode++ } Else { echo Equal; }
+        echo "Osiris_AVX2.dll SHA1 hash:"
+        If ((Get-Content -Path Osiris_AdvancedVectorExtensions2.dll.sha1).Substring(0, 40) -ne (Get-Content -Path ready\Osiris_AVX2.dll.sha1).Substring(0, 40)) { echo "NOT Equal"; $exitCode++ } Else { echo Equal; }
+        exit $exitCode
+      
+    # Reupload it as one archive
+    - name: Upload All
+      uses: actions/upload-artifact@v2.2.3
       with:
         name: Osiris Release Windows All
-        path: Osiris/ready
-
-    - name: Upload Only SSE2
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Windows SSE2
-        path: Osiris/ready/Osiris_SSE2.dll
-
-    - name: Upload Only AVX
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Windows AVX
-        path: Osiris/ready/Osiris_AVX.dll
-
-    - name: Upload Only AVX2
-      uses: actions/upload-artifact@v1
-      with:
-        name: Osiris Release Windows AVX2
-        path: Osiris/ready/Osiris_AVX2.dll
-
-    - name: Push to Discord
-      run: |
-            Start-Sleep -s 180
-            Compress-Archive -Path ${{ github.workspace }}\Osiris\ready\* -DestinationPath "${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip"
-            cUrl.exe -X POST -H 'Content-Type: multipart/form-data' -F 'file=@${{ github.workspace }}\Osiris\Osiris Release Windows (${{github.run_id}}).zip' -F 'payload_json={\"embeds\": [{\"color\": 65280,\"fields\": [{\"name\": \"GitHub repo\",\"value\": \"[Click!](https://github.com/playday3008/Osiris)\"}],\"author\": {\"name\": \"Osiris\"}}]}' ${{ secrets.DISCORD_HOOK }}
-      shell: pwsh
+        path: ready/*
