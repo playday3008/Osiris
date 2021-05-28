@@ -56,6 +56,16 @@ public:
     VIRTUAL_METHOD(const Vector&, obbMaxs, 2, (), (this))
 };
 
+class EconItemView {
+public:
+    INCONSTRUCTIBLE(EconItemView)
+
+    std::uintptr_t getAttributeList() noexcept
+    {
+        return std::uintptr_t(this) + WIN32_LINUX(0x244, 0x2F8);
+    }
+};
+
 class Entity {
 public:
     INCONSTRUCTIBLE(Entity)
@@ -286,6 +296,7 @@ public:
     NETVAR(fallbackWear, "CBaseAttributableItem", "m_flFallbackWear", float)
     NETVAR(fallbackStatTrak, "CBaseAttributableItem", "m_nFallbackStatTrak", unsigned)
     NETVAR(initialized, "CBaseAttributableItem", "m_bInitialized", bool)
+    NETVAR(econItemView, "CBaseAttributableItem", "m_Item", EconItemView)
 
     NETVAR(owner, "CBaseViewModel", "m_hOwner", int)
     NETVAR(weapon, "CBaseViewModel", "m_hWeapon", int)
