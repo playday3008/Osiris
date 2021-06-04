@@ -63,7 +63,9 @@ public:
         Music,
         Collectible,
         NameTag,
-        Patch
+        Patch,
+        Graffiti,
+        SealedGraffiti
     };
 
     struct GameItem {
@@ -76,9 +78,11 @@ public:
         bool isCollectible() const noexcept { return type == Type::Collectible; }
         bool isNameTag() const noexcept { return type == Type::NameTag; }
         bool isPatch() const noexcept { return type == Type::Patch; }
+        bool isGraffiti() const noexcept { return type == Type::Graffiti; }
+        bool isSealedGraffiti() const noexcept { return type == Type::SealedGraffiti; }
 
         // TODO: We need a better name for this
-        bool hasPaintKit() const noexcept { return isSkin() || isGlove() || isSticker() || isMusic() || isPatch(); }
+        bool hasPaintKit() const noexcept { return isSkin() || isGlove() || isSticker() || isMusic() || isPatch() || isGraffiti() || isSealedGraffiti(); }
 
         Type type;
         std::uint8_t rarity;
@@ -179,6 +183,10 @@ private:
             } else if (isPatch) {
                 _paintKits.emplace_back(stickerKit->id, interfaces->localize->findSafe(stickerKit->itemName.data()));
                 _gameItems.emplace_back(Type::Patch, stickerKit->rarity, WeaponId::Patch, _paintKits.size() - 1, stickerKit->inventoryImage.data());
+            } else if (isGraffiti) {
+                _paintKits.emplace_back(stickerKit->id, interfaces->localize->findSafe(stickerKit->itemName.data()));
+                _gameItems.emplace_back(Type::Graffiti, stickerKit->rarity, WeaponId::Graffiti, _paintKits.size() - 1, stickerKit->inventoryImage.data());
+                _gameItems.emplace_back(Type::SealedGraffiti, stickerKit->rarity, WeaponId::SealedGraffiti, _paintKits.size() - 1, stickerKit->inventoryImage.data());
             }
         }
 
@@ -814,15 +822,13 @@ void InventoryChanger::run(FrameStage stage) noexcept
         econItem->inventory = baseInvID + i + 1;
         econItem->rarity = item.rarity;
         econItem->quality = 4;
+        econItem->weaponId = item.weaponID;
 
-        if (item.isSticker()) {
-            econItem->weaponId = WeaponId::Sticker;
+        if (item.isSticker() || item.isPatch() || item.isGraffiti() || item.isSealedGraffiti()) {
             econItem->setStickerID(0, StaticData::paintKits()[item.dataIndex].id);
         } else if (item.isMusic()) {
-            econItem->weaponId = WeaponId::MusicKit;
             econItem->setMusicID(StaticData::paintKits()[item.dataIndex].id);
         } else if (item.isSkin()) {
-            econItem->weaponId = item.weaponID;
             if (isKnife(econItem->weaponId))
                 econItem->quality = 3;
             econItem->setPaintKit(static_cast<float>(StaticData::paintKits()[item.dataIndex].id));
@@ -841,23 +847,15 @@ void InventoryChanger::run(FrameStage stage) noexcept
                 econItem->setStickerWear(j, sticker.wear);
             }
         } else if (item.isGlove()) {
-            econItem->weaponId = item.weaponID;
             econItem->quality = 3;
-
             econItem->setPaintKit(static_cast<float>(StaticData::paintKits()[item.dataIndex].id));
 
             const auto& dynamicData = dynamicGloveData[inventory[i].getDynamicDataIndex()];
             econItem->setWear(dynamicData.wear);
             econItem->setSeed(static_cast<float>(dynamicData.seed));
         } else if (item.isCollectible()) {
-            econItem->weaponId = item.weaponID;
             if (StaticData::collectibles()[item.dataIndex].isOriginal)
                 econItem->quality = 1;
-        } else if (item.isNameTag()) {
-            econItem->weaponId = WeaponId::NameTag;
-        } else if (item.isPatch()) {
-            econItem->weaponId = WeaponId::Patch;
-            econItem->setStickerID(0, StaticData::paintKits()[item.dataIndex].id);
         }
 
         baseTypeCache->addObject(econItem);
@@ -1266,6 +1264,18 @@ json InventoryChanger::toJson() noexcept
             itemConfig["Patch ID"] = staticData.id;
             break;
         }
+        case StaticData::Type::Graffiti: {
+            itemConfig["Type"] = "Graffiti";
+            const auto& staticData = StaticData::paintKits()[gameItem.dataIndex];
+            itemConfig["Graffiti ID"] = staticData.id;
+            break;
+        }
+        case StaticData::Type::SealedGraffiti: {
+            itemConfig["Type"] = "Sealed Graffiti";
+            const auto& staticData = StaticData::paintKits()[gameItem.dataIndex];
+            itemConfig["Graffiti ID"] = staticData.id;
+            break;
+        }
         }
 
         items.push_back(std::move(itemConfig));
@@ -1452,6 +1462,22 @@ void InventoryChanger::fromJson(const json& j) noexcept
 
             const int patchID = jsonItem["Patch ID"];
             const auto staticData = std::ranges::find_if(StaticData::gameItems(), [patchID](const auto& gameItem) { return gameItem.isPatch() && StaticData::paintKits()[gameItem.dataIndex].id == patchID; });
+            if (staticData != StaticData::gameItems().end())
+                inventory.emplace_back(std::ranges::distance(StaticData::gameItems().begin(), staticData));
+        } else if (type == "Graffiti") {
+            if (!jsonItem.contains("Graffiti ID") || !jsonItem["Graffiti ID"].is_number_integer())
+                continue;
+
+            const int graffitiID = jsonItem["Graffiti ID"];
+            const auto staticData = std::ranges::find_if(StaticData::gameItems(), [graffitiID](const auto& gameItem) { return gameItem.isGraffiti() && StaticData::paintKits()[gameItem.dataIndex].id == graffitiID; });
+            if (staticData != StaticData::gameItems().end())
+                inventory.emplace_back(std::ranges::distance(StaticData::gameItems().begin(), staticData));
+        } else if (type == "Sealed Graffiti") {
+            if (!jsonItem.contains("Graffiti ID") || !jsonItem["Graffiti ID"].is_number_integer())
+                continue;
+
+            const int graffitiID = jsonItem["Graffiti ID"];
+            const auto staticData = std::ranges::find_if(StaticData::gameItems(), [graffitiID](const auto& gameItem) { return gameItem.isSealedGraffiti() && StaticData::paintKits()[gameItem.dataIndex].id == graffitiID; });
             if (staticData != StaticData::gameItems().end())
                 inventory.emplace_back(std::ranges::distance(StaticData::gameItems().begin(), staticData));
         }
