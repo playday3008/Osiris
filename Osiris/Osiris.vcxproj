@@ -197,6 +197,8 @@
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\default_vs.h</HeaderFileOutput>
       <ObjectFileOutput>
       </ObjectFileOutput>
+      <DisableOptimizations>false</DisableOptimizations>
+      <EnableDebuggingInformation>false</EnableDebuggingInformation>
     </FxCompile>
     <ResourceCompile Include="Osiris.rc" />
   </ItemGroup>
