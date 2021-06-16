@@ -496,6 +496,12 @@ static const char* __STDCALL getArgAsString(LINUX_ARGS(void* thisptr,) void* par
     return result;
 }
 
+static bool __STDCALL equipItemInLoadout(LINUX_ARGS(void* thisptr, ) Team team, int slot, std::uint64_t itemID, bool swap) noexcept
+{
+    InventoryChanger::onItemEquip(itemID);
+    return hooks->inventoryManager.callOriginal<bool, 20>(team, slot, itemID, swap);
+}
+
 #ifdef _WIN32
 
 Hooks::Hooks(HMODULE moduleHandle) noexcept : moduleHandle{ moduleHandle }
@@ -601,6 +607,7 @@ void Hooks::install() noexcept
     engine.hookAt(WIN32_LINUX(218, 219), &getDemoPlaybackParameters);
 
     inventoryManager.init(memory->inventoryManager);
+    inventoryManager.hookAt(20, &equipItemInLoadout);
 
     modelRender.init(interfaces->modelRender);
     modelRender.hookAt(21, &drawModelExecute);
@@ -710,6 +717,11 @@ void Hooks::uninstall() noexcept
     *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent) = pollEvent;
     *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow) = swapWindow;
 #endif
+}
+
+void Hooks::callOriginalDrawModelExecute(void* ctx, void* state, const ModelRenderInfo& info, matrix3x4* customBoneToWorld) noexcept
+{
+    modelRender.callOriginal<void, 21>(ctx, state, std::cref(info), customBoneToWorld);
 }
 
 #ifndef _WIN32

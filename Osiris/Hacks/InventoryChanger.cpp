@@ -57,15 +57,18 @@ constexpr auto isKnife(WeaponId id) noexcept
 class StaticData {
 public:
     enum class Type : std::uint8_t {
+        // has paint kit, must match GameItem::hasPaintKit() below
         Sticker,
         Glove,
         Skin,
         Music,
-        Collectible,
-        NameTag,
         Patch,
         Graffiti,
         SealedGraffiti,
+
+        // has other data
+        Collectible,
+        NameTag,
         Agent,
         CaseKey
     };
@@ -85,8 +88,7 @@ public:
         bool isAgent() const noexcept { return type == Type::Agent; }
         bool isCaseKey() const noexcept { return type == Type::CaseKey; }
 
-        // TODO: We need a better name for this
-        bool hasPaintKit() const noexcept { return isSkin() || isGlove() || isSticker() || isMusic() || isPatch() || isGraffiti() || isSealedGraffiti(); }
+        bool hasPaintKit() const noexcept { return type >= Type::Sticker && type <= Type::SealedGraffiti; }
 
         Type type;
         std::uint8_t rarity;
@@ -262,14 +264,9 @@ private:
         initItemData(itemSchema);
 
         std::ranges::sort(_gameItems, [this](const auto& a, const auto& b) {
-            const auto compare = _weaponNamesUpper[a.weaponID].compare(_weaponNamesUpper[b.weaponID]);
-            if (compare < 0)
-                return true;
-
-            if (a.hasPaintKit() && b.hasPaintKit() && compare == 0)
+            if (a.weaponID == b.weaponID && a.hasPaintKit() && b.hasPaintKit())
                 return _paintKits[a.dataIndex].nameUpperCase < _paintKits[b.dataIndex].nameUpperCase;
-
-            return false;
+            return _weaponNamesUpper[a.weaponID] < _weaponNamesUpper[b.weaponID];
         });
 
         _gameItems.shrink_to_fit();
@@ -372,6 +369,7 @@ public:
     bool isGlove() const noexcept { return !isDeleted() && !shouldDelete() && get().isGlove(); }
     bool isMusic() const noexcept { return !isDeleted() && !shouldDelete() && get().isMusic(); }
     bool isAgent() const noexcept { return !isDeleted() && !shouldDelete() && get().isAgent(); }
+    bool isCollectible() const noexcept { return !isDeleted() && !shouldDelete() && get().isCollectible(); }
 
     std::size_t getDynamicDataIndex() const noexcept { assert(dynamicDataIndex != static_cast<std::size_t>(-1)); return dynamicDataIndex; }
 
@@ -914,6 +912,30 @@ static void applyPlayerAgent(CSPlayerInventory& localInventory) noexcept
         ragdoll->setModelIndex(idx);
 }
 
+static void applyMedal(CSPlayerInventory& localInventory) noexcept
+{
+    if (!localPlayer)
+        return;
+
+    const auto pr = *memory->playerResource;
+    if (!pr)
+        return;
+
+    const auto itemView = localInventory.getItemInLoadout(Team::None, 55);
+    if (!itemView)
+        return;
+
+    const auto soc = memory->getSOCData(itemView);
+    if (!soc || !wasItemCreatedByOsiris(soc->itemID))
+        return;
+
+    const auto& item = inventory[static_cast<std::size_t>(soc->itemID - BASE_ITEMID)];
+    if (!item.isCollectible())
+        return;
+
+    pr->activeCoinRank()[localPlayer->index()] = static_cast<int>(item.get().weaponID);
+}
+
 void InventoryChanger::run(FrameStage stage) noexcept
 {
     static int localPlayerHandle = -1;
@@ -940,6 +962,7 @@ void InventoryChanger::run(FrameStage stage) noexcept
 
     applyMusicKit(*localInventory);
     applyPlayerAgent(*localInventory);
+    applyMedal(*localInventory);
 
     static const auto baseInvID = localInventory->getHighestIDs().second;
 
@@ -1879,6 +1902,24 @@ void InventoryChanger::resetConfig() noexcept
 void InventoryChanger::clearInventory() noexcept
 {
     resetConfig();
+}
+
+void InventoryChanger::onItemEquip(std::uint64_t itemID) noexcept
+{
+    if (!wasItemCreatedByOsiris(itemID))
+        return;
+
+    const auto localInventory = memory->inventoryManager->getLocalInventory();
+    if (!localInventory)
+        return;
+
+    const auto& item = inventory[static_cast<std::size_t>(itemID - BASE_ITEMID)];
+    if (item.isCollectible()) {
+        if (const auto view = memory->getInventoryItemByItemID(localInventory, itemID)) {
+            if (const auto econItem = memory->getSOCData(view))
+                localInventory->soUpdated(localInventory->getSOID(), (SharedObject*)econItem, 4);
+        }
+    }
 }
 
 struct Icon {
