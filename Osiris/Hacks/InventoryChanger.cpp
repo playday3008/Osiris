@@ -70,6 +70,7 @@ public:
         Collectible,
         NameTag,
         Agent,
+        Case,
         CaseKey
     };
 
@@ -86,6 +87,7 @@ public:
         bool isGraffiti() const noexcept { return type == Type::Graffiti; }
         bool isSealedGraffiti() const noexcept { return type == Type::SealedGraffiti; }
         bool isAgent() const noexcept { return type == Type::Agent; }
+        bool isCase() const noexcept { return type == Type::Case; }
         bool isCaseKey() const noexcept { return type == Type::CaseKey; }
 
         bool hasPaintKit() const noexcept { return type >= Type::Sticker && type <= Type::SealedGraffiti; }
@@ -232,23 +234,23 @@ private:
                 _weaponNamesUpper.emplace(item->getWeaponId(), Helpers::toUpper(nameWide));
             }
 
+            const auto inventoryImage = item->getInventoryImage();
+            if (!inventoryImage)
+                continue;
+
             if (itemTypeName == "#CSGO_Type_Knife" && item->getRarity() == 6) {
-                if (const auto image = item->getInventoryImage())
-                    _gameItems.emplace_back(Type::Skin, 6, item->getWeaponId(), vanillaPaintIndex, image);
+                _gameItems.emplace_back(Type::Skin, 6, item->getWeaponId(), vanillaPaintIndex, inventoryImage);
             } else if (isCollectible) {
-                if (const auto image = item->getInventoryImage()) {
-                    _collectibles.emplace_back(isOriginal);
-                    _gameItems.emplace_back(Type::Collectible, item->getRarity(), item->getWeaponId(), _collectibles.size() - 1, image);
-                }
+                _collectibles.emplace_back(isOriginal);
+                _gameItems.emplace_back(Type::Collectible, item->getRarity(), item->getWeaponId(), _collectibles.size() - 1, inventoryImage);
             } else if (itemTypeName == "#CSGO_Tool_Name_TagTag") {
-                if (const auto image = item->getInventoryImage())
-                    _gameItems.emplace_back(Type::NameTag, item->getRarity(), item->getWeaponId(), 0, image);
+                _gameItems.emplace_back(Type::NameTag, item->getRarity(), item->getWeaponId(), 0, inventoryImage);
             } else if (item->isPatchable()) {
-                if (const auto image = item->getInventoryImage())
-                    _gameItems.emplace_back(Type::Agent, item->getRarity(), item->getWeaponId(), 0, image);
+                _gameItems.emplace_back(Type::Agent, item->getRarity(), item->getWeaponId(), 0, inventoryImage);
+            } else if (itemTypeName == "#CSGO_Type_WeaponCase") {
+                _gameItems.emplace_back(Type::Case, item->getRarity(), item->getWeaponId(), 0, inventoryImage);
             } else if (itemTypeName == "#CSGO_Tool_WeaponCase_KeyTag") {
-                if (const auto image = item->getInventoryImage())
-                    _gameItems.emplace_back(Type::CaseKey, item->getRarity(), item->getWeaponId(), 0, image);
+                _gameItems.emplace_back(Type::CaseKey, item->getRarity(), item->getWeaponId(), 0, inventoryImage);
             }
         }
     }
@@ -1581,6 +1583,11 @@ json InventoryChanger::toJson() noexcept
             }
             break;
         }
+        case StaticData::Type::Case: {
+            itemConfig["Type"] = "Case";
+            itemConfig["Weapon ID"] = gameItem.weaponID;
+            break;
+        }
         case StaticData::Type::CaseKey: {
             itemConfig["Type"] = "Case Key";
             itemConfig["Weapon ID"] = gameItem.weaponID;
@@ -1829,6 +1836,17 @@ void InventoryChanger::fromJson(const json& j) noexcept
                     continue;
                 dynamicData.patches[slot].patchID = patchID;
             }
+        } else if (type == "Case") {
+            if (!jsonItem.contains("Weapon ID") || !jsonItem["Weapon ID"].is_number_integer())
+                continue;
+
+            const WeaponId weaponID = jsonItem["Weapon ID"];
+
+            const auto staticData = std::ranges::find_if(StaticData::gameItems(), [weaponID](const auto& gameItem) { return gameItem.isCase() && gameItem.weaponID == weaponID; });
+            if (staticData == StaticData::gameItems().end())
+                continue;
+
+            inventory.emplace_back(std::ranges::distance(StaticData::gameItems().begin(), staticData));
         } else if (type == "Case Key") {
             if (!jsonItem.contains("Weapon ID") || !jsonItem["Weapon ID"].is_number_integer())
                 continue;
@@ -1904,7 +1922,8 @@ void InventoryChanger::clearInventory() noexcept
     resetConfig();
 }
 
-void InventoryChanger::onItemEquip(std::uint64_t itemID) noexcept
+static std::uint64_t lastEquippedItemID = 0;
+void InventoryChanger::onItemEquip(Team team, int slot, std::uint64_t itemID) noexcept
 {
     if (!wasItemCreatedByOsiris(itemID))
         return;
@@ -1919,6 +1938,22 @@ void InventoryChanger::onItemEquip(std::uint64_t itemID) noexcept
             if (const auto econItem = memory->getSOCData(view))
                 localInventory->soUpdated(localInventory->getSOID(), (SharedObject*)econItem, 4);
         }
+    } else if (item.isSkin()) {
+        const auto view = localInventory->getItemInLoadout(team, slot);
+        memory->inventoryManager->equipItemInSlot(team, slot, (std::uint64_t(0xF) << 60) | static_cast<short>(item.get().weaponID));
+        if (view) {
+            if (const auto econItem = memory->getSOCData(view))
+                localInventory->soUpdated(localInventory->getSOID(), (SharedObject*)econItem, 4);
+        }
+        lastEquippedItemID = itemID;
+    }
+}
+
+void InventoryChanger::onSoUpdated(SharedObject* object, int event) noexcept
+{
+    if (lastEquippedItemID != 0 && object->getTypeID() == 43 /* = k_EEconTypeDefaultEquippedDefinitionInstanceClient */) {
+        *reinterpret_cast<WeaponId*>(std::uintptr_t(object) + WIN32_LINUX(0x10, 0x1C)) = WeaponId::None;
+        lastEquippedItemID = 0;
     }
 }
 
