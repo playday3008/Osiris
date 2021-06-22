@@ -127,13 +127,18 @@ public:
         return *reinterpret_cast<const UtlVector<StaticAttrib>*>(std::uintptr_t(this) + WIN32_LINUX(0x30, 0x50));
     }
 
-    bool hasCrateSeries() noexcept
+    std::uint32_t getCrateSeriesNumber() noexcept
     {
         const auto& staticAttributes = getStaticAttributes();
         for (int i = 0; i < staticAttributes.size; ++i)
             if (staticAttributes[i].defIndex == 68 /* "set supply crate series" */)
-                return true;
-        return false;
+                return staticAttributes[i].value;
+        return 0;
+    }
+
+    bool hasCrateSeries() noexcept
+    {
+        return getCrateSeriesNumber() != 0;
     }
 
     bool isPaintable() noexcept { return getCapabilities() & 1; /* ITEM_CAP_PAINTABLE */ }
@@ -155,7 +160,13 @@ public:
 struct ItemListEntry {
     int itemDef;
     int paintKit;
-    PAD(20)
+    int paintKitSeed;
+    float paintKitWear;
+    std::uint32_t stickerKit;
+    std::uint32_t musicKit;
+    bool isNestedList;
+    bool isUnusualList;
+    PAD(2)
 
     auto weaponId() const noexcept
     {
@@ -169,6 +180,11 @@ public:
 
     VIRTUAL_METHOD(const char*, getName, 0, (), (this))
     VIRTUAL_METHOD(const UtlVector<ItemListEntry>&, getLootListContents, 1, (), (this))
+
+    bool willProduceStatTrak() noexcept
+    {
+        return *reinterpret_cast<bool*>(std::uintptr_t(this) + WIN32_LINUX(0x36, 0x56));
+    }
 };
 
 class EconItemSetDefinition {
@@ -216,7 +232,9 @@ public:
     UtlMap<int, EconItemQualityDefinition> qualities;
     PAD(WIN32_LINUX(0x48, 0x60))
     UtlMap<int, EconItemDefinition*> itemsSorted;
-    PAD(WIN32_LINUX(0x104, 0x168))
+    PAD(WIN32_LINUX(0x60, 0x88))
+    UtlMap<int, const char*> revolvingLootLists;
+    PAD(WIN32_LINUX(0x80, 0xB0))
     UtlMap<std::uint64_t, AlternateIconData> alternateIcons;
     PAD(WIN32_LINUX(0x48, 0x60))
     UtlMap<int, PaintKit*> paintKits;
@@ -229,6 +247,7 @@ public:
     VIRTUAL_METHOD(EconItemAttributeDefinition*, getAttributeDefinitionInterface, 27, (int index), (this, index))
     VIRTUAL_METHOD(int, getItemSetCount, 28, (), (this))
     VIRTUAL_METHOD(EconItemSetDefinition*, getItemSet, 29, (int index), (this, index))
+    VIRTUAL_METHOD(EconLootListDefinition*, getLootList, 31, (const char* name, int* index = nullptr), (this, name, index))
     VIRTUAL_METHOD(EconLootListDefinition*, getLootList, 32, (int index), (this, index))
     VIRTUAL_METHOD(int, getLootListCount, 34, (), (this))
     VIRTUAL_METHOD(EconItemDefinition*, getItemDefinitionByName, 42, (const char* name), (this, name))
@@ -274,6 +293,8 @@ public:
     void setSeed(float seed) noexcept { setAttributeValue(7, &seed); }
     void setWear(float wear) noexcept { setAttributeValue(8, &wear); }
     void setMusicID(int musicID) noexcept { setAttributeValue(166, &musicID); }
+    void setStatTrak(int value) noexcept { setAttributeValue(80, &value); }
+    void setStatTrakType(int type) noexcept { setAttributeValue(81, &type); }
 
     void setStickerID(int slot, int stickerID) noexcept
     {
