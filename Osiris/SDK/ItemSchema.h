@@ -141,6 +141,20 @@ public:
         return getCrateSeriesNumber() != 0;
     }
 
+    std::uint32_t getTournamentEventID() noexcept
+    {
+        const auto& staticAttributes = getStaticAttributes();
+        for (int i = 0; i < staticAttributes.size; ++i)
+            if (staticAttributes[i].defIndex == 137 /* "tournament event id" */)
+                return staticAttributes[i].value;
+        return 0;
+    }
+
+    bool hasTournamentEventID() noexcept
+    {
+        return getTournamentEventID() != 0;
+    }
+
     bool isPaintable() noexcept { return getCapabilities() & 1; /* ITEM_CAP_PAINTABLE */ }
     bool isPatchable() noexcept { return getCapabilities() & (1 << 22); /* ITEM_CAP_CAN_PATCH */ }
 
@@ -357,6 +371,7 @@ public:
     INCONSTRUCTIBLE(CSPlayerInventory)
 
     VIRTUAL_METHOD(void, soUpdated, 1, (SOID owner, SharedObject* object, int event), (this, owner, object, event))
+    VIRTUAL_METHOD(void, soDestroyed, 2, (SOID owner, SharedObject* object, int event), (this, owner, object, event))
     VIRTUAL_METHOD_V(void*, getItemInLoadout, 8, (Team team, int slot), (this, team, slot))
     VIRTUAL_METHOD_V(void, removeItem, 15, (std::uint64_t itemID), (this, itemID))
 
