@@ -4,8 +4,11 @@
 
 #include "Inconstructible.h"
 #include "Pad.h"
+#include "Entity.h"
 #include "UtlVector.h"
 #include "VirtualMethod.h"
+
+#include "../Memory.h"
 
 enum class WeaponId : short;
 
@@ -92,12 +95,24 @@ struct StickerKit {
     UtlString inventoryImage;
 };
 
-enum class Team;
+union AttributeDataUnion {
+    float asFloat;
+    std::uint32_t asUint32;
+    char* asBlobPointer;
+};
 
 struct StaticAttrib {
     std::uint16_t defIndex;
-    std::uint32_t value;
+    AttributeDataUnion value;
     bool forceGCToGenerate;
+};
+static_assert(sizeof(StaticAttrib) == WIN32_LINUX(12, 24));
+
+struct EconTool {
+    INCONSTRUCTIBLE(EconTool)
+
+    PAD(sizeof(std::uintptr_t))
+    const char* typeName;
 };
 
 class EconItemDefinition {
@@ -132,7 +147,7 @@ public:
         const auto& staticAttributes = getStaticAttributes();
         for (int i = 0; i < staticAttributes.size; ++i)
             if (staticAttributes[i].defIndex == 68 /* "set supply crate series" */)
-                return staticAttributes[i].value;
+                return staticAttributes[i].value.asUint32;
         return 0;
     }
 
@@ -146,7 +161,7 @@ public:
         const auto& staticAttributes = getStaticAttributes();
         for (int i = 0; i < staticAttributes.size; ++i)
             if (staticAttributes[i].defIndex == 137 /* "tournament event id" */)
-                return staticAttributes[i].value;
+                return staticAttributes[i].value.asUint32;
         return 0;
     }
 
@@ -161,6 +176,11 @@ public:
     const char* getDefinitionName() noexcept
     {
         return *reinterpret_cast<const char**>(this + WIN32_LINUX(0x1DC, 0x2E0));
+    }
+
+    EconTool* getEconTool() noexcept
+    {
+        return *reinterpret_cast<EconTool**>(std::uintptr_t(this) + WIN32_LINUX(0x140, 0x1E8));
     }
 
     int getLoadoutSlot(Team team) noexcept

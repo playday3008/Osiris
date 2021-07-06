@@ -19,7 +19,7 @@
 #include "Hacks/AntiAim.h"
 #include "Hacks/Backtrack.h"
 #include "Hacks/Glow.h"
-#include "Hacks/InventoryChanger.h"
+#include "InventoryChanger/InventoryChanger.h"
 #include "Hacks/Sound.h"
 #include "Hacks/Visuals.h"
 #include "Hacks/Misc.h"
@@ -91,13 +91,6 @@ static void from_json(const json& j, ColorToggleRounding& ctr)
     from_json(j, static_cast<ColorToggle&>(ctr));
 
     read(j, "Rounding", ctr.rounding);
-}
-
-static void from_json(const json& j, ColorToggleThickness& ctt)
-{
-    from_json(j, static_cast<ColorToggle&>(ctt));
-
-    read(j, "Thickness", ctt.thickness);
 }
 
 static void from_json(const json& j, ColorToggleThicknessRounding& cttr)

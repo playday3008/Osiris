@@ -40,10 +40,11 @@
 #include "Hacks/StreamProofESP.h"
 #include "Hacks/Glow.h"
 #include "Hacks/Misc.h"
-#include "Hacks/InventoryChanger.h"
 #include "Hacks/Sound.h"
 #include "Hacks/Triggerbot.h"
 #include "Hacks/Visuals.h"
+
+#include "InventoryChanger/InventoryChanger.h"
 
 #include "SDK/ClientClass.h"
 #include "SDK/Cvar.h"
@@ -56,6 +57,7 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 #include "SDK/ItemSchema.h"
+#include "SDK/LocalPlayer.h"
 #include "SDK/MaterialSystem.h"
 #include "SDK/ModelRender.h"
 #include "SDK/Platform.h"
@@ -73,7 +75,7 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     [[maybe_unused]] static const auto once = [](HWND window) noexcept {
-        netvars = std::make_unique<Netvars>();
+        Netvars::init();
         EventListener::init();
 
         ImGui::CreateContext();
@@ -480,8 +482,7 @@ static const char* __STDCALL getArgAsString(LINUX_ARGS(void* thisptr,) void* par
     const auto result = hooks->panoramaMarshallHelper.callOriginal<const char*, 7>(params, index);
 
     if (result) {
-        const auto ret = RETURN_ADDRESS();
-        if (ret == memory->useToolGetArgAsStringReturnAddress) {
+        if (const auto ret = RETURN_ADDRESS(); ret == memory->useToolGetArgAsStringReturnAddress) {
             InventoryChanger::setToolToUse(stringToUint64(result));
         } else if (ret == memory->useToolGetArg2AsStringReturnAddress) {
             InventoryChanger::setItemToApplyTool(stringToUint64(result));
@@ -491,9 +492,17 @@ static const char* __STDCALL getArgAsString(LINUX_ARGS(void* thisptr,) void* par
             InventoryChanger::setNameTagString(result);
         } else if (ret == memory->clearCustomNameGetArgAsStringReturnAddress) {
             InventoryChanger::setItemToRemoveNameTag(stringToUint64(result));
+        } else if (ret == memory->deleteItemGetArgAsStringReturnAddress) {
+            InventoryChanger::deleteItem(stringToUint64(result));
+        } else if (ret == memory->acknowledgeNewItemByItemIDGetArgAsStringReturnAddress) {
+            InventoryChanger::acknowledgeItem(stringToUint64(result));
+        } else if (ret == memory->setStatTrakSwapToolItemsGetArgAsStringReturnAddress1) {
+            InventoryChanger::setStatTrakSwapItem1(stringToUint64(result));
+        } else if (ret == memory->setStatTrakSwapToolItemsGetArgAsStringReturnAddress2) {
+            InventoryChanger::setStatTrakSwapItem2(stringToUint64(result));
         }
     }
-   
+
     return result;
 }
 
@@ -707,7 +716,7 @@ void Hooks::uninstall() noexcept
     svCheats.restore();
     viewRender.restore();
 
-    netvars->restore();
+    Netvars::restore();
 
     Glow::clearCustomObjects();
     InventoryChanger::clearInventory();
@@ -740,7 +749,7 @@ void Hooks::callOriginalDrawModelExecute(void* ctx, void* state, const ModelRend
 static int pollEvent(SDL_Event* event) noexcept
 {
     [[maybe_unused]] static const auto once = []() noexcept {
-        netvars = std::make_unique<Netvars>();
+        Netvars::init();
         EventListener::init();
 
         ImGui::CreateContext();

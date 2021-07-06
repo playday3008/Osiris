@@ -5,21 +5,16 @@
 #include <string>
 
 #include "AnimState.h"
-#include "Engine.h"
-#include "EngineTrace.h"
 #include "Inconstructible.h"
-#include "LocalPlayer.h"
-#include "matrix3x4.h"
 #include "Platform.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 #include "WeaponData.h"
 #include "WeaponId.h"
 
-#include "../Interfaces.h"
-#include "../Memory.h"
-#include "../Hacks/Misc.h"
 #include "../Netvars.h"
+
+class matrix3x4;
 
 struct AnimState;
 struct ClientClass;
@@ -142,42 +137,15 @@ public:
         return false;
     }
 
-    bool setupBones(matrix3x4* out, int maxBones, int boneMask, float currentTime) noexcept
-    {
-#ifdef _WIN32
-        if (Misc::shouldFixBoneMatrix()) {
-            int* render = reinterpret_cast<int*>(this + 0x274);
-            int backup = *render;
-            Vector absOrigin = getAbsOrigin();
-            *render = 0;
-            memory->setAbsOrigin(this, origin());
-            auto result = VirtualMethod::call<bool, 13>(this + sizeof(uintptr_t), out, maxBones, boneMask, currentTime);
-            memory->setAbsOrigin(this, absOrigin);
-            *render = backup;
-            return result;
-        }
-#endif
-        return VirtualMethod::call<bool, 13>(this + sizeof(uintptr_t), out, maxBones, boneMask, currentTime);
-    }
-
-    Vector getBonePosition(int bone) noexcept
-    {
-        if (matrix3x4 boneMatrices[256]; setupBones(boneMatrices, 256, 256, 0.0f))
-            return boneMatrices[bone].origin();
-        else
-            return Vector{ };
-    }
+    bool setupBones(matrix3x4* out, int maxBones, int boneMask, float currentTime) noexcept;
+    Vector getBonePosition(int bone) noexcept;
 
     bool isVisible(const Vector& position = { }) noexcept;
     bool isOtherEnemy(Entity* other) noexcept;
 
-    VarMap* getVarMap() noexcept
+    VarMap& getVarMap() noexcept
     {
-#ifdef _WIN32
-        return reinterpret_cast<VarMap*>(this + 0x24);
-#else
-        return nullptr;
-#endif
+        return *reinterpret_cast<VarMap*>(std::uintptr_t(this) + WIN32_LINUX(0x24, 0x48));
     }
    
     AnimState* getAnimstate() noexcept
@@ -189,20 +157,7 @@ public:
 #endif
     }
 
-    float getMaxDesyncAngle() noexcept
-    {
-        const auto animState = getAnimstate();
-
-        if (!animState)
-            return 0.0f;
-
-        float yawModifier = (animState->stopToFullRunningFraction * -0.3f - 0.2f) * std::clamp(animState->footSpeed, 0.0f, 1.0f) + 1.0f;
-
-        if (animState->duckAmount > 0.0f)
-            yawModifier += (animState->duckAmount * std::clamp(animState->footSpeed2, 0.0f, 1.0f) * (0.5f - yawModifier));
-
-        return animState->velocitySubtractY * yawModifier;
-    }
+    float getMaxDesyncAngle() noexcept;
 
     bool isInReload() noexcept
     {
@@ -275,7 +230,7 @@ public:
     NETVAR(nextAttack, "CBaseCombatCharacter", "m_flNextAttack", float)
 
     NETVAR(accountID, "CBaseAttributableItem", "m_iAccountID", int)
-    NETVAR(itemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short)
+    [[deprecated]] NETVAR(itemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short)
     NETVAR(itemDefinitionIndex2, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId)
     NETVAR(itemIDHigh, "CBaseAttributableItem", "m_iItemIDHigh", std::uint32_t)
     NETVAR(itemIDLow, "CBaseAttributableItem", "m_iItemIDLow", std::uint32_t)
