@@ -166,6 +166,28 @@ private:
         }
     }
 
+    auto findItems(WeaponId weaponID) noexcept
+    {
+        struct Comp {
+            explicit Comp(const std::vector<GameItem>& gameItems) : gameItems{ gameItems } {}
+            bool operator()(WeaponId weaponID, std::size_t index) const noexcept { return weaponID < gameItems[index].weaponID; }
+            bool operator()(std::size_t index, WeaponId weaponID) const noexcept { return gameItems[index].weaponID < weaponID; }
+        private:
+            const std::vector<GameItem>& gameItems;
+        };
+
+        assert(!_skinsSorted.empty());
+        return std::equal_range(_skinsSorted.cbegin(), _skinsSorted.cend(), weaponID, Comp{ _gameItems }); // not using std::ranges::equal_range() here because it requires extra operators
+    }
+
+    std::size_t getItemIndex(WeaponId weaponID, int paintKit) noexcept
+    {
+        const auto [begin, end] = findItems(weaponID);
+        if (const auto it = std::lower_bound(begin, end, paintKit, [this](std::size_t index, int paintKit) { return _gameItems[index].hasPaintKit() && _paintKits[_gameItems[index].dataIndex].id < paintKit; }); it != end && _gameItems[*it].weaponID == weaponID && (!_gameItems[*it].hasPaintKit() || _paintKits[_gameItems[*it].dataIndex].id == paintKit))
+            return *it;
+        return static_cast<std::size_t>(-1);
+    }
+
     void fillLootFromLootList(ItemSchema* itemSchema, EconLootListDefinition* lootList, std::vector<std::size_t>& loot, bool* willProduceStatTrak = nullptr) noexcept
     {
         if (willProduceStatTrak)
@@ -224,12 +246,19 @@ private:
     void initSortedVectors() noexcept
     {
         for (std::size_t i = 0; i < _gameItems.size(); ++i) {
-            const auto& item = _gameItems[i];
-            if (item.isSticker() || item.isPatch() || item.isGraffiti())
+            if (const auto& item = _gameItems[i]; item.isSticker() || item.isPatch() || item.isGraffiti())
                 _stickersSorted.push_back(i);
+            _skinsSorted.push_back(i);
         }
 
         std::ranges::sort(_stickersSorted, [this](std::size_t a, std::size_t b) { return _paintKits[_gameItems[a].dataIndex].id < _paintKits[_gameItems[b].dataIndex].id; });
+        std::ranges::sort(_skinsSorted, [this](std::size_t a, std::size_t b) {
+            const auto& itemA = _gameItems[a];
+            const auto& itemB = _gameItems[b];
+            if (itemA.weaponID == itemB.weaponID && itemA.hasPaintKit() && itemB.hasPaintKit())
+                return _paintKits[itemA.dataIndex].id < _paintKits[itemB.dataIndex].id;
+            return itemA.weaponID < itemB.weaponID;
+        });
     }
 
     StaticDataImpl()
@@ -247,7 +276,7 @@ private:
             if (a.weaponID == b.weaponID && a.hasPaintKit() && b.hasPaintKit())
                 return _paintKits[a.dataIndex].nameUpperCase < _paintKits[b.dataIndex].nameUpperCase;
             return _weaponNamesUpper[a.weaponID] < _weaponNamesUpper[b.weaponID];
-            });
+        });
 
         initSortedVectors();
         buildLootLists(itemSchema, lootListIndices);
@@ -271,6 +300,7 @@ private:
     std::vector<Case> _cases;
     std::vector<std::size_t> _caseLoot;
     std::vector<std::size_t> _stickersSorted;
+    std::vector<std::size_t> _skinsSorted;
     std::vector<StaticData::PaintKit> _paintKits{ { 0, L"" } };
     static constexpr auto vanillaPaintIndex = 0;
     std::unordered_map<WeaponId, std::string> _weaponNames;
