@@ -239,6 +239,9 @@
     <ClCompile Include="InventoryChanger\Inventory.cpp">
       <Filter>InventoryChanger</Filter>
     </ClCompile>
+    <ClCompile Include="InventoryChanger\ToolUser.cpp">
+      <Filter>InventoryChanger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI.h">
@@ -587,6 +590,12 @@
       <Filter>InventoryChanger</Filter>
     </ClInclude>
     <ClInclude Include="InventoryChanger\Inventory.h">
+      <Filter>InventoryChanger</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtobufReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryChanger\ToolUser.h">
       <Filter>InventoryChanger</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
