@@ -24,10 +24,10 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y libsdl2-dev gcc-10 g++-10
+        sudo apt install -y libsdl2-dev gcc-11 g++-11
       
     - name: Configure CMake
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-m${{ matrix.intrinsic }} -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_FLAGS=-m${{ matrix.intrinsic }} -D CMAKE_C_COMPILER=gcc-11 -D CMAKE_CXX_COMPILER=g++-11 ..
       
     - name: Build
       run: cd Release && make -j $(nproc --all)

@@ -7,12 +7,15 @@
 #include "AnimState.h"
 #include "Inconstructible.h"
 #include "Platform.h"
+#include "UtlVector.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 #include "WeaponData.h"
 #include "WeaponId.h"
 
 #include "../Netvars.h"
+
+class EconItemView;
 
 class matrix3x4;
 
@@ -51,22 +54,13 @@ public:
     VIRTUAL_METHOD(const Vector&, obbMaxs, 2, (), (this))
 };
 
-class EconItemView {
-public:
-    INCONSTRUCTIBLE(EconItemView)
-
-    std::uintptr_t getAttributeList() noexcept
-    {
-        return std::uintptr_t(this) + WIN32_LINUX(0x244, 0x2F8);
-    }
-};
-
 class Entity {
 public:
     INCONSTRUCTIBLE(Entity)
 
     VIRTUAL_METHOD(void, release, 1, (), (this + sizeof(uintptr_t) * 2))
     VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + sizeof(uintptr_t) * 2))
+    VIRTUAL_METHOD(void, onDataChanged, 5, (int updateType), (this + sizeof(uintptr_t) * 2, updateType))
     VIRTUAL_METHOD(void, preDataUpdate, 6, (int updateType), (this + sizeof(uintptr_t) * 2, updateType))
     VIRTUAL_METHOD(void, postDataUpdate, 7, (int updateType), (this + sizeof(uintptr_t) * 2, updateType))
     VIRTUAL_METHOD(bool, isDormant, 9, (), (this + sizeof(uintptr_t) * 2))

@@ -598,6 +598,9 @@
     <ClInclude Include="InventoryChanger\ToolUser.h">
       <Filter>InventoryChanger</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\EconItemView.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
