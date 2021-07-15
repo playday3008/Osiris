@@ -49,9 +49,18 @@ jobs:
       run: |
         git clone --branch LoadLibrary-CreateRemoteThread-JUNKED https://github.com/playday3008/OG-Injector.git
         cd .\OG-Injector\OG-Injector
-        & '.\__asm_emit generator.exe' (Get-Random -Minimum 300 -Maximum 500) 1
         Remove-Item -Path JunkDef.hpp
-        Move-Item -Path junk.h -Destination JunkDef.hpp
+        Add-Content .\JunkDef.hpp @"
+        #pragma once
+        
+        // And you need:
+        // 1. change all bytes(0x00, 0x01, 0x03....) in define "JUNKS" to random bytes
+        // 2. change size this block by adding new bytes
+        #define JUNKS \
+        "@
+        $x = (Get-Random -Minimum 300 -Maximum 500); For ($i = 0; $i -le $x; $i++) {
+        Add-Content .\JunkDef.hpp ('__asm _emit 0x{0:x} \' -f (Get-Random -Minimum 0 -Maximum 255))
+        }
         ((Get-Content OG-Injector.cpp -Raw) -replace '//#define OSIRIS','#define OSIRIS') | Set-Content OG-Injector.cpp
         msbuild OG-Injector.vcxproj /p:Configuration=Release /v:m
         Copy-Item -Path ${{ github.workspace }}\OG-Injector\OG-Injector\Release\OG-Injector.exe -Destination "..\..\ready\OG-Injector(Osiris).exe"
