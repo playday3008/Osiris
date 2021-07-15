@@ -113,7 +113,7 @@ jobs:
       run: |
             git clone https://github.com/playday3008/OG-Injector-Linux.git
             cd OG-Injector-Linux
-            sed -i 's+//#define Osiris+#define Osiris+g' OG-Injector-Linux.cpp
+            sed -i 's+//#define OSIRIS+#define OSIRIS+g' OG-Injector-Linux.cpp
             cmake -E make_directory build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release
             cmake --build . --config Release
             cd ../.. && cp OG-Injector-Linux/build/OG-Injector-Linux ready/OG-Injector
